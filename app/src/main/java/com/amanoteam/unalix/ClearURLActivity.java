@@ -21,65 +21,24 @@ public class ClearURLActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
- 	
+ 		
 		final Intent intent = getIntent();
 		final String action = intent.getAction();
-		final Intent sendIntent = new Intent();
 		
-		String actionName = "";
+		String uglyUrl = "";
 		
 		if (action.equals(Intent.ACTION_SEND)) {
-			final String uglyUrl = intent.getStringExtra(Intent.EXTRA_TEXT);
-			final String cleanedUrl = unalix.clearUrl(uglyUrl);
-			
-			actionName = "Share with";
-			
-			sendIntent.setAction(Intent.ACTION_SEND);
-			sendIntent.putExtra(Intent.EXTRA_TEXT, cleanedUrl);
-			sendIntent.setType("text/plain");
+			uglyUrl = intent.getStringExtra(Intent.EXTRA_TEXT);
 		} else if (action.equals(Intent.ACTION_VIEW)) {
-			final Uri uglyUrl = intent.getData();
-			final String cleanedUrl = unalix.clearUrl(uglyUrl.toString());
-			
-			actionName = "Open with";
-			
-			sendIntent.setAction(Intent.ACTION_VIEW);
-			sendIntent.setData(Uri.parse(cleanedUrl));
+			uglyUrl = intent.getData().toString();
 		}
 		
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-			final ArrayList<ComponentName> excludeTargets = new ArrayList<>();
-			
-			excludeTargets.add(new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.ClearURLActivity"));
-			excludeTargets.add(new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.UnshortURLActivity"));
-			
-			final Intent chooserIntent = Intent.createChooser(sendIntent, actionName);
-			chooserIntent.putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, excludeTargets.toArray(new ComponentName[0]));
-			
-			startActivity(chooserIntent);
-		} else {
-			final List<Intent> intentsList = new ArrayList<>();
-			final List<ResolveInfo> resolveInfoList = getPackageManager().queryIntentActivities(sendIntent, 0);
-			
-			for (ResolveInfo resolveInfoItem : resolveInfoList) {
-				Intent targetIntent = (Intent) sendIntent.clone();
-				
-				String packageName = resolveInfoItem.activityInfo.packageName;
-				String activityName = resolveInfoItem.activityInfo.name;
-				
-				if (activityName.equals("com.amanoteam.unalix.ClearURLActivity") || activityName.equals("com.amanoteam.unalix.UnshortURLActivity")) {
-					continue;
-				}
-				
-				targetIntent.setComponent(new ComponentName(packageName, activityName));
-				intentsList.add(targetIntent);
-			}
-
-			final Intent chooserIntent = Intent.createChooser(intentsList.remove(0), actionName);
-			chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentsList.toArray(new Parcelable[intentsList.size()]));
-			
-			startActivity(chooserIntent);
-		}
+		final Intent serviceIntent = new Intent(this, UnalixService.class);
+		serviceIntent.putExtra("originalAction", action);
+		serviceIntent.putExtra("uglyUrl", uglyUrl);
+		serviceIntent.putExtra("whatToDo", "clearUrl");
+		
+		startService(serviceIntent);
 		
 		finish();
 	}

@@ -3,6 +3,8 @@ package com.amanoteam.unalix;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import androidx.preference.PreferenceManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
@@ -36,26 +38,69 @@ public class UnalixService extends Service {
 			@Override
 			public void handleMessage(Message msg) {
 					
+					String cleanedUrl = "";
+					
 					final Intent intent = (Intent) msg.obj;
 					final String action = intent.getStringExtra("originalAction");
 					final String uglyUrl = intent.getStringExtra("uglyUrl");
+					final String whatToDo = intent.getStringExtra("whatToDo");
 					final Intent sendIntent = new Intent();
 					
+					final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+					
+					final boolean ignoreReferralMarketing = settings.getBoolean("ignoreReferralMarketing", false);
+					final boolean ignoreRules = settings.getBoolean("ignoreRules", false);
+					final boolean ignoreExceptions = settings.getBoolean("ignoreExceptions", false);
+					final boolean ignoreRawRules = settings.getBoolean("ignoreRawRules", false);
+					final boolean ignoreRedirections = settings.getBoolean("ignoreRedirections", false);
+					final boolean skipBlocked = settings.getBoolean("skipBlocked", false);
+					final boolean stripDuplicates = settings.getBoolean("stripDuplicates", false);
+					final boolean stripEmpty = settings.getBoolean("stripEmpty", false);
+					
 					final Unalix unalix = new Unalix();
+					
+					unalix.setIgnoreReferralMarketing(ignoreReferralMarketing);
+					unalix.setIgnoreRules(ignoreRules);
+					unalix.setIgnoreExceptions(ignoreExceptions);
+					unalix.setRawRules(ignoreRawRules);
+					unalix.setIgnoreRedirections(ignoreRedirections);
+					unalix.setSkipBlocked(skipBlocked);
+					unalix.setStripDuplicates(stripDuplicates);
+					unalix.setStripEmpty(stripEmpty);
+					
+					if (whatToDo.equals("clearUrl")) {
+						cleanedUrl = unalix.clearUrl(uglyUrl);
+					} else {
+						final int maxRedirects = Integer.valueOf(settings.getString("maxRedirects", "13"));
+						final int connectTimeout = Integer.valueOf(settings.getString("connectTimeout", "3000"));
+						final int readTimeout = Integer.valueOf(settings.getString("readTimeout", "3000"));
+						final int readChunkSize = Integer.valueOf(settings.getString("readChunkSize", "1024"));
+						final String dohUrl = settings.getString("dohUrl", "https://cloudflare-dns.com/dns-query");
+						final String dohAddress = settings.getString("dohAddress", "1.1.1.1");
+						final int dohPort = Integer.valueOf(settings.getString("dohPort", "443"));
+						final String userAgent = settings.getString("userAgent", "UnalixAndroid/0.1 (+https://github.com/AmanoTeam/UnalixAndroid)");
+
+						unalix.setMaxRedirects(maxRedirects);
+						unalix.setConnectTimeout(connectTimeout);
+						unalix.setReadTimeout(readTimeout);
+						unalix.setReadChunkSize(readChunkSize);
+						unalix.setDohUrl(dohUrl);
+						unalix.setDohAddress(dohAddress);
+						unalix.setDohPort(dohPort);
+						unalix.setUserAgent(userAgent);
+						
+						cleanedUrl = unalix.unshortUrl(uglyUrl);
+					}
 					
 					String actionName = "";
 					
 					if (action.equals(Intent.ACTION_SEND)) {
-						final String cleanedUrl = unalix.aunshortUrl(uglyUrl);
-						
 						actionName = "Share with";
 						
 						sendIntent.setAction(Intent.ACTION_SEND);
 						sendIntent.putExtra(Intent.EXTRA_TEXT, cleanedUrl);
 						sendIntent.setType("text/plain");
 					} else if (action.equals(Intent.ACTION_VIEW)) {
-						final String cleanedUrl = unalix.aunshortUrl(uglyUrl);
-						
 						actionName = "Open with";
 						
 						sendIntent.setAction(Intent.ACTION_VIEW);

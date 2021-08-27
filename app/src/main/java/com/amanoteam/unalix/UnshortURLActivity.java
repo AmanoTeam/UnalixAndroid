@@ -27,6 +27,7 @@ public class UnshortURLActivity extends Activity {
 		final Intent serviceIntent = new Intent(this, UnalixService.class);
 		serviceIntent.putExtra("originalAction", action);
 		serviceIntent.putExtra("uglyUrl", uglyUrl);
+		serviceIntent.putExtra("whatToDo", "unshortUrl");
 		
 		startService(serviceIntent);
 		

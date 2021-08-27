@@ -14,5 +14,5 @@ public class SettingsActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_settings);
 		getSupportFragmentManager().beginTransaction().replace(R.id.fl_settings, new SettingsFragment()).commit();
 	}
-
+	
 }

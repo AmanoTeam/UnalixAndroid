@@ -76,7 +76,7 @@
         android:title="User agent">
     </EditTextPreference>
   </PreferenceCategory>
-  <PreferenceCategory android:title="DOH filtering">
+  <PreferenceCategory android:title="DOH settings">
     <EditTextPreference
         android:defaultValue="https://cloudflare-dns.com/dns-query"
         android:key="dohUrl"
