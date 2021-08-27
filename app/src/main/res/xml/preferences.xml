@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+  <PreferenceCategory android:title="URL filtering">
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="ignoreReferralMarketing"
+        android:summary="Don't strip referral marketing fields"
+        android:title="Ignore referral">
+    </CheckBoxPreference>
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="ignoreRules"
+        android:summary="Don't strip generic tracking fields"
+        android:title="Ignore rules">
+    </CheckBoxPreference>
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="ignoreExceptions"
+        android:summary="Don't parse exceptions"
+        android:title="Ignore exceptions">
+    </CheckBoxPreference>
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="ignoreRawRules"
+        android:summary="Don't strip raw tracking elements"
+        android:title="Ignore raw rules">
+    </CheckBoxPreference>
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="ignoreRedirections"
+        android:summary="Don't extract/resolve redirect URLs"
+        android:title="Ignore redirections">
+    </CheckBoxPreference>
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="stripDuplicates"
+        android:summary="Strip fields with duplicate names (might break the URL)"
+        android:title="Strip duplicates">
+    </CheckBoxPreference>
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="stripEmpty"
+        android:summary="Strip fields with empty values (might break the URL)"
+        android:title="Strip empty">
+    </CheckBoxPreference>
+  </PreferenceCategory>
+  <PreferenceCategory android:title="HTTP settings">
+    <EditTextPreference
+        android:defaultValue="13"
+        android:key="maxRedirects"
+        android:summary="Max number of redirects to follow before giving up"
+        android:title="Max redirects">
+    </EditTextPreference>
+    <EditTextPreference
+        android:defaultValue="3000"
+        android:key="connectTimeout"
+        android:summary="Max time (in milliseconds) to wait for the connection before giving up"
+        android:title="Connect timeout">
+    </EditTextPreference>
+    <EditTextPreference
+        android:defaultValue="3000"
+        android:key="readTimeout"
+        android:summary="Max time (in milliseconds) to wait for the read before giving up"
+        android:title="Read timeout">
+    </EditTextPreference>
+    <EditTextPreference
+        android:defaultValue="1024"
+        android:key="readChunkSize"
+        android:summary="Max amount of data (in bytes) to retrieve from the server"
+        android:title="Read chunck size">
+    </EditTextPreference>
+    <EditTextPreference
+        android:defaultValue="UnalixAndroid/0.1 (+https://github.com/AmanoTeam/UnalixAndroid)"
+        android:key="userAgent"
+        android:summary="User-Agent HTTP header sent in requests"
+        android:title="User agent">
+    </EditTextPreference>
+  </PreferenceCategory>
+  <PreferenceCategory android:title="DOH filtering">
+    <EditTextPreference
+        android:defaultValue="https://cloudflare-dns.com/dns-query"
+        android:key="dohUrl"
+        android:summary="DOH endpoint for resolving domain names (only GET requests are supported)"
+        android:title="DNS-over-HTTPS endpoint">
+    </EditTextPreference>
+    <EditTextPreference
+        android:defaultValue="1.1.1.1"
+        android:key="dohAddress"
+        android:summary="IPv4 or IPv6 address to which the DOH hostname points to"
+        android:title="DNS-over-HTTPS address">
+    </EditTextPreference>
+    <EditTextPreference
+        android:defaultValue="443"
+        android:key="dohPort"
+        android:summary="TCP port in where the DOH server is listening on (only TLS connections are supported)"
+        android:title="DNS-over-HTTPS port">
+    </EditTextPreference>
+  </PreferenceCategory>
+</PreferenceScreen>
