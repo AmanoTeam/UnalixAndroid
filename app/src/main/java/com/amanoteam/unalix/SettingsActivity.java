@@ -2,6 +2,7 @@ package com.amanoteam.unalix;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import android.view.MenuInflater;
 import android.view.Menu;
@@ -36,7 +37,6 @@ import java.text.SimpleDateFormat;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
 
 import java.io.File;
 
@@ -80,6 +80,7 @@ public class SettingsActivity extends AppCompatActivity {
 					preferences.put("dohAddress", settings.getString("dohAddress", "1.1.1.1"));
 					preferences.put("dohPort", Integer.valueOf(settings.getString("dohPort", "443")));
 					preferences.put("userAgent", settings.getString("userAgent", "UnalixAndroid/0.1 (+https://github.com/AmanoTeam/UnalixAndroid)"));
+					preferences.put("appTheme", settings.getString("appTheme", "light"));
 					
 					final OutputStream fileOutputStream = contentResolver.openOutputStream(fileUri);
 					
@@ -140,6 +141,7 @@ public class SettingsActivity extends AppCompatActivity {
 					editor.putString("dohAddress", preferences.getString("dohAddress"));
 					editor.putString("dohPort", String.valueOf(preferences.getInt("dohPort")));
 					editor.putString("userAgent", preferences.getString("userAgent"));
+					editor.putString("appTheme", preferences.getString("appTheme"));
 					
 					editor.commit();
 					
@@ -155,7 +157,17 @@ public class SettingsActivity extends AppCompatActivity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		
+		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		
+		if (settings.getString("appTheme", "light").equals("dark")) {
+			setTheme(R.style.DarkTheme);
+		} else {
+			setTheme(R.style.LigthTheme);
+		}
+		
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.activity_settings);
 		
 		// Action bar

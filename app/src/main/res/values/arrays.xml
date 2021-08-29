@@ -1,0 +1,10 @@
+<resources>
+    <string-array name="dark_mode_entries">
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+    <string-array name="dark_mode_values">
+        <item>light</item>
+        <item>dark</item>
+    </string-array>
+</resources>

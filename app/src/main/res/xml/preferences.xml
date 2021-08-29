@@ -96,4 +96,13 @@
         android:title="DNS-over-HTTPS port">
     </EditTextPreference>
   </PreferenceCategory>
+  <PreferenceCategory android:title="App settings">
+	<ListPreference
+		android:defaultValue="light"
+		android:entries="@array/dark_mode_entries"
+		android:entryValues="@array/dark_mode_values"
+		android:key="appTheme"
+		android:title="Theme" >
+	</ListPreference>
+  </PreferenceCategory>
 </PreferenceScreen>
