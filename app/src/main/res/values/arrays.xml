@@ -1,9 +1,11 @@
 <resources>
-    <string-array name="dark_mode_entries">
+    <string-array name="app_theme_entries">
+        <item>Follow system</item>
         <item>Light</item>
         <item>Dark</item>
     </string-array>
-    <string-array name="dark_mode_values">
+    <string-array name="app_theme_values">
+        <item>follow_system</item>
         <item>light</item>
         <item>dark</item>
     </string-array>

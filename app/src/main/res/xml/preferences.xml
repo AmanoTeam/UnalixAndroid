@@ -5,7 +5,7 @@
         android:defaultValue="false"
         android:key="ignoreReferralMarketing"
         android:summary="Don't strip referral marketing fields"
-        android:title="Ignore referral">
+        android:title="Ignore referral marketing">
     </CheckBoxPreference>
     <CheckBoxPreference
         android:defaultValue="false"
@@ -16,7 +16,7 @@
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="ignoreExceptions"
-        android:summary="Don't parse exceptions"
+        android:summary="Ignore URL exceptions"
         android:title="Ignore exceptions">
     </CheckBoxPreference>
     <CheckBoxPreference
@@ -44,23 +44,23 @@
         android:title="Strip empty">
     </CheckBoxPreference>
   </PreferenceCategory>
-  <PreferenceCategory android:title="HTTP settings">
+  <PreferenceCategory android:title="Network settings">
     <EditTextPreference
         android:defaultValue="13"
         android:key="maxRedirects"
-        android:summary="Max number of redirects to follow before giving up"
+        android:summary="Max number of redirects to follow"
         android:title="Max redirects">
     </EditTextPreference>
     <EditTextPreference
         android:defaultValue="3000"
         android:key="connectTimeout"
-        android:summary="Max time (in milliseconds) to wait for the connection before giving up"
+        android:summary="Max time (in milliseconds) to wait for the connection"
         android:title="Connect timeout">
     </EditTextPreference>
     <EditTextPreference
         android:defaultValue="3000"
         android:key="readTimeout"
-        android:summary="Max time (in milliseconds) to wait for the read before giving up"
+        android:summary="Max time (in milliseconds) to wait for the read"
         android:title="Read timeout">
     </EditTextPreference>
     <EditTextPreference
@@ -72,37 +72,53 @@
     <EditTextPreference
         android:defaultValue="UnalixAndroid/0.1 (+https://github.com/AmanoTeam/UnalixAndroid)"
         android:key="userAgent"
-        android:summary="User-Agent HTTP header sent in requests"
+        android:summary="HTTP User-Agent header"
         android:title="User agent">
     </EditTextPreference>
-  </PreferenceCategory>
-  <PreferenceCategory android:title="DOH settings">
     <EditTextPreference
         android:defaultValue="https://cloudflare-dns.com/dns-query"
         android:key="dohUrl"
-        android:summary="DOH endpoint for resolving domain names (only GET requests are supported)"
-        android:title="DNS-over-HTTPS endpoint">
+        android:summary="DNS-over-HTTPS endpoint for resolving domain names"
+        android:title="DOH endpoint">
     </EditTextPreference>
     <EditTextPreference
         android:defaultValue="1.1.1.1"
         android:key="dohAddress"
-        android:summary="IPv4 or IPv6 address to which the DOH hostname points to"
-        android:title="DNS-over-HTTPS address">
+        android:summary="IPv4 or IPv6 address to which the DNS-over-HTTPS hostname points to"
+        android:title="DOH address">
     </EditTextPreference>
     <EditTextPreference
         android:defaultValue="443"
         android:key="dohPort"
-        android:summary="TCP port in where the DOH server is listening on (only TLS connections are supported)"
-        android:title="DNS-over-HTTPS port">
+        android:summary="TCP port in where the DNS-over-HTTPS server is listening on"
+        android:title="DOH port">
     </EditTextPreference>
   </PreferenceCategory>
   <PreferenceCategory android:title="App settings">
 	<ListPreference
-		android:defaultValue="light"
-		android:entries="@array/dark_mode_entries"
-		android:entryValues="@array/dark_mode_values"
+		android:defaultValue="follow_system"
+		android:entries="@array/app_theme_entries"
+		android:entryValues="@array/app_theme_values"
 		android:key="appTheme"
 		android:title="Theme" >
 	</ListPreference>
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="disableClearURLActivity"
+        android:summary="Don't show 'Clean URL' in the disambiguation dialog"
+        android:title="Disable ClearURL activity">
+    </CheckBoxPreference>
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="disableUnshortURLActivity"
+        android:summary="Don't show 'Unshort URL' in the disambiguation dialog"
+        android:title="Disable UnshortURL activity">
+    </CheckBoxPreference>
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="disableCopyToClipboardActivity"
+        android:summary="Don't show 'Copy to clipboard' in the disambiguation dialog"
+        android:title="Disable CopyToClipboard activity">
+    </CheckBoxPreference>
   </PreferenceCategory>
 </PreferenceScreen>

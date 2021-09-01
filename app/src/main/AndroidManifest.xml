@@ -14,7 +14,7 @@
         <activity
 			android:name=".ClearURLActivity"
 			android:exported="true"
-			android:label="Clear URL"
+			android:label="Clean URL"
 			android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -66,7 +66,15 @@
             </intent-filter>
         </activity>
         <activity
+        	android:label="Settings"
 			android:name=".SettingsActivity"
+			android:launchMode="singleInstance"
+			android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        </activity>
+        <activity
+        	android:label="Unalix"
+			android:name=".MainActivity"
+			android:launchMode="singleInstance"
 			android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

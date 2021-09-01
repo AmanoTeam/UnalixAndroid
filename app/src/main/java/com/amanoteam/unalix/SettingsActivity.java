@@ -1,56 +1,57 @@
 package com.amanoteam.unalix;
 
+import android.app.Activity;
+import android.app.UiModeManager;
+import android.content.ComponentName;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences.Editor;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.Toolbar;
-import android.view.MenuInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Toast;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
+
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.io.OutputStream;
 import java.lang.StringBuilder;
 import java.nio.charset.StandardCharsets;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.content.Context;
-import androidx.preference.PreferenceManager;
-import android.view.MenuItem;
-import android.content.Intent;
-import android.content.ContentResolver;
-import android.os.Process;
-import android.app.Activity;
-import android.net.Uri;
-import android.os.Environment;
-import android.provider.DocumentsContract;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
-import java.io.OutputStream;
-import java.io.IOException;
-import org.json.JSONObject;
-import org.json.JSONException;
-import android.widget.Toast;
-import java.text.SimpleDateFormat;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import java.io.File;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.amanoteam.unalix.R;
 import com.amanoteam.unalix.SettingsFragment;
 
 public class SettingsActivity extends AppCompatActivity {
 	
-	private final String BACKUP_FILE = "unalix_preferences.json";
-	
+	// "Export" preferences listener
 	private final ActivityResultLauncher<Intent> exportPreferences = registerForActivityResult(new StartActivityForResult(),
 			new ActivityResultCallback<ActivityResult>() {
 		@Override
-		public void onActivityResult(ActivityResult result) {
+		public void onActivityResult(final ActivityResult result) {
 			if (result.getResultCode() == Activity.RESULT_OK) {
 				
 				final Context context = getApplicationContext();
@@ -81,6 +82,9 @@ public class SettingsActivity extends AppCompatActivity {
 					preferences.put("dohPort", Integer.valueOf(settings.getString("dohPort", "443")));
 					preferences.put("userAgent", settings.getString("userAgent", "UnalixAndroid/0.1 (+https://github.com/AmanoTeam/UnalixAndroid)"));
 					preferences.put("appTheme", settings.getString("appTheme", "light"));
+					preferences.put("disableClearURLActivity", settings.getBoolean("disableClearURLActivity", false));
+					preferences.put("disableUnshortURLActivity", settings.getBoolean("disableUnshortURLActivity", false));
+					preferences.put("disableCopyToClipboardActivity", settings.getBoolean("disableCopyToClipboardActivity", false));
 					
 					final OutputStream fileOutputStream = contentResolver.openOutputStream(fileUri);
 					
@@ -95,10 +99,12 @@ public class SettingsActivity extends AppCompatActivity {
 			}
 		}
 	});
+	
+	// "Import" preferences listener
 	private final ActivityResultLauncher<Intent> importPreferences = registerForActivityResult(new StartActivityForResult(),
 			new ActivityResultCallback<ActivityResult>() {
 		@Override
-		public void onActivityResult(ActivityResult result) {
+		public void onActivityResult(final ActivityResult result) {
 			if (result.getResultCode() == Activity.RESULT_OK) {
 				
 				final Context context = getApplicationContext();
@@ -142,6 +148,9 @@ public class SettingsActivity extends AppCompatActivity {
 					editor.putString("dohPort", String.valueOf(preferences.getInt("dohPort")));
 					editor.putString("userAgent", preferences.getString("userAgent"));
 					editor.putString("appTheme", preferences.getString("appTheme"));
+					editor.putBoolean("disableClearURLActivity", preferences.getBoolean("disableClearURLActivity"));
+					editor.putBoolean("disableUnshortURLActivity", preferences.getBoolean("disableUnshortURLActivity"));
+					editor.putBoolean("disableUnshortURLActivity", preferences.getBoolean("disableUnshortURLActivity"));
 					
 					editor.commit();
 					
@@ -155,15 +164,67 @@ public class SettingsActivity extends AppCompatActivity {
 		}
 	});
 	
+	private PackageManager packageManager;
+	
+	private final ComponentName clearUrlActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.ClearURLActivity");
+	private final ComponentName unshortUrlActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.UnshortURLActivity");
+	private final ComponentName copyToClipboardActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.CopyToClipboardActivity");
+	
+	private final OnSharedPreferenceChangeListener onSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+		@Override
+		public void onSharedPreferenceChanged(final SharedPreferences settings, final String key) {
+			
+			if (key.equals("disableClearURLActivity")) {
+				if (settings.getBoolean(key, false)) {
+					packageManager.setComponentEnabledSetting(clearUrlActivity, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+				} else {
+					packageManager.setComponentEnabledSetting(clearUrlActivity, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+				}
+			} else if (key.equals("disableUnshortURLActivity")) {
+				if (settings.getBoolean(key, false)) {
+					packageManager.setComponentEnabledSetting(unshortUrlActivity, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+				} else {
+					packageManager.setComponentEnabledSetting(unshortUrlActivity, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+				}
+			} else if (key.equals("disableCopyToClipboardActivity")) {
+				if (settings.getBoolean(key, false)) {
+					packageManager.setComponentEnabledSetting(copyToClipboardActivity, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+				} else {
+					packageManager.setComponentEnabledSetting(copyToClipboardActivity, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+				}
+			} else if (key.equals("appTheme")) {
+				recreate();
+			}
+			
+		}
+	};
+	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
+		packageManager = getPackageManager();
 		
+		// Preferences stuff
 		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		settings.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
 		
-		if (settings.getString("appTheme", "light").equals("dark")) {
+		// Dark mode stuff
+		final String appTheme = settings.getString("appTheme", "follow_system");
+		
+		boolean isDarkMode = false;
+		
+		if (appTheme.equals("follow_system")) {
+			// Snippet from https://github.com/Andrew67/dark-mode-toggle/blob/11c1e16071b301071be0c4715a15fcb031d0bb64/app/src/main/java/com/andrew67/darkmode/UiModeManagerUtil.java#L17
+			final UiModeManager uiModeManager = ContextCompat.getSystemService(this, UiModeManager.class);
+			
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M || uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_CAR) {
+				isDarkMode = true;
+			}
+		} else if (appTheme.equals("dark")) {
+			isDarkMode = true;
+		}
+		
+		if (isDarkMode) {
 			setTheme(R.style.DarkTheme);
-		} else {
-			setTheme(R.style.LigthTheme);
 		}
 		
 		super.onCreate(savedInstanceState);
@@ -171,30 +232,31 @@ public class SettingsActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_settings);
 		
 		// Action bar
-		final Toolbar myToolbar = (Toolbar) findViewById(R.id.settings_toolbar);
-		setSupportActionBar(myToolbar);
+		final Toolbar settingsToolbar = (Toolbar) findViewById(R.id.settings_toolbar);
+		setSupportActionBar(settingsToolbar);
 		
 		// Preferences screen
-		getSupportFragmentManager().beginTransaction().replace(R.id.fl_settings, new SettingsFragment()).commit();
-		
+		getSupportFragmentManager()
+			.beginTransaction()
+			.replace(R.id.frame_layout_settings, new SettingsFragment())
+			.commit();
 	}
 	
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(final Menu menu) {
 		final MenuInflater inflater = getMenuInflater();
+		
 		inflater.inflate(R.menu.settings_menu, menu);
+		
 		return true;
 	}
 	
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.settings_quit:
-				System.exit(0);
 			case R.id.settings_export:
 				final Calendar calendar = Calendar.getInstance();
 				final Date currentLocalTime = calendar.getTime();
-				
 				final DateFormat date = new SimpleDateFormat("dd-MM-yyy_HH-mm-ss");
 				
 				final Intent exportIntent = new Intent();
@@ -205,6 +267,7 @@ public class SettingsActivity extends AppCompatActivity {
 				exportIntent.putExtra(Intent.EXTRA_TITLE, "unalix_" + date.format(currentLocalTime) + ".json");
 				
 				exportPreferences.launch(exportIntent);
+				
 				return true;
 			case R.id.settings_import:
 				final Intent importIntent = new Intent();
@@ -214,12 +277,9 @@ public class SettingsActivity extends AppCompatActivity {
 				importIntent.setType("application/json");
 				
 				importPreferences.launch(importIntent);
+				
 				return true;
-			case R.id.settings_restart:
-				recreate();
 			default:
-				// If we got here, the user's action was not recognized.
-				// Invoke the superclass to handle it.
 				return super.onOptionsItemSelected(item);
 		}
 		

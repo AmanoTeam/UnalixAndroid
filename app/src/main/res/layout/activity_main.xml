@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:id="@+id/constraint_main"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+	<androidx.appcompat.widget.Toolbar
+		android:id="@+id/main_toolbar"
+		android:layout_width="match_parent"
+		android:layout_height="?attr/actionBarSize"
+		android:background="?attr/colorPrimary"
+		android:elevation="4dp"
+		android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+		app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/url_input"
+        android:layout_width="245dp"
+        android:layout_height="245dp"
+        android:layout_marginTop="80dp"
+        android:ems="10"
+        android:gravity="left"
+        android:ellipsize="end"
+		android:paddingLeft="10dp"
+        android:layout_toRightOf="@+id/main_toolbar"
+        android:hint="Type or paste some URL"
+        android:inputType="textMultiLine|textNoSuggestions"
+        android:allowUndo="true"
+        android:background="@drawable/edit_text_border_light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_toolbar" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/open_url_button"
+        android:contentDescription="Open URL"
+        android:src="@drawable/outline_open_in_browser_24"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="32dp"
+        android:layout_centerHorizontal="true"
+        app:layout_constraintStart_toStartOf="@id/url_input"
+		app:layout_constraintRight_toLeftOf="@id/clean_url_button"
+        app:layout_constraintTop_toTopOf="@id/clean_url_button"
+        app:layout_constraintTop_toBottomOf="@id/url_input"
+        android:background="@drawable/edit_text_border_light" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:layout_below="@id/url_input"
+        android:id="@+id/clean_url_button"
+        android:contentDescription="Clean URL"
+        android:src="@drawable/baseline_cleaning_services_24"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="32dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/edit_text_border_light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/url_input" />
+        
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/share_url_button"
+        android:contentDescription="Share URL"
+        android:src="@drawable/outline_share_24"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="32dp"
+        android:layout_centerHorizontal="true"
+        app:layout_constraintEnd_toEndOf="@id/url_input"
+		app:layout_constraintLeft_toRightOf="@id/clean_url_button"
+        app:layout_constraintTop_toTopOf="@id/clean_url_button"
+        app:layout_constraintTop_toBottomOf="@id/url_input"
+        android:background="@drawable/edit_text_border_light" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/clear_input_button"
+        android:contentDescription="Clear URL input"
+        android:src="@drawable/outline_clear_24"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="32dp"
+        android:layout_centerHorizontal="true"
+        app:layout_constraintEnd_toEndOf="@id/clean_url_button"
+		app:layout_constraintLeft_toRightOf="@id/open_url_button"
+        app:layout_constraintTop_toBottomOf="@id/clean_url_button"
+        android:background="@drawable/edit_text_border_light" />
+
+        
+</androidx.constraintlayout.widget.ConstraintLayout>

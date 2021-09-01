@@ -6,10 +6,4 @@
     <item android:id="@+id/settings_export"
           android:title="Export"
           app:showAsAction="never"/>
-    <item android:id="@+id/settings_restart"
-          android:title="Restart"
-          app:showAsAction="never"/>
-    <item android:id="@+id/settings_quit"
-          android:title="Quit"
-          app:showAsAction="never"/>
 </menu>

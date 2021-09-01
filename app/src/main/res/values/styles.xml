@@ -3,5 +3,5 @@
     	<item name="android:textColor">#FFFAFAFA</item>
 		<item name="android:itemBackground">#1F1B24</item>
 	</style>
-    <style name="LigthTheme" parent="@style/Theme.AppCompat.Light.NoActionBar"/>
+    <style name="LigthTheme" parent="@style/Theme.AppCompat.Light.NoActionBar" />
 </resources>

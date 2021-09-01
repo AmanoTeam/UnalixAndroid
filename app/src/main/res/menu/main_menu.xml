@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/settings_activity"
+          android:title="Settings"
+          android:contentDescription="Open application settings"
+          app:showAsAction="never"/>
+    <item android:id="@+id/main_quit"
+          android:title="Quit"
+          android:contentDescription="Quit application"
+          app:showAsAction="never"/>
+</menu>

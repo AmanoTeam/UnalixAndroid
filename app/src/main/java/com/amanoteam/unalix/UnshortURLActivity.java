@@ -3,18 +3,17 @@ package com.amanoteam.unalix;
 import android.os.Bundle;
 import android.content.Intent;
 import android.app.Activity;
-import android.net.Uri;
 
 import com.amanoteam.unalix.UnalixService;
 
 public class UnshortURLActivity extends Activity {
 	
-	private String uglyUrl = "";
-	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		
+		String uglyUrl = null;
+		
 		final Intent intent = getIntent();
 		final String action = intent.getAction();
 		
@@ -25,6 +24,7 @@ public class UnshortURLActivity extends Activity {
 		}
 		
 		final Intent serviceIntent = new Intent(this, UnalixService.class);
+		
 		serviceIntent.putExtra("originalAction", action);
 		serviceIntent.putExtra("uglyUrl", uglyUrl);
 		serviceIntent.putExtra("whatToDo", "unshortUrl");

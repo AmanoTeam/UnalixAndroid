@@ -4,11 +4,10 @@ import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import androidx.preference.PreferenceManager;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -16,10 +15,8 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Parcelable;
 import android.os.Process;
-import android.widget.Toast;
+import androidx.preference.PreferenceManager;
 
-import java.lang.InterruptedException;
-import java.lang.Thread;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,15 +27,22 @@ public class UnalixService extends Service {
 	private Looper serviceLooper;
 	private ServiceHandler serviceHandler;
 	
+	private PackageManager packageManager;
+	
+	private final ArrayList<ComponentName> excludeTargets = new ArrayList<>();
+	
+	private final ComponentName clearUrlActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.ClearURLActivity");
+	private final ComponentName unshortUrlActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.UnshortURLActivity");
+	
 	// Handler that receives messages from the thread
 	private final class ServiceHandler extends Handler {
-			public ServiceHandler(Looper looper) {
+			public ServiceHandler(final Looper looper) {
 					super(looper);
 			}
 			@Override
-			public void handleMessage(Message msg) {
+			public void handleMessage(final Message msg) {
 					
-					String cleanedUrl = "";
+					String cleanedUrl = null;
 					
 					final Intent intent = (Intent) msg.obj;
 					final String action = intent.getStringExtra("originalAction");
@@ -92,7 +96,7 @@ public class UnalixService extends Service {
 						cleanedUrl = unalix.unshortUrl(uglyUrl);
 					}
 					
-					String actionName = "";
+					String actionName = null;
 					
 					if (action.equals(Intent.ACTION_SEND)) {
 						actionName = "Share with";
@@ -108,17 +112,12 @@ public class UnalixService extends Service {
 					}
 					
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-						final ArrayList<ComponentName> excludeTargets = new ArrayList<>();
-						
-						excludeTargets.add(new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.ClearURLActivity"));
-						excludeTargets.add(new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.UnshortURLActivity"));
-						
 						final Intent chooserIntent = Intent.createChooser(sendIntent, actionName);
 						chooserIntent.putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, excludeTargets.toArray(new ComponentName[0]));
 						startActivity(chooserIntent);
 					} else {
 						final List<Intent> intentsList = new ArrayList<>();
-						final List<ResolveInfo> resolveInfoList = getPackageManager().queryIntentActivities(sendIntent, 0);
+						final List<ResolveInfo> resolveInfoList = packageManager.queryIntentActivities(sendIntent, 0);
 						
 						for (ResolveInfo resolveInfoItem : resolveInfoList) {
 							Intent targetIntent = (Intent) sendIntent.clone();
@@ -147,6 +146,13 @@ public class UnalixService extends Service {
 
 	@Override
 	public void onCreate() {
+		// Set package manager
+		packageManager = getPackageManager();
+		
+		// Set exclude targets
+		excludeTargets.add(clearUrlActivity);
+		excludeTargets.add(unshortUrlActivity);
+		
 		final HandlerThread thread = new HandlerThread("ServiceStartArguments",
 						Process.THREAD_PRIORITY_BACKGROUND);
 		thread.start();
@@ -156,9 +162,7 @@ public class UnalixService extends Service {
 	}
 
 	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-			Toast.makeText(this, "unshort url", Toast.LENGTH_SHORT).show();
-
+	public int onStartCommand(final Intent intent, final int flags, final int startId) {
 			Message msg = serviceHandler.obtainMessage();
 			msg.arg1 = startId;
 			msg.obj = (Object) intent;
@@ -174,10 +178,7 @@ public class UnalixService extends Service {
 
 	@Override
 	public void onDestroy() {
-		Toast.makeText(this, "unshort url done", Toast.LENGTH_SHORT).show();
-		
-		// https://stackoverflow.com/a/4379822
-		Process.killProcess(Process.myPid());
+		System.exit(0);
 	}
 
 

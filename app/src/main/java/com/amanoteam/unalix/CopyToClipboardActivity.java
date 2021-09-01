@@ -1,22 +1,21 @@
 package com.amanoteam.unalix;
 
-import android.os.Bundle;
-import android.content.Intent;
 import android.app.Activity;
-import android.net.Uri;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Intent;
+import android.os.Bundle;
 
 public class CopyToClipboardActivity extends Activity {
 	
-	private String urlToCopy = "";
-	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		final Intent intent = getIntent();
 		final String action = intent.getAction();
+		
+		String urlToCopy = null;
 		
 		if (action.equals(Intent.ACTION_SEND)) {
 			urlToCopy = intent.getStringExtra(Intent.EXTRA_TEXT);
@@ -25,6 +24,7 @@ public class CopyToClipboardActivity extends Activity {
 		}
 		
 		final ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+		
         clipboard.setPrimaryClip(ClipData.newPlainText("Clean URL", urlToCopy));
 		
 		finish();
