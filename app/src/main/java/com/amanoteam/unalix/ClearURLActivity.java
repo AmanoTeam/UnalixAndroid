@@ -4,12 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import unalix.Unalix;
-
 public class ClearURLActivity extends Activity {
 	
-	private static final Unalix unalix = new Unalix();
-
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

@@ -16,7 +16,7 @@
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="ignoreExceptions"
-        android:summary="Ignore URL exceptions"
+        android:summary="Ignore rule exceptions"
         android:title="Ignore exceptions">
     </CheckBoxPreference>
     <CheckBoxPreference
@@ -28,7 +28,7 @@
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="ignoreRedirections"
-        android:summary="Don't extract/resolve redirect URLs"
+        android:summary="Ignore redirection rules"
         android:title="Ignore redirections">
     </CheckBoxPreference>
     <CheckBoxPreference
@@ -46,52 +46,40 @@
   </PreferenceCategory>
   <PreferenceCategory android:title="Network settings">
     <EditTextPreference
+        android:defaultValue="GET"
+        android:key="httpMethod"
+        android:summary="Default HTTP method for requests"
+        android:title="HTTP method">
+    </EditTextPreference>
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="parseDocuments"
+        android:summary="Look for redirect URLs in the response body when there is no HTTP redirect to follow"
+        android:title="Parse documents">
+    </CheckBoxPreference>
+    <EditTextPreference
         android:defaultValue="13"
-        android:key="maxRedirects"
-        android:summary="Max number of redirects to follow"
+        android:key="httpMaxRedirects"
+        android:summary="Max number of HTTP redirects to follow before raising an exception"
         android:title="Max redirects">
     </EditTextPreference>
     <EditTextPreference
-        android:defaultValue="3000"
-        android:key="connectTimeout"
-        android:summary="Max time (in milliseconds) to wait for the connection"
-        android:title="Connect timeout">
+        android:defaultValue="3001"
+        android:key="httpTimeout"
+        android:summary="Max number of milliseconds to wait for a response before raising an exception"
+        android:title="Timeout">
     </EditTextPreference>
     <EditTextPreference
-        android:defaultValue="3000"
-        android:key="readTimeout"
-        android:summary="Max time (in milliseconds) to wait for the read"
-        android:title="Read timeout">
+        android:defaultValue="1048576"
+        android:key="httpMaxFetchSize"
+        android:summary="Max number of bytes to fetch from responses body. Only takes effect when 'Parse documents' is set"
+        android:title="Max fetch size">
     </EditTextPreference>
     <EditTextPreference
-        android:defaultValue="1024"
-        android:key="readChunkSize"
-        android:summary="Max amount of data (in bytes) to retrieve from the server"
-        android:title="Read chunck size">
-    </EditTextPreference>
-    <EditTextPreference
-        android:defaultValue="UnalixAndroid/0.1 (+https://github.com/AmanoTeam/UnalixAndroid)"
-        android:key="userAgent"
-        android:summary="HTTP User-Agent header"
-        android:title="User agent">
-    </EditTextPreference>
-    <EditTextPreference
-        android:defaultValue="https://cloudflare-dns.com/dns-query"
-        android:key="dohUrl"
-        android:summary="DNS-over-HTTPS endpoint for resolving domain names"
-        android:title="DOH endpoint">
-    </EditTextPreference>
-    <EditTextPreference
-        android:defaultValue="1.1.1.1"
-        android:key="dohAddress"
-        android:summary="IPv4 or IPv6 address to which the DNS-over-HTTPS hostname points to"
-        android:title="DOH address">
-    </EditTextPreference>
-    <EditTextPreference
-        android:defaultValue="443"
-        android:key="dohPort"
-        android:summary="TCP port in where the DNS-over-HTTPS server is listening on"
-        android:title="DOH port">
+        android:defaultValue="0"
+        android:key="httpMaxRetries"
+        android:summary="Max number of times to retry on connection errors"
+        android:title="Max retries">
     </EditTextPreference>
   </PreferenceCategory>
   <PreferenceCategory android:title="App settings">

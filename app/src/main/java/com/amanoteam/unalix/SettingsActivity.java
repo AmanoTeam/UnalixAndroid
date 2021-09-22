@@ -73,15 +73,14 @@ public class SettingsActivity extends AppCompatActivity {
 					preferences.put("skipBlocked", settings.getBoolean("skipBlocked", false));
 					preferences.put("stripDuplicates", settings.getBoolean("stripDuplicates", false));
 					preferences.put("stripEmpty", settings.getBoolean("stripEmpty", false));
-					preferences.put("maxRedirects", Integer.valueOf(settings.getString("maxRedirects", "13")));
-					preferences.put("connectTimeout", Integer.valueOf(settings.getString("connectTimeout", "3000")));
-					preferences.put("readTimeout", Integer.valueOf(settings.getString("readTimeout", "3000")));
-					preferences.put("readChunkSize", Integer.valueOf(settings.getString("readChunkSize", "1024")));
-					preferences.put("dohUrl", settings.getString("dohUrl", "https://cloudflare-dns.com/dns-query"));
-					preferences.put("dohAddress", settings.getString("dohAddress", "1.1.1.1"));
-					preferences.put("dohPort", Integer.valueOf(settings.getString("dohPort", "443")));
-					preferences.put("userAgent", settings.getString("userAgent", "UnalixAndroid/0.1 (+https://github.com/AmanoTeam/UnalixAndroid)"));
-					preferences.put("appTheme", settings.getString("appTheme", "light"));
+					
+					preferences.put("httpMethod", settings.getString("httpMethod", "GET"));
+					preferences.put("parseDocuments", settings.getBoolean("parseDocuments", false));
+					preferences.put("httpMaxRedirects", Integer.valueOf(settings.getString("httpMaxRedirects", "13")));
+					preferences.put("httpTimeout", Integer.valueOf(settings.getString("httpTimeout", "3000")));
+					preferences.put("httpMaxFetchSize", Integer.valueOf(settings.getString("httpMaxFetchSize", Integer.valueOf(1024 * 1024))));
+					preferences.put("httpMaxRetries", Integer.valueOf(settings.getString("httpMaxRetries", "0")));
+					
 					preferences.put("disableClearURLActivity", settings.getBoolean("disableClearURLActivity", false));
 					preferences.put("disableUnshortURLActivity", settings.getBoolean("disableUnshortURLActivity", false));
 					preferences.put("disableCopyToClipboardActivity", settings.getBoolean("disableCopyToClipboardActivity", false));
@@ -139,18 +138,13 @@ public class SettingsActivity extends AppCompatActivity {
 					editor.putBoolean("skipBlocked", preferences.getBoolean("skipBlocked"));
 					editor.putBoolean("stripDuplicates", preferences.getBoolean("stripDuplicates"));
 					editor.putBoolean("stripEmpty", preferences.getBoolean("stripEmpty"));
-					editor.putString("maxRedirects", String.valueOf(preferences.getInt("maxRedirects")));
-					editor.putString("connectTimeout", String.valueOf(preferences.getInt("connectTimeout")));
-					editor.putString("readTimeout", String.valueOf(preferences.getInt("readTimeout")));
-					editor.putString("readChunkSize", String.valueOf(preferences.getInt("readChunkSize")));
-					editor.putString("dohUrl", preferences.getString("dohUrl"));
-					editor.putString("dohAddress", preferences.getString("dohAddress"));
-					editor.putString("dohPort", String.valueOf(preferences.getInt("dohPort")));
-					editor.putString("userAgent", preferences.getString("userAgent"));
-					editor.putString("appTheme", preferences.getString("appTheme"));
-					editor.putBoolean("disableClearURLActivity", preferences.getBoolean("disableClearURLActivity"));
-					editor.putBoolean("disableUnshortURLActivity", preferences.getBoolean("disableUnshortURLActivity"));
-					editor.putBoolean("disableUnshortURLActivity", preferences.getBoolean("disableUnshortURLActivity"));
+					
+					editor.putString("httpMethod", preferences.getString("httpMethod"));
+					editor.putBoolean("parseDocuments", preferences.getBoolean("parseDocuments"));
+					editor.putString("httpMaxRedirects", String.valueOf(preferences.getInt("httpMaxRedirects")));
+					editor.putString("httpTimeout", String.valueOf(preferences.getInt("httpTimeout")));
+					editor.putString("httpMaxFetchSize", String.valueOf(preferences.getInt("httpMaxFetchSize")));
+					editor.putString("httpMaxRetries", String.valueOf(preferences.getInt("httpMaxRetries")));
 					
 					editor.commit();
 					
