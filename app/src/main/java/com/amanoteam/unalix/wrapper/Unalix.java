@@ -1,4 +1,6 @@
-package com.amanoteam.this.wrapper;
+package com.amanoteam.unalix.wrapper;
+
+import android.content.SharedPreferences;
 
 import com.sun.jna.Native;
 import com.sun.jna.Library;
@@ -162,7 +164,7 @@ public class Unalix {
 		);
 	}
 	
-	public void setFromPreferences(final SharedPreferences preferences);
+	public void setFromPreferences(final SharedPreferences preferences) {
 		
 		this.setIgnoreReferralMarketing(
 			preferences.getBoolean("ignoreReferralMarketing", false)

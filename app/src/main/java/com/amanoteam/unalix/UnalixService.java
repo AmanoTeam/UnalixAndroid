@@ -20,7 +20,7 @@ import androidx.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import unalix.Unalix;
+import com.amanoteam.unalix.wrapper.Unalix;
 
 public class UnalixService extends Service {
 	
@@ -54,8 +54,6 @@ public class UnalixService extends Service {
 					
 					// libunalix stuff
 					final Unalix unalix = new Unalix();
-					
-					unalix = new Unalix();
 					unalix.setFromPreferences(settings);
 					
 					if (whatToDo.equals("clearUrl")) {

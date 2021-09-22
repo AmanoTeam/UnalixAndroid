@@ -78,7 +78,7 @@ public class SettingsActivity extends AppCompatActivity {
 					preferences.put("parseDocuments", settings.getBoolean("parseDocuments", false));
 					preferences.put("httpMaxRedirects", Integer.valueOf(settings.getString("httpMaxRedirects", "13")));
 					preferences.put("httpTimeout", Integer.valueOf(settings.getString("httpTimeout", "3000")));
-					preferences.put("httpMaxFetchSize", Integer.valueOf(settings.getString("httpMaxFetchSize", Integer.valueOf(1024 * 1024))));
+					preferences.put("httpMaxFetchSize", Integer.valueOf(settings.getString("httpMaxFetchSize", String.valueOf(1024 * 1024))));
 					preferences.put("httpMaxRetries", Integer.valueOf(settings.getString("httpMaxRetries", "0")));
 					
 					preferences.put("disableClearURLActivity", settings.getBoolean("disableClearURLActivity", false));

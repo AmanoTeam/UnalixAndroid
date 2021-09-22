@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.amanoteam.unalix.wrapper.Unalix;
-
 import com.amanoteam.unalix.R;
 import com.amanoteam.unalix.SettingsActivity;
 
