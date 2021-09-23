@@ -4,6 +4,7 @@ import android.app.UiModeManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -45,6 +46,17 @@ public class MainActivity extends AppCompatActivity {
 	private final ComponentName clearUrlActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.ClearURLActivity");
 	private final ComponentName unshortUrlActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.UnshortURLActivity");
 	
+	private final OnSharedPreferenceChangeListener onSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+		@Override
+		public void onSharedPreferenceChanged(final SharedPreferences settings, final String key) {
+			
+			if (key.equals("appTheme")) {
+				recreate();
+			}
+			
+		}
+	};
+	
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		// Set package manager
@@ -54,7 +66,9 @@ public class MainActivity extends AppCompatActivity {
 		excludeTargets.add(clearUrlActivity);
 		excludeTargets.add(unshortUrlActivity);
 		
+		// Preferences stuff
 		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		settings.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
 		
 		// Dark mode stuff
 		final String appTheme = settings.getString("appTheme", "follow_system");
@@ -258,6 +272,11 @@ public class MainActivity extends AppCompatActivity {
 			default:
 				return super.onOptionsItemSelected(item);
 		}
+	}
+	
+	@Override
+	public void onBackPressed() {
+		moveTaskToBack(true);
 	}
 	
 }
