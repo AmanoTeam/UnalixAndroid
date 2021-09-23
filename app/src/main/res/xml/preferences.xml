@@ -45,42 +45,52 @@
     </CheckBoxPreference>
   </PreferenceCategory>
   <PreferenceCategory android:title="Network settings">
-    <EditTextPreference
-        android:defaultValue="GET"
-        android:key="httpMethod"
-        android:summary="Default HTTP method for requests"
-        android:title="HTTP method">
-    </EditTextPreference>
+	<ListPreference
+		android:defaultValue="GET"
+		android:entries="@array/http_method_entries"
+		android:entryValues="@array/http_method_values"
+		android:key="httpMethod"
+		android:summary="Default HTTP method for requests"
+		android:title="HTTP method">
+	</ListPreference>
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="parseDocuments"
         android:summary="Look for redirect URLs in the response body when there is no HTTP redirect to follow"
         android:title="Parse documents">
     </CheckBoxPreference>
-    <EditTextPreference
-        android:defaultValue="13"
-        android:key="httpMaxRedirects"
-        android:summary="Max number of HTTP redirects to follow before raising an exception"
+	<ListPreference
+		android:defaultValue="13"
+		android:entries="@array/max_redirects_entries"
+		android:entryValues="@array/max_redirects_values"
+		android:key="httpMaxRedirects"
+		android:summary="Max number of HTTP redirects to follow before raising an exception"
         android:title="Max redirects">
-    </EditTextPreference>
-    <EditTextPreference
-        android:defaultValue="3001"
-        android:key="httpTimeout"
-        android:summary="Max number of milliseconds to wait for a response before raising an exception"
+	</ListPreference>
+    <ListPreference
+		android:defaultValue="3000"
+		android:entries="@array/http_timeout_entries"
+		android:entryValues="@array/http_timeout_values"
+		android:key="httpTimeout"
+        android:summary="Max number of seconds to wait for a response before raising an exception"
         android:title="Timeout">
-    </EditTextPreference>
-    <EditTextPreference
-        android:defaultValue="1048576"
+	</ListPreference>
+    <ListPreference
+		android:defaultValue="1048576"
+		android:entries="@array/http_max_fetch_size_entries"
+		android:entryValues="@array/http_max_fetch_size_values"
         android:key="httpMaxFetchSize"
-        android:summary="Max number of bytes to fetch from responses body. Only takes effect when 'Parse documents' is set"
+        android:summary="Max number of bytes to fetch from response body"
         android:title="Max fetch size">
-    </EditTextPreference>
-    <EditTextPreference
-        android:defaultValue="0"
+	</ListPreference>
+    <ListPreference
+		android:defaultValue="0"
+		android:entries="@array/http_max_retries_entries"
+		android:entryValues="@array/http_max_retries_values"
         android:key="httpMaxRetries"
         android:summary="Max number of times to retry on connection errors"
         android:title="Max retries">
-    </EditTextPreference>
+	</ListPreference>
   </PreferenceCategory>
   <PreferenceCategory android:title="App settings">
 	<ListPreference

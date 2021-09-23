@@ -26,6 +26,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
+import androidx.preference.PreferenceScreen;
+import androidx.preference.CheckBoxPreference;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -164,9 +166,42 @@ public class SettingsActivity extends AppCompatActivity {
 	private final ComponentName unshortUrlActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.UnshortURLActivity");
 	private final ComponentName copyToClipboardActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.CopyToClipboardActivity");
 	
+	private SettingsFragment settingsFragment;
+	private PreferenceScreen preferenceScreen;
+	
+	private SharedPreferences settings;
+	
 	private final OnSharedPreferenceChangeListener onSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 		@Override
 		public void onSharedPreferenceChanged(final SharedPreferences settings, final String key) {
+			
+			if (preferenceScreen != null) {
+				if (key.equals("httpMethod")) {
+					
+					final CheckBoxPreference parseDocumentsPreference = (CheckBoxPreference) preferenceScreen.findPreference("parseDocuments");
+					
+					// parseDocuments is not available when httpMethod == "HEAD"
+					if (settings.getString(key, "GET").equals("HEAD")) {
+						parseDocumentsPreference.setEnabled(false);
+					} else {
+						parseDocumentsPreference.setEnabled(true);
+					}
+					
+					// httpMaxFetchSiz is not available when parseDocuments is true
+					if (parseDocumentsPreference.isEnabled() && settings.getBoolean("parseDocuments", false)) {
+						preferenceScreen.findPreference("httpMaxFetchSize").setEnabled(true);
+					} else {
+						preferenceScreen.findPreference("httpMaxFetchSize").setEnabled(false);
+					}
+				} else if (key.equals("parseDocuments")) {
+					// httpMaxFetchSiz is not available when parseDocuments is true
+					if (settings.getBoolean("parseDocuments", false)) {
+						preferenceScreen.findPreference("httpMaxFetchSize").setEnabled(true);
+					} else {
+						preferenceScreen.findPreference("httpMaxFetchSize").setEnabled(false);
+					}
+				}
+			}
 			
 			if (key.equals("disableClearURLActivity")) {
 				if (settings.getBoolean(key, false)) {
@@ -198,7 +233,7 @@ public class SettingsActivity extends AppCompatActivity {
 		packageManager = getPackageManager();
 		
 		// Preferences stuff
-		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		settings = PreferenceManager.getDefaultSharedPreferences(this);
 		settings.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
 		
 		// Dark mode stuff
@@ -229,11 +264,37 @@ public class SettingsActivity extends AppCompatActivity {
 		final Toolbar settingsToolbar = (Toolbar) findViewById(R.id.settings_toolbar);
 		setSupportActionBar(settingsToolbar);
 		
+		settingsFragment = new SettingsFragment();
+		
 		// Preferences screen
 		getSupportFragmentManager()
 			.beginTransaction()
-			.replace(R.id.frame_layout_settings, new SettingsFragment())
+			.replace(R.id.frame_layout_settings, settingsFragment)
 			.commit();
+	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		
+		preferenceScreen = settingsFragment.getPreferenceScreen();
+		
+		final CheckBoxPreference parseDocumentsPreference = (CheckBoxPreference) preferenceScreen.findPreference("parseDocuments");
+		
+		// parseDocuments is not available when httpMethod == "HEAD"
+		if (settings.getString("httpMethod", "GET").equals("HEAD")) {
+			parseDocumentsPreference.setEnabled(false);
+		} else {
+			parseDocumentsPreference.setEnabled(true);
+		}
+		
+		// httpMaxFetchSiz is not available when parseDocuments is true
+		if (parseDocumentsPreference.isEnabled() && settings.getBoolean("parseDocuments", false)) {
+			preferenceScreen.findPreference("httpMaxFetchSize").setEnabled(true);
+		} else {
+			preferenceScreen.findPreference("httpMaxFetchSize").setEnabled(false);
+		}
+		
 	}
 	
 	@Override
