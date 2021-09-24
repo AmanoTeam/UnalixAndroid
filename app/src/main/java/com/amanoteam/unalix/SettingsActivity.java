@@ -83,6 +83,7 @@ public class SettingsActivity extends AppCompatActivity {
 					preferences.put("httpMaxFetchSize", Integer.valueOf(settings.getString("httpMaxFetchSize", String.valueOf(1024 * 1024))));
 					preferences.put("httpMaxRetries", Integer.valueOf(settings.getString("httpMaxRetries", "0")));
 					
+					preferences.put("appTheme", settings.getString("appTheme", "follow_system"));
 					preferences.put("disableClearURLActivity", settings.getBoolean("disableClearURLActivity", false));
 					preferences.put("disableUnshortURLActivity", settings.getBoolean("disableUnshortURLActivity", false));
 					preferences.put("disableCopyToClipboardActivity", settings.getBoolean("disableCopyToClipboardActivity", false));
@@ -96,7 +97,7 @@ public class SettingsActivity extends AppCompatActivity {
 					return;
 				}
 				
-				Toast.makeText(context, "Exported preferences file", Toast.LENGTH_SHORT).show();
+				Toast.makeText(context, "Export successful", Toast.LENGTH_SHORT).show();
 			}
 		}
 	});
@@ -148,14 +149,18 @@ public class SettingsActivity extends AppCompatActivity {
 					editor.putString("httpMaxFetchSize", String.valueOf(preferences.getInt("httpMaxFetchSize")));
 					editor.putString("httpMaxRetries", String.valueOf(preferences.getInt("httpMaxRetries")));
 					
-					editor.commit();
+					editor.putString("appTheme", preferences.getString("appTheme"));
+					editor.putBoolean("disableClearURLActivity", preferences.getBoolean("disableClearURLActivity"));
+					editor.putBoolean("disableUnshortURLActivity", preferences.getBoolean("disableUnshortURLActivity"));
+					editor.putBoolean("disableCopyToClipboardActivity", preferences.getBoolean("disableCopyToClipboardActivity"));
 					
+					editor.commit();
 				} catch (IOException | JSONException e) {
 					Toast.makeText(context, "Error importing preferences file", Toast.LENGTH_SHORT).show();
 					return;
 				}
 				
-				Toast.makeText(context, "Please restart for changes to take effect", Toast.LENGTH_SHORT).show();
+				Toast.makeText(context, "Import successful", Toast.LENGTH_SHORT).show();
 			}
 		}
 	});
