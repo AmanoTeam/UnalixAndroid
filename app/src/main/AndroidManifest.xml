@@ -10,7 +10,7 @@
     <application
         android:allowBackup="true"
         android:label="Unalix"
-        android:theme="@android:style/Theme.NoDisplay">
+        android:theme="@style/LigthTheme">
         <activity
 			android:name=".ClearURLActivity"
 			android:exported="true"
