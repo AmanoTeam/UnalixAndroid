@@ -2,11 +2,11 @@ package com.amanoteam.unalix;
 
 import android.os.Bundle;
 import android.content.Intent;
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.amanoteam.unalix.UnalixService;
 
-public class UnshortURLActivity extends Activity {
+public class UnshortURLActivity extends AppCompatActivity {
 	
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {

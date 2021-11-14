@@ -11,8 +11,18 @@ android {
     }
 
     buildTypes {
-        release {
+        debug {
+            debuggable true
             minifyEnabled false
+            zipAlignEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        release {
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
+            zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -31,10 +41,9 @@ repositories {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.4.0-alpha03'
-    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.appcompat:appcompat:1.4.0-rc01'
+    implementation 'androidx.preference:preference:1.2.0-alpha02'
     implementation 'androidx.activity:activity:1.4.0-alpha02'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
-    implementation 'androidx.core:core:1.7.0-beta01'
-    implementation 'net.java.dev.jna:jna:5.9.0@aar'
+    implementation 'net.java.dev.jna:jna:5.10.0@aar'
 }

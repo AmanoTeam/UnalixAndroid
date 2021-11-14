@@ -1,12 +1,12 @@
 package com.amanoteam.unalix;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Bundle;
 
-public class CopyToClipboardActivity extends Activity {
+public class CopyToClipboardActivity extends AppCompatActivity {
 	
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
