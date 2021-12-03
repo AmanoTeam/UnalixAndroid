@@ -43,6 +43,28 @@
         android:summary="Strip fields with empty values (might break the URL)"
         android:title="stripEmpty">
     </CheckBoxPreference>
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="parseDocuments"
+        android:summary="Look for redirect URLs in the response body when there is no HTTP redirect to follow"
+        android:title="parseDocuments">
+    </CheckBoxPreference>
+  </PreferenceCategory>
+  <PreferenceCategory android:title="HTTP settings">
+	<ListPreference
+		android:defaultValue="3000"
+		android:entries="@array/timeout_entries"
+		android:entryValues="@array/timeout_values"
+		android:key="timeout"
+		android:title="Timeout" >
+	</ListPreference>
+	<ListPreference
+		android:defaultValue="13"
+		android:entries="@array/max_redirects_entries"
+		android:entryValues="@array/max_redirects_values"
+		android:key="maxRedirects"
+		android:title="Max redirects" >
+	</ListPreference>
   </PreferenceCategory>
   <PreferenceCategory android:title="App settings">
 	<ListPreference

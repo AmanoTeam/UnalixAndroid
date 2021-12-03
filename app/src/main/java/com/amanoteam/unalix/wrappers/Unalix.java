@@ -1,12 +1,11 @@
 package com.amanoteam.unalix.wrappers;
 
+import android.content.Context;
+import androidx.preference.PreferenceManager;
 import android.content.SharedPreferences;
 
-import com.sun.jna.Native;
-import com.sun.jna.Library;
-
 public class Unalix {
-
+	
 	private boolean ignoreReferralMarketing = false;
 	private boolean ignoreRules = false;
 	private boolean ignoreExceptions = false;
@@ -15,80 +14,24 @@ public class Unalix {
 	private boolean skipBlocked = false;
 	private boolean stripDuplicates = false;
 	private boolean stripEmpty = false;
+	private boolean parseDocuments = false;
+	private int timeout = 3000;
+	private int maxRedirects = 13;
 	
-	public Unalix setIgnoreReferralMarketing(final boolean value) {
-		this.ignoreReferralMarketing = value;
-		return this;
-	}
-
-	public Unalix setIgnoreRules(final boolean value) {
-		this.ignoreRules = value;
-		return this;
-	}
-
-	public Unalix setIgnoreExceptions(final boolean value) {
-		this.ignoreExceptions = value;
-		return this;
-	}
-
-	public Unalix setRawRules(final boolean value) {
-		this.ignoreRawRules = value;
-		return this;
-	}
-
-	public Unalix setIgnoreRedirections(final boolean value) {
-		this.ignoreRedirections = value;
-		return this;
-	}
-
-	public Unalix setSkipBlocked(final boolean value) {
-		this.skipBlocked = value;
-		return this;
-	}
-
-	public Unalix setStripDuplicates(final boolean value) {
-		this.stripDuplicates = value;
-		return this;
-	}
-
-	public Unalix setStripEmpty(final boolean value) {
-		this.stripEmpty = value;
-		return this;
-	}
-	
-	public interface UnalixCLibrary extends Library {
-		final UnalixCLibrary instance = (UnalixCLibrary) Native.load("unalix", UnalixCLibrary.class);
-
-		void NimMain();
-
-		String clearUrl(
-			String url,
-			boolean ignoreReferralMarketing,
-			boolean ignoreRules,
-			boolean ignoreExceptions,
-			boolean ignoreRawRules,
-			boolean ignoreRedirections,
-			boolean skipBlocked,
-			boolean stripDuplicates,
-			boolean stripEmpty
-		);
-		
-		String unshortUrl(
-			String url,
-			boolean ignoreReferralMarketing,
-			boolean ignoreRules,
-			boolean ignoreExceptions,
-			boolean ignoreRawRules,
-			boolean ignoreRedirections,
-			boolean skipBlocked,
-			boolean stripDuplicates,
-			boolean stripEmpty
-		);
-		
-	}
+	private native String clearUrl(
+		final String url,
+		final boolean ignoreReferralMarketing,
+		final boolean ignoreRules,
+		final boolean ignoreExceptions,
+		final boolean ignoreRawRules,
+		final boolean ignoreRedirections,
+		final boolean skipBlocked,
+		final boolean stripDuplicates,
+		final boolean stripEmpty
+	);
 	
 	public String clearUrl(final String url) {
-		return UnalixCLibrary.instance.clearUrl(
+		return this.clearUrl(
 			url,
 			this.ignoreReferralMarketing,
 			this.ignoreRules,
@@ -100,9 +43,24 @@ public class Unalix {
 			this.stripEmpty
 		);
 	}
+	
+	private native String unshortUrl(
+		final String url,
+		final boolean ignoreReferralMarketing,
+		final boolean ignoreRules,
+		final boolean ignoreExceptions,
+		final boolean ignoreRawRules,
+		final boolean ignoreRedirections,
+		final boolean skipBlocked,
+		final boolean stripDuplicates,
+		final boolean stripEmpty,
+		final boolean parseDocuments,
+		final int timeout,
+		final int maxRedirects
+	);
 	
 	public String unshortUrl(final String url) {
-		return UnalixCLibrary.instance.unshortUrl(
+		return this.unshortUrl(
 			url,
 			this.ignoreReferralMarketing,
 			this.ignoreRules,
@@ -111,48 +69,101 @@ public class Unalix {
 			this.ignoreRedirections,
 			this.skipBlocked,
 			this.stripDuplicates,
-			this.stripEmpty
+			this.stripEmpty,
+			this.parseDocuments,
+			this.timeout,
+			this.maxRedirects
 		);
 	}
 	
-	public void setFromPreferences(final SharedPreferences preferences) {
-		
-		this.setIgnoreReferralMarketing(
-			preferences.getBoolean("ignoreReferralMarketing", false)
-		);
-		
-		this.setIgnoreRules(
-			preferences.getBoolean("ignoreRules", false)
-		);
-		
-		this.setIgnoreExceptions(
-			preferences.getBoolean("ignoreExceptions", false)
-		);
-		
-		this.setRawRules(
-			preferences.getBoolean("ignoreRawRules", false)
-		);
-		
-		this.setIgnoreRedirections(
-			preferences.getBoolean("ignoreRedirections", false)
-		);
-		
-		this.setSkipBlocked(
-			preferences.getBoolean("skipBlocked", false)
-		);
-		
-		this.setStripDuplicates(
-			preferences.getBoolean("stripDuplicates", false)
-		);
-		
-		this.setStripEmpty(
-			preferences.getBoolean("stripEmpty", false)
-		);
-		
-	}
+	private native void initialize();
 	
 	public Unalix() {
-		UnalixCLibrary.instance.NimMain();
-	};
+		System.loadLibrary("unalix_jni");
+		initialize();
+	}
 	
- }
+	private void setIgnoreReferralMarketing(final boolean value) {
+		this.ignoreReferralMarketing = value;
+	}
+
+	private void setIgnoreRules(final boolean value) {
+		this.ignoreRules = value;
+	}
+
+	private void setIgnoreExceptions(final boolean value) {
+		this.ignoreExceptions = value;
+	}
+
+	private void setIgnoreRawRules(final boolean value) {
+		this.ignoreRawRules = value;
+	}
+
+	private void setIgnoreRedirections(final boolean value) {
+		this.ignoreRedirections = value;
+	}
+
+	private void setSkipBlocked(final boolean value) {
+		this.skipBlocked = value;
+	}
+
+	private void setStripDuplicates(final boolean value) {
+		this.stripDuplicates = value;
+	}
+
+	private void setStripEmpty(final boolean value) {
+		this.stripEmpty = value;
+	}
+	
+	private void setParseDocuments(final boolean value) {
+		this.parseDocuments = value;
+	}
+	
+	private void setTimeout(final int value) {
+		this.timeout = value;
+	}
+	
+	private void setMaxRedirects(final int value) {
+		this.maxRedirects = value;
+	}
+	
+	public void setFromPreferences(final Context context) {
+		
+		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+		
+		final boolean ignoreReferralMarketing = settings.getBoolean("ignoreReferralMarketing", false);
+		setIgnoreReferralMarketing(ignoreReferralMarketing);
+		
+		final boolean ignoreRules = settings.getBoolean("ignoreRules", false);
+		setIgnoreRules(ignoreRules);
+		
+		final boolean ignoreExceptions = settings.getBoolean("ignoreExceptions", false);
+		setIgnoreExceptions(ignoreExceptions);
+		
+		final boolean ignoreRawRules = settings.getBoolean("ignoreRawRules", false);
+		setIgnoreRawRules(ignoreRawRules);
+		
+		final boolean ignoreRedirections = settings.getBoolean("ignoreRedirections", false);
+		setIgnoreRedirections(ignoreRedirections);
+		
+		final boolean skipBlocked = settings.getBoolean("skipBlocked", false);
+		setSkipBlocked(skipBlocked);
+		
+		final boolean stripDuplicates = settings.getBoolean("stripDuplicates", false);
+		setStripDuplicates(stripDuplicates);
+		
+		final boolean stripEmpty = settings.getBoolean("stripEmpty", false);
+		setStripEmpty(stripEmpty);
+		
+		final boolean parseDocuments = settings.getBoolean("parseDocuments", false);
+		setParseDocuments(parseDocuments);
+		
+		final int timeout = Integer.valueOf(settings.getString("timeout", "3000"));
+		setTimeout(timeout);
+		
+		final int maxRedirects = Integer.valueOf(settings.getString("maxRedirects", "13"));
+		setMaxRedirects(maxRedirects);
+		
+	}
+
+}

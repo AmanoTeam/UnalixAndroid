@@ -153,9 +153,9 @@ public class SettingsActivity extends AppCompatActivity {
 	
 	private PackageManager packageManager;
 	
-	private final ComponentName clearUrlActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.ClearURLActivity");
-	private final ComponentName unshortUrlActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.UnshortURLActivity");
-	private final ComponentName copyToClipboardActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.CopyToClipboardActivity");
+	private final ComponentName clearUrlActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.activities.ClearURLActivity");
+	private final ComponentName unshortUrlActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.activities.UnshortURLActivity");
+	private final ComponentName copyToClipboardActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.activities.CopyToClipboardActivity");
 	
 	private SettingsFragment settingsFragment;
 	private PreferenceScreen preferenceScreen;

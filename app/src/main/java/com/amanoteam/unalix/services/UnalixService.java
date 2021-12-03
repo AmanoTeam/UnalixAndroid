@@ -15,10 +15,14 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Parcelable;
 import android.os.Process;
+import android.widget.Toast;
+import android.util.Log;
 import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.Runnable;
+import java.lang.InterruptedException;
 
 import com.amanoteam.unalix.wrappers.Unalix;
 
@@ -31,8 +35,8 @@ public class UnalixService extends Service {
 	
 	private final ArrayList<ComponentName> excludeTargets = new ArrayList<>();
 	
-	private final ComponentName clearUrlActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.ClearURLActivity");
-	private final ComponentName unshortUrlActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.UnshortURLActivity");
+	private final ComponentName clearUrlActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.activities.ClearURLActivity");
+	private final ComponentName unshortUrlActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.activities.UnshortURLActivity");
 	
 	// Handler that receives messages from the thread
 	private final class ServiceHandler extends Handler {
@@ -41,44 +45,43 @@ public class UnalixService extends Service {
 			}
 			@Override
 			public void handleMessage(final Message msg) {
-					
-					String cleanedUrl = null;
-					
 					final Intent intent = (Intent) msg.obj;
 					final String action = intent.getStringExtra("originalAction");
 					final String uglyUrl = intent.getStringExtra("uglyUrl");
 					final String whatToDo = intent.getStringExtra("whatToDo");
-					final Intent sendIntent = new Intent();
-					
-					final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 					
 					// libunalix stuff
 					final Unalix unalix = new Unalix();
-					unalix.setFromPreferences(settings);
+					unalix.setFromPreferences(getApplicationContext());
 					
-					if (whatToDo.equals("clearUrl")) {
-						cleanedUrl = unalix.clearUrl(uglyUrl);
-					} else {
-						cleanedUrl = unalix.unshortUrl(uglyUrl);
-					}
+					final String cleanUrl = (whatToDo.equals("clearUrl") ? unalix.clearUrl(uglyUrl) : unalix.unshortUrl(uglyUrl));
 					
-					String actionName = null;
+					new Handler(Looper.getMainLooper()).post(new Runnable() {
+						@Override
+						public void run() {
+							Toast.makeText(UnalixService.this.getApplicationContext(), cleanUrl, Toast.LENGTH_SHORT).show();
+						}
+					});
+					
+					// String actionName = null;
+					
+					final Intent sendIntent = new Intent();
 					
 					if (action.equals(Intent.ACTION_SEND)) {
-						actionName = "Share with";
+						// actionName = "Share with";
 						
 						sendIntent.setAction(Intent.ACTION_SEND);
-						sendIntent.putExtra(Intent.EXTRA_TEXT, cleanedUrl);
+						sendIntent.putExtra(Intent.EXTRA_TEXT, cleanUrl);
 						sendIntent.setType("text/plain");
 					} else if (action.equals(Intent.ACTION_VIEW)) {
-						actionName = "Open with";
+						// actionName = "Open with";
 						
 						sendIntent.setAction(Intent.ACTION_VIEW);
-						sendIntent.setData(Uri.parse(cleanedUrl));
+						sendIntent.setData(Uri.parse(cleanUrl));
 					}
 					
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-						final Intent chooserIntent = Intent.createChooser(sendIntent, actionName);
+						final Intent chooserIntent = Intent.createChooser(sendIntent, cleanUrl);
 						chooserIntent.putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, excludeTargets.toArray(new ComponentName[0]));
 						startActivity(chooserIntent);
 					} else {
@@ -91,7 +94,7 @@ public class UnalixService extends Service {
 							String packageName = resolveInfoItem.activityInfo.packageName;
 							String activityName = resolveInfoItem.activityInfo.name;
 							
-							if (activityName.equals("com.amanoteam.unalix.ClearURLActivity") || activityName.equals("com.amanoteam.unalix.UnshortURLActivity")) {
+							if (activityName.equals("com.amanoteam.unalix.activities.ClearURLActivity") || activityName.equals("com.amanoteam.unalix.activities.UnshortURLActivity")) {
 								continue;
 							}
 							
@@ -99,7 +102,7 @@ public class UnalixService extends Service {
 							intentsList.add(targetIntent);
 						}
 			
-						final Intent chooserIntent = Intent.createChooser(intentsList.remove(0), actionName);
+						final Intent chooserIntent = Intent.createChooser(intentsList.remove(0), cleanUrl);
 						chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentsList.toArray(new Parcelable[intentsList.size()]));
 						
 						startActivity(chooserIntent);
@@ -138,7 +141,7 @@ public class UnalixService extends Service {
 	}
 
 	@Override
-	public IBinder onBind(Intent intent) {
+	public IBinder onBind(final Intent intent) {
 			return null;
 	}
 
@@ -146,6 +149,5 @@ public class UnalixService extends Service {
 	public void onDestroy() {
 		System.exit(0);
 	}
-
 
 }

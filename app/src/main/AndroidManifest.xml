@@ -4,7 +4,7 @@
     <uses-sdk
         android:minSdkVersion="21"
         android:targetSdkVersion="31" />
-    <uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.INTERNET" />
     <application
         android:allowBackup="true"
         android:label="Unalix"
@@ -67,8 +67,7 @@
         	android:label="Settings"
 			android:name=".activities.SettingsActivity"
 			android:launchMode="singleTop"
-			android:alwaysRetainTaskState="true"
-			android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+			android:alwaysRetainTaskState="true">
         </activity>
         <activity
         	android:label="Unalix"
@@ -76,14 +75,14 @@
 			android:exported="true"
 			android:launchMode="singleInstance"
 			android:alwaysRetainTaskState="true"
-			android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+			android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <service
-			android:name=".UnalixService"
+			android:name=".services.UnalixService"
 			android:label="Unalix service"
 			android:process=":unalixprocess"
 			android:exported="false" />

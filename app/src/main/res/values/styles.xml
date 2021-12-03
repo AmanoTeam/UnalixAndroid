@@ -3,6 +3,12 @@
     	<item name="android:textColor">#FFFAFAFA</item>
 		<item name="android:itemBackground">#1F1B24</item>
 	</style>
-    <style name="LigthTheme" parent="@style/Theme.AppCompat.Light.NoActionBar"/>
-    <style name="AppTheme" parent="@android:style/Theme.NoDisplay"/>
+    <style name="LigthTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+		<item name="android:windowNoTitle">true</item>
+	    <item name="android:windowBackground">@android:color/transparent</item>
+	    <item name="android:colorBackgroundCacheHint">@null</item>
+	    <item name="android:windowIsTranslucent">true</item>
+	    <item name="android:windowAnimationStyle">@android:style/Animation</item>
+		<item name="android:windowDisablePreview">true</item>
+    </style>
 </resources>
