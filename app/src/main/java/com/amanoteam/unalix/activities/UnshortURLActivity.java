@@ -1,10 +1,10 @@
-package com.amanoteam.unalix;
+package com.amanoteam.unalix.activities;
 
 import android.os.Bundle;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.amanoteam.unalix.UnalixService;
+import com.amanoteam.unalix.services.UnalixService;
 
 public class UnshortURLActivity extends AppCompatActivity {
 	

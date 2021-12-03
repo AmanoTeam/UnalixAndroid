@@ -1,4 +1,4 @@
-package com.amanoteam.unalix;
+package com.amanoteam.unalix.activities;
 
 import android.app.UiModeManager;
 import android.content.ComponentName;
@@ -29,9 +29,9 @@ import androidx.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.amanoteam.unalix.wrapper.Unalix;
+import com.amanoteam.unalix.wrappers.Unalix;
 import com.amanoteam.unalix.R;
-import com.amanoteam.unalix.SettingsActivity;
+import com.amanoteam.unalix.activities.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity {
 	
@@ -49,11 +49,9 @@ public class MainActivity extends AppCompatActivity {
 	private final OnSharedPreferenceChangeListener onSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 		@Override
 		public void onSharedPreferenceChanged(final SharedPreferences settings, final String key) {
-			
 			if (key.equals("appTheme")) {
 				recreate();
 			}
-			
 		}
 	};
 	
@@ -118,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
 				final String text = urlInput.getText().toString();
 				
 				if (TextUtils.isEmpty(text)) {
-					Toast.makeText(getApplicationContext(), "There is no URL to clean", Toast.LENGTH_SHORT).show();
+					Toast.makeText(MainActivity.this, "There is no URL to clean", Toast.LENGTH_SHORT).show();
 					return;
 				}
 				
@@ -135,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
 				final String text = urlInput.getText().toString();
 				
 				if (TextUtils.isEmpty(text)) {
-					Toast.makeText(getApplicationContext(), "There is no URL to launch", Toast.LENGTH_SHORT).show();
+					Toast.makeText(MainActivity.this, "There is no URL to launch", Toast.LENGTH_SHORT).show();
 					return;
 				}
 				
@@ -181,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
 				final String text = urlInput.getText().toString();
 				
 				if (TextUtils.isEmpty(text)) {
-					Toast.makeText(getApplicationContext(), "There is no URL to share", Toast.LENGTH_SHORT).show();
+					Toast.makeText(MainActivity.this, "There is no URL to share", Toast.LENGTH_SHORT).show();
 					return;
 				}
 				
@@ -228,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
 				final String text = urlInput.getText().toString();
 				
 				if (TextUtils.isEmpty(text)) {
-					Toast.makeText(getApplicationContext(), "URL input is already empty", Toast.LENGTH_SHORT).show();
+					Toast.makeText(MainActivity.this, "URL input is already empty", Toast.LENGTH_SHORT).show();
 					return;
 				}
 				

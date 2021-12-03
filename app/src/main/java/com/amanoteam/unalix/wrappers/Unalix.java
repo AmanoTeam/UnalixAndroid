@@ -1,4 +1,4 @@
-package com.amanoteam.unalix.wrapper;
+package com.amanoteam.unalix.wrappers;
 
 import android.content.SharedPreferences;
 
@@ -15,13 +15,6 @@ public class Unalix {
 	private boolean skipBlocked = false;
 	private boolean stripDuplicates = false;
 	private boolean stripEmpty = false;
-	
-	private String httpMethod = "GET";
-	private boolean parseDocuments = false;
-	private int httpMaxRedirects = 13;
-	private int httpTimeout = 3000;
-	private int httpMaxFetchSize = 1024 * 1024;
-	private int httpMaxRetries = 0;
 	
 	public Unalix setIgnoreReferralMarketing(final boolean value) {
 		this.ignoreReferralMarketing = value;
@@ -63,36 +56,6 @@ public class Unalix {
 		return this;
 	}
 	
-	public Unalix setHttpMethod(final String value) {
-		this.httpMethod = value;
-		return this;
-	}
-	
-	public Unalix setParseDocuments(final boolean value) {
-		this.parseDocuments = value;
-		return this;
-	}
-	
-	public Unalix setHttpMaxRedirects(final int value) {
-		this.httpMaxRedirects = value;
-		return this;
-	}
-	
-	public Unalix setHttpTimeout(final int value) {
-		this.httpTimeout = value;
-		return this;
-	}
-	
-	public Unalix setHttpMaxFetchSize(final int value) {
-		this.httpMaxFetchSize = value;
-		return this;
-	}
-	
-	public Unalix setHttpMaxRetries(final int value) {
-		this.httpMaxRetries = value;
-		return this;
-	}
-	
 	public interface UnalixCLibrary extends Library {
 		final UnalixCLibrary instance = (UnalixCLibrary) Native.load("unalix", UnalixCLibrary.class);
 
@@ -119,13 +82,7 @@ public class Unalix {
 			boolean ignoreRedirections,
 			boolean skipBlocked,
 			boolean stripDuplicates,
-			boolean stripEmpty,
-			String httpMethod,
-			boolean parseDocuments,
-			int httpMaxRedirects,
-			int httpTimeout,
-			int httpMaxFetchSize,
-			int httpMaxRetries
+			boolean stripEmpty
 		);
 		
 	}
@@ -154,13 +111,7 @@ public class Unalix {
 			this.ignoreRedirections,
 			this.skipBlocked,
 			this.stripDuplicates,
-			this.stripEmpty,
-			this.httpMethod,
-			this.parseDocuments,
-			this.httpMaxRedirects,
-			this.httpTimeout,
-			this.httpMaxFetchSize,
-			this.httpMaxRetries
+			this.stripEmpty
 		);
 	}
 	
@@ -198,29 +149,6 @@ public class Unalix {
 			preferences.getBoolean("stripEmpty", false)
 		);
 		
-		this.setHttpMethod(
-			preferences.getString("httpMethod", "GET")
-		);
-		
-		this.setParseDocuments(
-			preferences.getBoolean("parseDocuments", false)
-		);
-		
-		this.setHttpMaxRedirects(
-			Integer.valueOf(preferences.getString("httpMaxRedirects", "13"))
-		);
-		
-		this.setHttpTimeout(
-			Integer.valueOf(preferences.getString("httpTimeout", "3000"))
-		);
-		
-		this.setHttpMaxFetchSize(
-			Integer.valueOf(preferences.getString("httpMaxFetchSize", String.valueOf(1024 * 1024)))
-		);
-		
-		this.setHttpMaxRetries(
-			Integer.valueOf(preferences.getString("httpMaxRetries", "0"))
-		);
 	}
 	
 	public Unalix() {

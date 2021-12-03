@@ -1,4 +1,4 @@
-package com.amanoteam.unalix;
+package com.amanoteam.unalix.services;
 
 import android.app.Service;
 import android.content.ComponentName;
@@ -20,7 +20,7 @@ import androidx.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.amanoteam.unalix.wrapper.Unalix;
+import com.amanoteam.unalix.wrappers.Unalix;
 
 public class UnalixService extends Service {
 	

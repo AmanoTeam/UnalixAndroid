@@ -1,4 +1,4 @@
-package com.amanoteam.unalix;
+package com.amanoteam.unalix.activities;
 
 import android.app.Activity;
 import android.app.UiModeManager;
@@ -45,7 +45,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.amanoteam.unalix.R;
-import com.amanoteam.unalix.SettingsFragment;
+import com.amanoteam.unalix.fragments.SettingsFragment;
 
 public class SettingsActivity extends AppCompatActivity {
 	
@@ -75,13 +75,6 @@ public class SettingsActivity extends AppCompatActivity {
 					preferences.put("skipBlocked", settings.getBoolean("skipBlocked", false));
 					preferences.put("stripDuplicates", settings.getBoolean("stripDuplicates", false));
 					preferences.put("stripEmpty", settings.getBoolean("stripEmpty", false));
-					
-					preferences.put("httpMethod", settings.getString("httpMethod", "GET"));
-					preferences.put("parseDocuments", settings.getBoolean("parseDocuments", false));
-					preferences.put("httpMaxRedirects", Integer.valueOf(settings.getString("httpMaxRedirects", "13")));
-					preferences.put("httpTimeout", Integer.valueOf(settings.getString("httpTimeout", "3000")));
-					preferences.put("httpMaxFetchSize", Integer.valueOf(settings.getString("httpMaxFetchSize", String.valueOf(1024 * 1024))));
-					preferences.put("httpMaxRetries", Integer.valueOf(settings.getString("httpMaxRetries", "0")));
 					
 					preferences.put("appTheme", settings.getString("appTheme", "follow_system"));
 					preferences.put("disableClearURLActivity", settings.getBoolean("disableClearURLActivity", false));
@@ -142,13 +135,6 @@ public class SettingsActivity extends AppCompatActivity {
 					editor.putBoolean("stripDuplicates", preferences.getBoolean("stripDuplicates"));
 					editor.putBoolean("stripEmpty", preferences.getBoolean("stripEmpty"));
 					
-					editor.putString("httpMethod", preferences.getString("httpMethod"));
-					editor.putBoolean("parseDocuments", preferences.getBoolean("parseDocuments"));
-					editor.putString("httpMaxRedirects", String.valueOf(preferences.getInt("httpMaxRedirects")));
-					editor.putString("httpTimeout", String.valueOf(preferences.getInt("httpTimeout")));
-					editor.putString("httpMaxFetchSize", String.valueOf(preferences.getInt("httpMaxFetchSize")));
-					editor.putString("httpMaxRetries", String.valueOf(preferences.getInt("httpMaxRetries")));
-					
 					editor.putString("appTheme", preferences.getString("appTheme"));
 					editor.putBoolean("disableClearURLActivity", preferences.getBoolean("disableClearURLActivity"));
 					editor.putBoolean("disableUnshortURLActivity", preferences.getBoolean("disableUnshortURLActivity"));
@@ -179,34 +165,6 @@ public class SettingsActivity extends AppCompatActivity {
 	private final OnSharedPreferenceChangeListener onSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 		@Override
 		public void onSharedPreferenceChanged(final SharedPreferences settings, final String key) {
-			
-			if (preferenceScreen != null) {
-				if (key.equals("httpMethod")) {
-					
-					final CheckBoxPreference parseDocumentsPreference = (CheckBoxPreference) preferenceScreen.findPreference("parseDocuments");
-					
-					// parseDocuments is not available when httpMethod == "HEAD"
-					if (settings.getString(key, "GET").equals("HEAD")) {
-						parseDocumentsPreference.setEnabled(false);
-					} else {
-						parseDocumentsPreference.setEnabled(true);
-					}
-					
-					// httpMaxFetchSiz is not available when parseDocuments is true
-					if (parseDocumentsPreference.isEnabled() && settings.getBoolean("parseDocuments", false)) {
-						preferenceScreen.findPreference("httpMaxFetchSize").setEnabled(true);
-					} else {
-						preferenceScreen.findPreference("httpMaxFetchSize").setEnabled(false);
-					}
-				} else if (key.equals("parseDocuments")) {
-					// httpMaxFetchSiz is not available when parseDocuments is true
-					if (settings.getBoolean("parseDocuments", false)) {
-						preferenceScreen.findPreference("httpMaxFetchSize").setEnabled(true);
-					} else {
-						preferenceScreen.findPreference("httpMaxFetchSize").setEnabled(false);
-					}
-				}
-			}
 			
 			if (key.equals("disableClearURLActivity")) {
 				if (settings.getBoolean(key, false)) {
@@ -279,35 +237,9 @@ public class SettingsActivity extends AppCompatActivity {
 	}
 	
 	@Override
-	protected void onStart() {
-		super.onStart();
-		
-		preferenceScreen = settingsFragment.getPreferenceScreen();
-		
-		final CheckBoxPreference parseDocumentsPreference = (CheckBoxPreference) preferenceScreen.findPreference("parseDocuments");
-		
-		// parseDocuments is not available when httpMethod == "HEAD"
-		if (settings.getString("httpMethod", "GET").equals("HEAD")) {
-			parseDocumentsPreference.setEnabled(false);
-		} else {
-			parseDocumentsPreference.setEnabled(true);
-		}
-		
-		// httpMaxFetchSiz is not available when parseDocuments is true
-		if (parseDocumentsPreference.isEnabled() && settings.getBoolean("parseDocuments", false)) {
-			preferenceScreen.findPreference("httpMaxFetchSize").setEnabled(true);
-		} else {
-			preferenceScreen.findPreference("httpMaxFetchSize").setEnabled(false);
-		}
-		
-	}
-	
-	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		final MenuInflater inflater = getMenuInflater();
-		
 		inflater.inflate(R.menu.settings_menu, menu);
-		
 		return true;
 	}
 	

@@ -5,92 +5,44 @@
         android:defaultValue="false"
         android:key="ignoreReferralMarketing"
         android:summary="Don't strip referral marketing fields"
-        android:title="Ignore referral marketing">
+        android:title="ignoreReferralMarketing">
     </CheckBoxPreference>
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="ignoreRules"
         android:summary="Don't strip generic tracking fields"
-        android:title="Ignore rules">
+        android:title="ignoreRules">
     </CheckBoxPreference>
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="ignoreExceptions"
         android:summary="Ignore rule exceptions"
-        android:title="Ignore exceptions">
+        android:title="ignoreExceptions">
     </CheckBoxPreference>
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="ignoreRawRules"
         android:summary="Don't strip raw tracking elements"
-        android:title="Ignore raw rules">
+        android:title="ignoreRawRules">
     </CheckBoxPreference>
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="ignoreRedirections"
         android:summary="Ignore redirection rules"
-        android:title="Ignore redirections">
+        android:title="ignoreRedirections">
     </CheckBoxPreference>
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="stripDuplicates"
         android:summary="Strip fields with duplicate names (might break the URL)"
-        android:title="Strip duplicates">
+        android:title="stripDuplicates">
     </CheckBoxPreference>
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="stripEmpty"
         android:summary="Strip fields with empty values (might break the URL)"
-        android:title="Strip empty">
+        android:title="stripEmpty">
     </CheckBoxPreference>
-  </PreferenceCategory>
-  <PreferenceCategory android:title="Network settings">
-	<ListPreference
-		android:defaultValue="GET"
-		android:entries="@array/http_method_entries"
-		android:entryValues="@array/http_method_values"
-		android:key="httpMethod"
-		android:summary="Default HTTP method for requests"
-		android:title="HTTP method">
-	</ListPreference>
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="parseDocuments"
-        android:summary="Look for redirect URLs in the response body when there is no HTTP redirect to follow"
-        android:title="Parse documents">
-    </CheckBoxPreference>
-	<ListPreference
-		android:defaultValue="13"
-		android:entries="@array/max_redirects_entries"
-		android:entryValues="@array/max_redirects_values"
-		android:key="httpMaxRedirects"
-		android:summary="Max number of HTTP redirects to follow before raising an exception"
-        android:title="Max redirects">
-	</ListPreference>
-    <ListPreference
-		android:defaultValue="3000"
-		android:entries="@array/http_timeout_entries"
-		android:entryValues="@array/http_timeout_values"
-		android:key="httpTimeout"
-        android:summary="Max number of seconds to wait for a response before raising an exception"
-        android:title="Timeout">
-	</ListPreference>
-    <ListPreference
-		android:defaultValue="1048576"
-		android:entries="@array/http_max_fetch_size_entries"
-		android:entryValues="@array/http_max_fetch_size_values"
-        android:key="httpMaxFetchSize"
-        android:summary="Max number of bytes to fetch from response body"
-        android:title="Max fetch size">
-	</ListPreference>
-    <ListPreference
-		android:defaultValue="0"
-		android:entries="@array/http_max_retries_entries"
-		android:entryValues="@array/http_max_retries_values"
-        android:key="httpMaxRetries"
-        android:summary="Max number of times to retry on connection errors"
-        android:title="Max retries">
-	</ListPreference>
   </PreferenceCategory>
   <PreferenceCategory android:title="App settings">
 	<ListPreference

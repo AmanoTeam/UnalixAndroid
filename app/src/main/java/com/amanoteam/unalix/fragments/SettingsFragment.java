@@ -1,4 +1,4 @@
-package com.amanoteam.unalix;
+package com.amanoteam.unalix.fragments;
 
 import android.os.Bundle;
 import androidx.preference.PreferenceFragmentCompat;

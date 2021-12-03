@@ -1,4 +1,4 @@
-package com.amanoteam.unalix;
+package com.amanoteam.unalix.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.ClipData;
