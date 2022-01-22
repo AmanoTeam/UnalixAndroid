@@ -25,9 +25,9 @@ jobs:
       uses: jiro4989/setup-nim-action@master
       with:
         nim-version: "devel"
-    - name: Install helper tool with nimble
+    - name: Install helper tool
       working-directory: app/src/main/jni/tool
-      run: nimble install --accept
+      run: nimble install --define:ssl --accept
     - name: Checkout PCRE source
       working-directory: app/src/main/jni/tool
       run: tool download pcre
