@@ -1,12 +1,12 @@
 package com.amanoteam.unalix.activities;
 
-import android.content.res.AssetManager;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.UiModeManager;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager;
@@ -28,17 +28,6 @@ import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.io.InputStream;
-import java.io.BufferedReader;
-import java.lang.StringBuilder;
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.nio.charset.StandardCharsets;
 
 import com.amanoteam.unalix.wrappers.Unalix;
 import com.amanoteam.unalix.R;
@@ -251,36 +240,6 @@ public class MainActivity extends AppCompatActivity {
 		final Toolbar mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
 		
 		setSupportActionBar(mainToolbar);
-		
-		final File file = new File(getFilesDir(), "cacert.pem");
-		
-		if (!file.exists()) {
-			try {
-				final AssetManager assetManager = getAssets();
-				
-				final FileOutputStream outputStream = openFileOutput("cacert.pem", Context.MODE_PRIVATE);
-				final InputStream inputStream = assetManager.open("cacert.pem");
-				final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8.name()));
-				
-				String string;
-				
-				while ((string = bufferedReader.readLine()) != null) {
-					outputStream.write(string.getBytes());
-				}
-				
-				inputStream.close();
-				outputStream.close();
-			} catch (IOException e) {
-				// I hate Java because it force us to handle exceptions we don't want to handle
-			}
-			
-			final Editor editor = settings.edit();
-			
-			editor.putString("caFile", file.getAbsolutePath());
-			
-			editor.commit();
-			
-		}
 		
 		// libunalix stuff
 		unalix = new Unalix();

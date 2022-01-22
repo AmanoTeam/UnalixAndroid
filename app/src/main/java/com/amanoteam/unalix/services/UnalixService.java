@@ -1,9 +1,12 @@
 package com.amanoteam.unalix.services;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.lang.Runnable;
+
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
@@ -16,13 +19,6 @@ import android.os.Message;
 import android.os.Parcelable;
 import android.os.Process;
 import android.widget.Toast;
-import android.util.Log;
-import androidx.preference.PreferenceManager;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.lang.Runnable;
-import java.lang.InterruptedException;
 
 import com.amanoteam.unalix.wrappers.Unalix;
 
@@ -63,19 +59,13 @@ public class UnalixService extends Service {
 						}
 					});
 					
-					// String actionName = null;
-					
 					final Intent sendIntent = new Intent();
 					
 					if (action.equals(Intent.ACTION_SEND)) {
-						// actionName = "Share with";
-						
 						sendIntent.setAction(Intent.ACTION_SEND);
 						sendIntent.putExtra(Intent.EXTRA_TEXT, cleanUrl);
 						sendIntent.setType("text/plain");
 					} else if (action.equals(Intent.ACTION_VIEW)) {
-						// actionName = "Open with";
-						
 						sendIntent.setAction(Intent.ACTION_VIEW);
 						sendIntent.setData(Uri.parse(cleanUrl));
 					}
