@@ -20,7 +20,7 @@ jobs:
       uses: actions/setup-java@main
       with:
         java-version: 17
-        distribution: adopt
+        distribution: temurin
     - name: Set up Nim devel
       uses: jiro4989/setup-nim-action@master
       with:
