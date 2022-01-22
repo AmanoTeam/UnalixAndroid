@@ -4,8 +4,6 @@ import std/net
 import pkg/jnim
 import pkg/unalix
 
-{.passC: "-DNimMain=Java_com_amanoteam_unalix_wrappers_Unalix_initialize".}
-
 proc clearUrl(
     env: ptr JNIEnv,
     obj: jobject,

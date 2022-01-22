@@ -215,6 +215,7 @@ of "build":
             ("clang.linkerexe", CC),
             ("os", "android"),
             ("cpu", architecture),
+            ("app", "lib"),
             ("define", "release"),
             ("define", "strip"),
             ("define", "danger"),
@@ -224,6 +225,7 @@ of "build":
             ("panics", "on"),
             ("passC", "-Ofast"),
             ("passC", "-flto=full"),
+            ("passC", "-DNimMain=Java_com_amanoteam_unalix_wrappers_Unalix_initialize"),
             ("gc", "refc"),
             ("out", JNI_LIBS / "libunalix_jni.so")
         ]
