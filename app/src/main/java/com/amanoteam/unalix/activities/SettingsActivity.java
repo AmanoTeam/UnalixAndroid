@@ -62,27 +62,31 @@ public class SettingsActivity extends AppCompatActivity {
 				final ContentResolver contentResolver =  getContentResolver();
 				
 				try {
-					final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-					final JSONObject preferences = new JSONObject();
+					final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+					final JSONObject obj = new JSONObject();
 					
-					preferences.put("ignoreReferralMarketing", settings.getBoolean("ignoreReferralMarketing", false));
-					preferences.put("ignoreRules", settings.getBoolean("ignoreRules", false));
-					preferences.put("ignoreExceptions", settings.getBoolean("ignoreExceptions", false));
-					preferences.put("ignoreRawRules", settings.getBoolean("ignoreRawRules", false));
-					preferences.put("ignoreRedirections", settings.getBoolean("ignoreRedirections", false));
-					preferences.put("skipBlocked", settings.getBoolean("skipBlocked", false));
-					preferences.put("stripDuplicates", settings.getBoolean("stripDuplicates", false));
-					preferences.put("stripEmpty", settings.getBoolean("stripEmpty", false));
+					obj.put("ignoreReferralMarketing", preferences.getBoolean("ignoreReferralMarketing", false));
+					obj.put("ignoreRules", preferences.getBoolean("ignoreRules", false));
+					obj.put("ignoreExceptions", preferences.getBoolean("ignoreExceptions", false));
+					obj.put("ignoreRawRules", preferences.getBoolean("ignoreRawRules", false));
+					obj.put("ignoreRedirections", preferences.getBoolean("ignoreRedirections", false));
+					obj.put("skipBlocked", preferences.getBoolean("skipBlocked", false));
+					obj.put("stripDuplicates", preferences.getBoolean("stripDuplicates", false));
+					obj.put("stripEmpty", preferences.getBoolean("stripEmpty", false));
+					obj.put("parseDocuments", preferences.getBoolean("parseDocuments", false));
 					
-					preferences.put("appTheme", settings.getString("appTheme", "follow_system"));
-					preferences.put("disableClearURLActivity", settings.getBoolean("disableClearURLActivity", false));
-					preferences.put("disableUnshortURLActivity", settings.getBoolean("disableUnshortURLActivity", false));
-					preferences.put("disableCopyToClipboardActivity", settings.getBoolean("disableCopyToClipboardActivity", false));
+					obj.put("timeout", Integer.valueOf(preferences.getString("timeout", "3000")));
+					obj.put("maxRedirects", Integer.valueOf(preferences.getString("maxRedirects", "13")));
 					
-					final OutputStream fileOutputStream = contentResolver.openOutputStream(fileUri);
+					obj.put("appTheme", preferences.getString("appTheme", "follow_system"));
+					obj.put("disableClearURLActivity", preferences.getBoolean("disableClearURLActivity", false));
+					obj.put("disableUnshortURLActivity", preferences.getBoolean("disableUnshortURLActivity", false));
+					obj.put("disableCopyToClipboardActivity", preferences.getBoolean("disableCopyToClipboardActivity", false));
 					
-					fileOutputStream.write(preferences.toString().getBytes());
-					fileOutputStream.close();
+					final OutputStream outputStream = contentResolver.openOutputStream(fileUri);
+					
+					outputStream.write(obj.toString().getBytes());
+					outputStream.close();
 				} catch (IOException | JSONException e) {
 					Toast.makeText(context, "Error exporting preferences file", Toast.LENGTH_SHORT).show();
 					return;
@@ -108,35 +112,39 @@ public class SettingsActivity extends AppCompatActivity {
 				final ContentResolver contentResolver =  getContentResolver();
 				
 				try {
-					final InputStream fileInputStream = contentResolver.openInputStream(fileUri);
-					final BufferedReader streamReader = new BufferedReader(new InputStreamReader(fileInputStream, StandardCharsets.UTF_8.name()));
-					final StringBuilder text = new StringBuilder();
+					final InputStream inputStream = contentResolver.openInputStream(fileUri);
+					final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8.name()));
+					final StringBuilder stringBuilder = new StringBuilder();
 					
 					String inputLine;
 					
-					while ((inputLine = streamReader.readLine()) != null)
-						text.append(inputLine);
+					while ((inputLine = bufferedReader.readLine()) != null)
+						stringBuilder.append(inputLine);
 					
-					fileInputStream.close();
+					inputStream.close();
 					
-					final JSONObject preferences = new JSONObject(text.toString());
+					final JSONObject obj = new JSONObject(stringBuilder.toString());
 					
-					final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-					final Editor editor = settings.edit();
+					final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+					final Editor editor = preferences.edit();
 					
-					editor.putBoolean("ignoreReferralMarketing", preferences.getBoolean("ignoreReferralMarketing"));
-					editor.putBoolean("ignoreRules", preferences.getBoolean("ignoreRules"));
-					editor.putBoolean("ignoreExceptions", preferences.getBoolean("ignoreExceptions"));
-					editor.putBoolean("ignoreRawRules", preferences.getBoolean("ignoreRawRules"));
-					editor.putBoolean("ignoreRedirections", preferences.getBoolean("ignoreRedirections"));
-					editor.putBoolean("skipBlocked", preferences.getBoolean("skipBlocked"));
-					editor.putBoolean("stripDuplicates", preferences.getBoolean("stripDuplicates"));
-					editor.putBoolean("stripEmpty", preferences.getBoolean("stripEmpty"));
+					editor.putBoolean("ignoreReferralMarketing", obj.getBoolean("ignoreReferralMarketing"));
+					editor.putBoolean("ignoreRules", obj.getBoolean("ignoreRules"));
+					editor.putBoolean("ignoreExceptions", obj.getBoolean("ignoreExceptions"));
+					editor.putBoolean("ignoreRawRules", obj.getBoolean("ignoreRawRules"));
+					editor.putBoolean("ignoreRedirections", obj.getBoolean("ignoreRedirections"));
+					editor.putBoolean("skipBlocked", obj.getBoolean("skipBlocked"));
+					editor.putBoolean("stripDuplicates", obj.getBoolean("stripDuplicates"));
+					editor.putBoolean("stripEmpty", obj.getBoolean("stripEmpty"));
+					editor.putBoolean("parseDocuments", obj.getBoolean("parseDocuments"));
 					
-					editor.putString("appTheme", preferences.getString("appTheme"));
-					editor.putBoolean("disableClearURLActivity", preferences.getBoolean("disableClearURLActivity"));
-					editor.putBoolean("disableUnshortURLActivity", preferences.getBoolean("disableUnshortURLActivity"));
-					editor.putBoolean("disableCopyToClipboardActivity", preferences.getBoolean("disableCopyToClipboardActivity"));
+					editor.putString("timeout", String.valueOf(obj.getInt("timeout")));
+					editor.putString("maxRedirects", String.valueOf(obj.getInt("maxRedirects")));
+					
+					editor.putString("appTheme", obj.getString("appTheme"));
+					editor.putBoolean("disableClearURLActivity", obj.getBoolean("disableClearURLActivity"));
+					editor.putBoolean("disableUnshortURLActivity", obj.getBoolean("disableUnshortURLActivity"));
+					editor.putBoolean("disableCopyToClipboardActivity", obj.getBoolean("disableCopyToClipboardActivity"));
 					
 					editor.commit();
 				} catch (IOException | JSONException e) {
@@ -158,26 +166,24 @@ public class SettingsActivity extends AppCompatActivity {
 	private SettingsFragment settingsFragment;
 	private PreferenceScreen preferenceScreen;
 	
-	private SharedPreferences settings;
-	
 	private final OnSharedPreferenceChangeListener onSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 		@Override
-		public void onSharedPreferenceChanged(final SharedPreferences settings, final String key) {
+		public void onSharedPreferenceChanged(final SharedPreferences preferences, final String key) {
 			
 			if (key.equals("disableClearURLActivity")) {
-				if (settings.getBoolean(key, false)) {
+				if (preferences.getBoolean(key, false)) {
 					packageManager.setComponentEnabledSetting(clearUrlActivity, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
 				} else {
 					packageManager.setComponentEnabledSetting(clearUrlActivity, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 				}
 			} else if (key.equals("disableUnshortURLActivity")) {
-				if (settings.getBoolean(key, false)) {
+				if (preferences.getBoolean(key, false)) {
 					packageManager.setComponentEnabledSetting(unshortUrlActivity, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
 				} else {
 					packageManager.setComponentEnabledSetting(unshortUrlActivity, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 				}
 			} else if (key.equals("disableCopyToClipboardActivity")) {
-				if (settings.getBoolean(key, false)) {
+				if (preferences.getBoolean(key, false)) {
 					packageManager.setComponentEnabledSetting(copyToClipboardActivity, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
 				} else {
 					packageManager.setComponentEnabledSetting(copyToClipboardActivity, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
@@ -194,11 +200,11 @@ public class SettingsActivity extends AppCompatActivity {
 		packageManager = getPackageManager();
 		
 		// Preferences stuff
-		settings = PreferenceManager.getDefaultSharedPreferences(this);
-		settings.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
+		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		preferences.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
 		
 		// Dark mode stuff
-		final String appTheme = settings.getString("appTheme", "follow_system");
+		final String appTheme = preferences.getString("appTheme", "follow_system");
 		
 		boolean isDarkMode = false;
 		
@@ -254,7 +260,7 @@ public class SettingsActivity extends AppCompatActivity {
 				exportIntent.setAction(Intent.ACTION_CREATE_DOCUMENT);
 				exportIntent.addCategory(Intent.CATEGORY_OPENABLE);
 				exportIntent.setType("application/json");
-				exportIntent.putExtra(Intent.EXTRA_TITLE, "unalix_" + date.format(currentLocalTime) + ".json");
+				exportIntent.putExtra(Intent.EXTRA_TITLE, "unalix_settings_" + date.format(currentLocalTime) + ".json");
 				
 				exportPreferences.launch(exportIntent);
 				
@@ -264,7 +270,7 @@ public class SettingsActivity extends AppCompatActivity {
 				
 				importIntent.setAction(Intent.ACTION_OPEN_DOCUMENT);
 				importIntent.addCategory(Intent.CATEGORY_OPENABLE);
-				importIntent.setType("application/json");
+				// importIntent.setType("application/json");
 				
 				importPreferences.launch(importIntent);
 				

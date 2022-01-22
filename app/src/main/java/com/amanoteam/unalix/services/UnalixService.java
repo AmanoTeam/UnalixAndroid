@@ -52,13 +52,6 @@ public class UnalixService extends Service {
 					
 					final String cleanUrl = (whatToDo.equals("clearUrl") ? unalix.clearUrl(uglyUrl) : unalix.unshortUrl(uglyUrl));
 					
-					new Handler(Looper.getMainLooper()).post(new Runnable() {
-						@Override
-						public void run() {
-							Toast.makeText(UnalixService.this.getApplicationContext(), cleanUrl, Toast.LENGTH_SHORT).show();
-						}
-					});
-					
 					final Intent sendIntent = new Intent();
 					
 					if (action.equals(Intent.ACTION_SEND)) {
