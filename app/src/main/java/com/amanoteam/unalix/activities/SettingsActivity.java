@@ -152,7 +152,7 @@ public class SettingsActivity extends AppCompatActivity {
 					return;
 				}
 				
-				Toast.makeText(context, "Import successful", Toast.LENGTH_SHORT).show();
+				Toast.makeText(context, "Please restart for changes to take effect", Toast.LENGTH_SHORT).show();
 			}
 		}
 	});
@@ -270,9 +270,9 @@ public class SettingsActivity extends AppCompatActivity {
 			case R.id.settings_import:
 				final Intent importIntent = new Intent();
 				
-				importIntent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+				importIntent.setAction(Intent.ACTION_GET_CONTENT);
 				importIntent.addCategory(Intent.CATEGORY_OPENABLE);
-				importIntent.setType("text/plain");
+				importIntent.setType("*/*");
 				
 				importPreferences.launch(importIntent);
 				

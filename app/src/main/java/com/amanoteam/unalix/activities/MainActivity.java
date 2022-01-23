@@ -49,9 +49,7 @@ public class MainActivity extends AppCompatActivity {
 	private final OnSharedPreferenceChangeListener onSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 		@Override
 		public void onSharedPreferenceChanged(final SharedPreferences settings, final String key) {
-			if (key.equals("appTheme")) {
-				recreate();
-			}
+			recreate();
 		}
 	};
 	
