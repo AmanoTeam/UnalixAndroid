@@ -86,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
 		
 		if (isDarkMode) {
 			setTheme(R.style.DarkTheme);
+		} else {
+			setTheme(R.style.LigthTheme);
 		}
 		
 		super.onCreate(savedInstanceState);

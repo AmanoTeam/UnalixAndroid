@@ -221,6 +221,8 @@ public class SettingsActivity extends AppCompatActivity {
 		
 		if (isDarkMode) {
 			setTheme(R.style.DarkTheme);
+		} else {
+			setTheme(R.style.LigthTheme);
 		}
 		
 		super.onCreate(savedInstanceState);
@@ -270,7 +272,7 @@ public class SettingsActivity extends AppCompatActivity {
 				
 				importIntent.setAction(Intent.ACTION_OPEN_DOCUMENT);
 				importIntent.addCategory(Intent.CATEGORY_OPENABLE);
-				// importIntent.setType("application/json");
+				importIntent.setType("text/plain");
 				
 				importPreferences.launch(importIntent);
 				
