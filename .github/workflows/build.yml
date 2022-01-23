@@ -65,9 +65,25 @@ jobs:
         tool build wrapper --architecture:i386
         tool build wrapper --architecture:amd64
     - name: Assemble APK
-      run: ./gradlew --no-daemon assembleRelease
+      run: |
+        ./gradlew --no-daemon assembleRelease
+        
+        mv app/build/outputs/apk/release/app-x86-release-unsigned.apk app/build/outputs/apk/release/app-x86-release.apk
+        mv app/build/outputs/apk/release/app-x86_64-release-unsigned.apk app/build/outputs/apk/release/app-x86_64-release.apk
+        mv app/build/outputs/apk/release/app-arm64-v8a-release-unsigned.apk app/build/outputs/apk/release/app-arm64-v8a-release.apk
+        mv app/build/outputs/apk/release/app-armeabi-v7a-release-unsigned.apk app/build/outputs/apk/release/app-armeabi-v7a-release.apk
+    - uses: r0adkll/sign-android-release@master
+      name: Sign APK
+      id: sign_app
+      with:
+        releaseDirectory: app/build/outputs/apk/release
+        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+        alias: ${{ secrets.ALIAS }}
+        keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+      env:
+        BUILD_TOOLS_VERSION: "30.0.2"
     - name: Upload APK
       uses: actions/upload-artifact@main
       with:
         name: build
-        path: app/build/outputs/apk/release/app-*-release-unsigned.apk
+        path: app/build/outputs/apk/release/app-*-release-signed.apk
