@@ -1,0 +1,11 @@
+### Added
+
+- Added MainActivity
+  - This activity has an text input which you can use to paste or type URLs you want to be clean
+- Added more options to SettingsActivity
+  - This includes a dark/light theme toggle and switches for disabling or enabling intent intercept for URLs
+
+### Fixes
+
+- Fix layout bug in SettingsActivity
+- ...and some minor fixes I can't remember for now

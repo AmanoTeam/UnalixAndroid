@@ -1,0 +1,3 @@
+* Change libunalix API implementation
+* Make MainActivity scrollable
+* Add support to Android 12
