@@ -1,0 +1,3 @@
+* Switch from OpenSSL to LibreSSL
+* Fix SSL certificates validation issue
+* Update dependencies
