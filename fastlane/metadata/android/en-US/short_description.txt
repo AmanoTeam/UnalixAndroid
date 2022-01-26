@@ -1,1 +1,1 @@
-Android app that removes link masking/tracking and optionally resolves shortened links
+Simple tool that removes link tracking and optionally resolves shortened links
