@@ -2,6 +2,7 @@ package com.amanoteam.unalix.activities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import android.app.UiModeManager;
 import android.content.ComponentName;
@@ -16,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,6 +25,7 @@ import android.view.View.OnClickListener;
 import android.view.View;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.Toolbar;
@@ -32,6 +35,8 @@ import androidx.preference.PreferenceManager;
 import com.amanoteam.unalix.wrappers.Unalix;
 import com.amanoteam.unalix.R;
 import com.amanoteam.unalix.activities.SettingsActivity;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
 	
@@ -68,24 +73,17 @@ public class MainActivity extends AppCompatActivity {
 		
 		// Dark mode stuff
 		final String appTheme = settings.getString("appTheme", "follow_system");
-		
-		boolean isDarkMode = false;
-		
-		if (appTheme.equals("follow_system")) {
-			// Snippet from https://github.com/Andrew67/dark-mode-toggle/blob/11c1e16071b301071be0c4715a15fcb031d0bb64/app/src/main/java/com/andrew67/darkmode/UiModeManagerUtil.java#L17
-			final UiModeManager uiModeManager = ContextCompat.getSystemService(this, UiModeManager.class);
-			
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M || uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_CAR) {
-				isDarkMode = true;
-			}
-		} else if (appTheme.equals("dark")) {
-			isDarkMode = true;
-		}
-		
-		if (isDarkMode) {
-			setTheme(R.style.DarkTheme);
-		} else {
-			setTheme(R.style.LigthTheme);
+
+		switch (appTheme) {
+			case "follow_system":
+				AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+				break;
+			case "dark":
+				AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+				break;
+			default:
+				AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+				break;
 		}
 		
 		super.onCreate(savedInstanceState);
@@ -93,21 +91,12 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_main);
 		
 		// ImageButton and EditText stuff
-		final AppCompatImageButton openUrlButton = (AppCompatImageButton) findViewById(R.id.open_url_button);
-		final AppCompatImageButton cleanUrlButton = (AppCompatImageButton) findViewById(R.id.clean_url_button);
-		final AppCompatImageButton shareUrlButton = (AppCompatImageButton) findViewById(R.id.share_url_button);
-		final AppCompatImageButton clearInputButton = (AppCompatImageButton) findViewById(R.id.clear_input_button);
+		final FloatingActionButton openUrlButton = findViewById(R.id.open_url_button);
+		final FloatingActionButton cleanUrlButton = findViewById(R.id.clean_url_button);
+		final FloatingActionButton shareUrlButton = findViewById(R.id.share_url_button);
+		final FloatingActionButton clearInputButton = findViewById(R.id.clear_input_button);
 		
-		urlInput = (AppCompatEditText) findViewById(R.id.url_input);
-		
-		// This needs to come after setContentView() (see https://stackoverflow.com/a/43635618)
-		if (isDarkMode) {
-			urlInput.setBackgroundResource(R.drawable.edit_text_border_dark);
-			openUrlButton.setBackgroundResource(R.drawable.edit_text_border_dark);
-			cleanUrlButton.setBackgroundResource(R.drawable.edit_text_border_dark);
-			shareUrlButton.setBackgroundResource(R.drawable.edit_text_border_dark);
-			clearInputButton.setBackgroundResource(R.drawable.edit_text_border_dark);
-		}
+		urlInput = findViewById(R.id.url_input);
 		
 		// "Clean URL" button listener
 		cleanUrlButton.setOnClickListener(new OnClickListener() {

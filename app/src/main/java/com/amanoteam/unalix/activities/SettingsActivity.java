@@ -26,6 +26,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,6 +36,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
@@ -158,38 +160,42 @@ public class SettingsActivity extends AppCompatActivity {
 	});
 	
 	private PackageManager packageManager;
-	
+
 	private final ComponentName clearUrlActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.activities.ClearURLActivity");
 	private final ComponentName unshortUrlActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.activities.UnshortURLActivity");
 	private final ComponentName copyToClipboardActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.activities.CopyToClipboardActivity");
-	
-	private SettingsFragment settingsFragment;
+
 	private PreferenceScreen preferenceScreen;
 	
 	private final OnSharedPreferenceChangeListener onSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 		@Override
 		public void onSharedPreferenceChanged(final SharedPreferences preferences, final String key) {
-			
-			if (key.equals("disableClearURLActivity")) {
-				if (preferences.getBoolean(key, false)) {
-					packageManager.setComponentEnabledSetting(clearUrlActivity, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-				} else {
-					packageManager.setComponentEnabledSetting(clearUrlActivity, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-				}
-			} else if (key.equals("disableUnshortURLActivity")) {
-				if (preferences.getBoolean(key, false)) {
-					packageManager.setComponentEnabledSetting(unshortUrlActivity, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-				} else {
-					packageManager.setComponentEnabledSetting(unshortUrlActivity, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-				}
-			} else if (key.equals("disableCopyToClipboardActivity")) {
-				if (preferences.getBoolean(key, false)) {
-					packageManager.setComponentEnabledSetting(copyToClipboardActivity, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-				} else {
-					packageManager.setComponentEnabledSetting(copyToClipboardActivity, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-				}
-			} else if (key.equals("appTheme")) {
-				recreate();
+
+			switch (key) {
+				case "disableClearURLActivity":
+					if (preferences.getBoolean(key, false)) {
+						packageManager.setComponentEnabledSetting(clearUrlActivity, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+					} else {
+						packageManager.setComponentEnabledSetting(clearUrlActivity, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+					}
+					break;
+				case "disableUnshortURLActivity":
+					if (preferences.getBoolean(key, false)) {
+						packageManager.setComponentEnabledSetting(unshortUrlActivity, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+					} else {
+						packageManager.setComponentEnabledSetting(unshortUrlActivity, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+					}
+					break;
+				case "disableCopyToClipboardActivity":
+					if (preferences.getBoolean(key, false)) {
+						packageManager.setComponentEnabledSetting(copyToClipboardActivity, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+					} else {
+						packageManager.setComponentEnabledSetting(copyToClipboardActivity, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+					}
+					break;
+				case "appTheme":
+					recreate();
+					break;
 			}
 			
 		}
@@ -205,24 +211,17 @@ public class SettingsActivity extends AppCompatActivity {
 		
 		// Dark mode stuff
 		final String appTheme = preferences.getString("appTheme", "follow_system");
-		
-		boolean isDarkMode = false;
-		
-		if (appTheme.equals("follow_system")) {
-			// Snippet from https://github.com/Andrew67/dark-mode-toggle/blob/11c1e16071b301071be0c4715a15fcb031d0bb64/app/src/main/java/com/andrew67/darkmode/UiModeManagerUtil.java#L17
-			final UiModeManager uiModeManager = ContextCompat.getSystemService(this, UiModeManager.class);
-			
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M || uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_CAR) {
-				isDarkMode = true;
-			}
-		} else if (appTheme.equals("dark")) {
-			isDarkMode = true;
-		}
-		
-		if (isDarkMode) {
-			setTheme(R.style.DarkTheme);
-		} else {
-			setTheme(R.style.LigthTheme);
+
+		switch (appTheme) {
+			case "follow_system":
+				AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+				break;
+			case "dark":
+				AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+				break;
+			default:
+				AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+				break;
 		}
 		
 		super.onCreate(savedInstanceState);
@@ -232,8 +231,8 @@ public class SettingsActivity extends AppCompatActivity {
 		// Action bar
 		final Toolbar settingsToolbar = (Toolbar) findViewById(R.id.settings_toolbar);
 		setSupportActionBar(settingsToolbar);
-		
-		settingsFragment = new SettingsFragment();
+
+		SettingsFragment settingsFragment = new SettingsFragment();
 		
 		// Preferences screen
 		getSupportFragmentManager()

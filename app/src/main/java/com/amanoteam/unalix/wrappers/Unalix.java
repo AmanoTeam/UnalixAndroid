@@ -158,10 +158,10 @@ public class Unalix {
 		final boolean parseDocuments = settings.getBoolean("parseDocuments", false);
 		setParseDocuments(parseDocuments);
 		
-		final int timeout = Integer.valueOf(settings.getString("timeout", "3000"));
+		final int timeout = Integer.parseInt(settings.getString("timeout", "3000"));
 		setTimeout(timeout);
 		
-		final int maxRedirects = Integer.valueOf(settings.getString("maxRedirects", "13"));
+		final int maxRedirects = Integer.parseInt(settings.getString("maxRedirects", "13"));
 		setMaxRedirects(maxRedirects);
 		
 	}

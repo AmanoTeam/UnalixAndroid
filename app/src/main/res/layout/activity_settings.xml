@@ -5,17 +5,13 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-		<androidx.appcompat.widget.Toolbar
+		<com.google.android.material.appbar.MaterialToolbar
 			android:id="@+id/settings_toolbar"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:background="?attr/colorPrimary"
-			android:elevation="4dp"
-			android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-			app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+			android:background="?attr/colorPrimary"/>
 		<FrameLayout
 			android:id="@+id/frame_layout_settings"
-			android:layout_below="@+id/settings_toolbar"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent" />
 </LinearLayout>
