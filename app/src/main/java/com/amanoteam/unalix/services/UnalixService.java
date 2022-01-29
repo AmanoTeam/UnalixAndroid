@@ -1,9 +1,5 @@
 package com.amanoteam.unalix.services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.lang.Runnable;
-
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -18,9 +14,11 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Parcelable;
 import android.os.Process;
-import android.widget.Toast;
 
 import com.amanoteam.unalix.wrappers.Unalix;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UnalixService extends Service {
 	

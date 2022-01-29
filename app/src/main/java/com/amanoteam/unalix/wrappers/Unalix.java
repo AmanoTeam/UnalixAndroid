@@ -1,8 +1,9 @@
 package com.amanoteam.unalix.wrappers;
 
 import android.content.Context;
-import androidx.preference.PreferenceManager;
 import android.content.SharedPreferences;
+
+import androidx.preference.PreferenceManager;
 
 public class Unalix {
 	
