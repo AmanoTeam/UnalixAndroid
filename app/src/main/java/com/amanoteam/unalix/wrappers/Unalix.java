@@ -7,6 +7,11 @@ import androidx.preference.PreferenceManager;
 
 public class Unalix {
 
+	static {
+		System.loadLibrary("unalix_jni");
+		initialize();
+	}
+
 	private boolean ignoreReferralMarketing = false;
 	private boolean ignoreRules = false;
 	private boolean ignoreExceptions = false;
@@ -19,10 +24,7 @@ public class Unalix {
 	private int timeout = 3000;
 	private int maxRedirects = 13;
 
-	public Unalix() {
-		System.loadLibrary("unalix_jni");
-		initialize();
-	}
+	private static native void initialize();
 
 	private native String clearUrl(
 			final String url,
@@ -81,8 +83,6 @@ public class Unalix {
 				this.maxRedirects
 		);
 	}
-
-	private native void initialize();
 
 	private void setIgnoreReferralMarketing(final boolean value) {
 		this.ignoreReferralMarketing = value;

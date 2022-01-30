@@ -36,11 +36,8 @@ public class MainActivity extends AppCompatActivity {
 	private final ArrayList<ComponentName> excludeTargets = new ArrayList<>();
 	private final ComponentName clearUrlActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.ClearURLActivity");
 	private final ComponentName unshortUrlActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.UnshortURLActivity");
-	private final OnSharedPreferenceChangeListener onSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-		@Override
-		public void onSharedPreferenceChanged(final SharedPreferences settings, final String key) {
-			recreate();
-		}
+	private final OnSharedPreferenceChangeListener onSharedPreferenceChangeListener = (settings, key) -> {
+		recreate();
 	};
 	private Unalix unalix;
 	private AppCompatEditText urlInput;
@@ -250,4 +247,12 @@ public class MainActivity extends AppCompatActivity {
 		moveTaskToBack(true);
 	}
 
+	@Override
+	protected void onDestroy() {
+		// Unregister preferences callback
+		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		settings.unregisterOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
+
+		super.onDestroy();
+	}
 }
