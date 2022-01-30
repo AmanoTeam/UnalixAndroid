@@ -1,40 +1,40 @@
 <resources>
-    <string-array name="app_theme_entries">
-        <item>Follow system</item>
-        <item>Light</item>
-        <item>Dark</item>
-    </string-array>
-    <string-array name="app_theme_values">
-        <item>follow_system</item>
-        <item>light</item>
-        <item>dark</item>
-    </string-array>
-    <string-array name="timeout_entries">
-        <item>3 seconds</item>
-        <item>6 seconds</item>
-        <item>9 seconds</item>
-        <item>12 seconds</item>
-        <item>15 seconds</item>
-    </string-array>
-    <string-array name="timeout_values">
-        <item>3000</item>
-        <item>6000</item>
-        <item>9000</item>
-        <item>12000</item>
-        <item>15000</item>
-    </string-array>
-    <string-array name="max_redirects_entries">
-        <item>8</item>
-        <item>13</item>
-        <item>18</item>
-        <item>23</item>
-        <item>28</item>
-    </string-array>
-    <string-array name="max_redirects_values">
-        <item>8</item>
-        <item>13</item>
-        <item>18</item>
-        <item>23</item>
-        <item>28</item>
-    </string-array>
+	<string-array name="app_theme_entries">
+		<item>Follow system</item>
+		<item>Light</item>
+		<item>Dark</item>
+	</string-array>
+	<string-array name="app_theme_values">
+		<item>follow_system</item>
+		<item>light</item>
+		<item>dark</item>
+	</string-array>
+	<string-array name="timeout_entries">
+		<item>3 seconds</item>
+		<item>6 seconds</item>
+		<item>9 seconds</item>
+		<item>12 seconds</item>
+		<item>15 seconds</item>
+	</string-array>
+	<string-array name="timeout_values">
+		<item>3000</item>
+		<item>6000</item>
+		<item>9000</item>
+		<item>12000</item>
+		<item>15000</item>
+	</string-array>
+	<string-array name="max_redirects_entries">
+		<item>8</item>
+		<item>13</item>
+		<item>18</item>
+		<item>23</item>
+		<item>28</item>
+	</string-array>
+	<string-array name="max_redirects_values">
+		<item>8</item>
+		<item>13</item>
+		<item>18</item>
+		<item>23</item>
+		<item>28</item>
+	</string-array>
 </resources>

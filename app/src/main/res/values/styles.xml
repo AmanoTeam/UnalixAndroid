@@ -1,6 +1,7 @@
 <resources>
-    <style name="AppTheme" parent="@style/Theme.MaterialComponents.DayNight.NoActionBar">
-	    <item name="android:windowAnimationStyle">@android:style/Animation</item>
+
+	<style name="AppTheme" parent="@style/Theme.MaterialComponents.DayNight.NoActionBar">
+		<item name="android:windowAnimationStyle">@android:style/Animation</item>
 		<item name="android:windowDisablePreview">true</item>
-    </style>
+	</style>
 </resources>
