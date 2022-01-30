@@ -5,42 +5,42 @@
 			android:defaultValue="false"
 			android:key="ignoreReferralMarketing"
 			android:summary="Don't strip referral marketing fields"
-			android:title="ignoreReferralMarketing"></CheckBoxPreference>
+			android:title="ignoreReferralMarketing" />
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="ignoreRules"
 			android:summary="Don't strip generic tracking fields"
-			android:title="ignoreRules"></CheckBoxPreference>
+			android:title="ignoreRules" />
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="ignoreExceptions"
 			android:summary="Ignore rule exceptions"
-			android:title="ignoreExceptions"></CheckBoxPreference>
+			android:title="ignoreExceptions" />
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="ignoreRawRules"
 			android:summary="Don't strip raw tracking elements"
-			android:title="ignoreRawRules"></CheckBoxPreference>
+			android:title="ignoreRawRules" />
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="ignoreRedirections"
 			android:summary="Ignore redirection rules"
-			android:title="ignoreRedirections"></CheckBoxPreference>
+			android:title="ignoreRedirections" />
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="stripDuplicates"
 			android:summary="Strip fields with duplicate names (might break the URL)"
-			android:title="stripDuplicates"></CheckBoxPreference>
+			android:title="stripDuplicates" />
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="stripEmpty"
 			android:summary="Strip fields with empty values (might break the URL)"
-			android:title="stripEmpty"></CheckBoxPreference>
+			android:title="stripEmpty" />
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="parseDocuments"
 			android:summary="Look for redirect URLs in the response body when there is no HTTP redirect to follow"
-			android:title="parseDocuments"></CheckBoxPreference>
+			android:title="parseDocuments" />
 	</PreferenceCategory>
 	<PreferenceCategory android:title="HTTP settings">
 		<ListPreference
@@ -48,13 +48,13 @@
 			android:entries="@array/timeout_entries"
 			android:entryValues="@array/timeout_values"
 			android:key="timeout"
-			android:title="Timeout"></ListPreference>
+			android:title="Timeout" />
 		<ListPreference
 			android:defaultValue="13"
 			android:entries="@array/max_redirects_entries"
 			android:entryValues="@array/max_redirects_values"
 			android:key="maxRedirects"
-			android:title="Max redirects"></ListPreference>
+			android:title="Max redirects" />
 	</PreferenceCategory>
 	<PreferenceCategory android:title="App settings">
 		<ListPreference
@@ -62,21 +62,21 @@
 			android:entries="@array/app_theme_entries"
 			android:entryValues="@array/app_theme_values"
 			android:key="appTheme"
-			android:title="Theme"></ListPreference>
+			android:title="Theme" />
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="disableClearURLActivity"
 			android:summary="Don't show 'Clean URL' in the disambiguation dialog"
-			android:title="Disable ClearURL activity"></CheckBoxPreference>
+			android:title="Disable ClearURL activity" />
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="disableUnshortURLActivity"
 			android:summary="Don't show 'Unshort URL' in the disambiguation dialog"
-			android:title="Disable UnshortURL activity"></CheckBoxPreference>
+			android:title="Disable UnshortURL activity" />
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="disableCopyToClipboardActivity"
 			android:summary="Don't show 'Copy to clipboard' in the disambiguation dialog"
-			android:title="Disable CopyToClipboard activity"></CheckBoxPreference>
+			android:title="Disable CopyToClipboard activity" />
 	</PreferenceCategory>
 </PreferenceScreen>
