@@ -71,7 +71,7 @@
 			android:name=".activities.SettingsActivity"
 			android:alwaysRetainTaskState="true"
 			android:label="Settings"
-			android:launchMode="singleTop"></activity>
+			android:launchMode="singleTop" />
 		<activity
 			android:name=".activities.MainActivity"
 			android:alwaysRetainTaskState="true"
