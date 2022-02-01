@@ -19,8 +19,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
 
 import com.amanoteam.unalix.R;
-import com.amanoteam.unalix.wrappers.Unalix;
 import com.amanoteam.unalix.utilities.PackageUtils;
+import com.amanoteam.unalix.wrappers.Unalix;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 
@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
 			case "dark":
 				AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 				break;
+			case "light":
 			default:
 				AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 				break;

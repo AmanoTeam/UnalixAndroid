@@ -1,8 +1,8 @@
 package com.amanoteam.unalix.services;
 
 import android.app.Service;
-import android.content.Intent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -10,8 +10,8 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
 
-import com.amanoteam.unalix.wrappers.Unalix;
 import com.amanoteam.unalix.utilities.PackageUtils;
+import com.amanoteam.unalix.wrappers.Unalix;
 
 
 public class UnalixService extends Service {
