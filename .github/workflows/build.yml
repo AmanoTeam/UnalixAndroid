@@ -29,7 +29,7 @@ jobs:
         nim-version: "devel"
     - name: Install helper tool
       working-directory: app/src/main/jni/tool
-      run: nimble install --define:ssl --accept
+      run: nimble install --accept
     - name: Checkout PCRE source
       working-directory: app/src/main/jni/tool
       run: tool download pcre

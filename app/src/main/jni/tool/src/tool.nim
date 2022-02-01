@@ -20,11 +20,10 @@ setControlCHook(
         quit(0)
 )
 
-var parser: OptParser = initOptParser()
-
-var arguments: seq[string] = newSeq[string]()
-
-var architecture: string
+var
+    parser: OptParser = initOptParser()
+    arguments: seq[string] = newSeq[string]()
+    architecture: string
 
 while true:
     parser.next()
@@ -42,12 +41,21 @@ while true:
             architecture = parser.val
             
             if architecture.isEmptyOrWhitespace():
-                writeStderr(s = &"fatal: missing required value for argument: --architecture", exitCode = 1)
+                writeStderr(
+                    s = "fatal: missing required value for argument: $1" % [getPrefixedArgument(parser.key)],
+                    exitCode = 1
+                )
             
             if architecture notin ["arm", "arm64", "i386", "amd64"]:
-                writeStderr(s = &"fatal: unsupported build architecture: {architecture}", exitCode = 1)
+                writeStderr(
+                    s = "fatal: unsupported build architecture: $1" % [architecture],
+                    exitCode = 1
+                )
         else:
-            writeStderr(s = &"faltal: unrecognized argument: " & getPrefixedArgument(parser.key), exitCode = 1)
+            writeStderr(
+                s = "faltal: unrecognized argument: $1" % [getPrefixedArgument(parser.key)],
+                exitCode = 1
+            )
     of cmdArgument:
         if len(arguments) == 2:
             writeStderr(s = "faltal: too many arguments", exitCode = 1)
@@ -78,7 +86,7 @@ of "download":
         )
     else:
         writeStderr(
-            s = &"faltal: unknown library name: {target}",
+            s = "faltal: unknown library name: $1" % [target],
             exitCode = 1
         )
 of "patch":
@@ -93,7 +101,7 @@ of "patch":
         echoAndRun(command = "patch --force --strip=0 --input=../patches/libressl/crypto-x509-by_dir.c.patch --directory=../libressl")
     else:
         writeStderr(
-            s = &"faltal: unknown library name: {target}",
+            s = "faltal: unknown library name: $1" % [target],
             exitCode = 1
         )
 of "build":
@@ -125,26 +133,26 @@ of "build":
         CC = toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang"
         CXX = toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang++"
         HOST = "armv7a-linux-androideabi"
-        JNI_LIBS = absolutePath(path = "../../" / "jniLibs/armeabi-v7a")
+        JNI_LIBS = absolutePath(path = "../../jniLibs/armeabi-v7a")
     of "arm64":
         CC = toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang"
         CXX = toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang++"
         HOST = "aarch64-linux-android"
-        JNI_LIBS = absolutePath(path = "../../" / "jniLibs/arm64-v8a")
+        JNI_LIBS = absolutePath(path = "../../jniLibs/arm64-v8a")
     of "i386":
         CC = toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android21-clang"
         CXX = toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android21-clang++"
         HOST = "i686-linux-android"
-        JNI_LIBS = absolutePath(path = "../../" / "jniLibs/x86")
+        JNI_LIBS = absolutePath(path = "../../jniLibs/x86")
     of "amd64":
         CC = toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android21-clang"
         CXX = toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android21-clang++"
         HOST = "x86_64-linux-android"
-        JNI_LIBS = absolutePath(path = "../../" / "jniLibs/x86_64")
+        JNI_LIBS = absolutePath(path = "../../jniLibs/x86_64")
     else:
         discard
     
-    let flags: seq[(string, string)] = @[
+    let FLAGS = [
         ("CC", CC),
         ("CXX", CXX),
         ("AR", toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar"),
@@ -155,14 +163,20 @@ of "build":
         ("OBJCOPY", toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-objcopy"),
         ("OBJDUMP", toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-objdump"),
         ("STRIP", toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip"),
-        ("CFLAGS", "-s -DNDEBUG -Ofast -w -Wfatal-errors -fpic -flto=full -D__ANDROID__ -D__ANDROID_API__=21"),
-        ("CCFLAGS", "-s -DNDEBUG -Ofast -w -Wfatal-errors -fpic -flto=full -D__ANDROID__ -D__ANDROID_API__=21"),
-        ("CXXFLAGS", "-s -DNDEBUG -Ofast -w -Wfatal-errors -fpic -flto=full -D__ANDROID__ -D__ANDROID_API__=21"),
+        ("CFLAGS", "-s -DNDEBUG -Ofast -w -Wfatal-errors -flto=full"),
+        ("CCFLAGS", "-s -DNDEBUG -Ofast -w -Wfatal-errors -flto=full"),
+        ("CXXFLAGS", "-s -DNDEBUG -Ofast -w -Wfatal-errors -flto=full"),
     ]
     
-    let CONFIGURE_FLAGS: string = (
-        block: collect newSeq: (for (key, value) in flags: &"{key}='{value}'")
-    ).join(sep = " ")
+    let parts: seq[string] = (
+        block:
+            collect newSeq: (
+                for (key, value) in FLAGS:
+                    "$1='$2'" % [key, value]
+            )
+    )
+    
+    let CONFIGURE_FLAGS: string = "--silent --host='$1' $2" % [HOST, parts.join(sep = " ")]
     
     case target
     of "pcre":
@@ -177,10 +191,10 @@ of "build":
         if fileExists(filename = "config.status"):
             echoAndRun(command = "make distclean")
         
-        echoAndRun(command = &"./configure --silent --host='{HOST}' {CONFIGURE_FLAGS}")
+        echoAndRun(command = "./configure $1" % [CONFIGURE_FLAGS])
         echoAndRun(command = "make --jobs --silent")
         
-        moveFile(source = "./" / ".libs/libpcre.so", dest = JNI_LIBS / "libpcre.so")
+        moveFile(source = "./.libs/libpcre.so", dest = JNI_LIBS / "libpcre.so")
         
         echoAndRun(command = "make distclean --silent")
     of "libressl":
@@ -195,11 +209,11 @@ of "build":
         if fileExists(filename = "config.status"):
             echoAndRun(command = "make distclean")
         
-        echoAndRun(command = &"./configure --silent --host='{HOST}' {CONFIGURE_FLAGS}")
+        echoAndRun(command = "./configure $1" % [CONFIGURE_FLAGS])
         echoAndRun(command = "make --jobs --silent")
 
-        moveFile(source = expandFilename(filename = "./" / "crypto/.libs/libcrypto.so"), dest = JNI_LIBS / "libcrypto.so")
-        moveFile(source = expandFilename(filename = "./" / "ssl/.libs/libssl.so"), dest = JNI_LIBS / "libssl.so")
+        moveFile(source = "./crypto/.libs/libcrypto.so", dest = JNI_LIBS / "libcrypto.so")
+        moveFile(source = "./ssl/.libs/libssl.so", dest = JNI_LIBS / "libssl.so")
         
         echoAndRun(command = "make distclean --silent")
     of "wrapper":
@@ -210,7 +224,7 @@ of "build":
         
         echoAndRun(command = "nimble install --accept")
         
-        let nimCompilerFlags: seq[(string, string)] = @[
+        let FLAGS = [
             ("clang.exe", CC),
             ("clang.linkerexe", CC),
             ("os", "android"),
@@ -223,6 +237,8 @@ of "build":
             ("define", "libressl"),
             ("define", "noSignalHandler"),
             ("panics", "on"),
+            ("errorMax", "1"),
+            ("passC", "-DNDEBUG"),
             ("passC", "-Ofast"),
             ("passC", "-flto=full"),
             ("passC", "-DNimMain=Java_com_amanoteam_unalix_wrappers_Unalix_initialize"),
@@ -230,11 +246,15 @@ of "build":
             ("out", JNI_LIBS / "libunalix_jni.so")
         ]
         
-        let compilerFlags: string = (
-            block: collect newSeq: (for (key, value) in nimCompilerFlags: &"--{key}:'{value}'")
-        ).join(sep = " ")
-    
-        echoAndRun(command = &"nim compile {compilerFlags} './src/wrapper.nim'")
+        let parts: seq[string] = (
+            block:
+                collect newSeq: (
+                    for (key, value) in FLAGS:
+                        "--$1:'$2'" % [key, value]
+                )
+        )
+
+        echoAndRun(command = "nim compile $1 '$2'" % [parts.join(sep = " "), "./src/wrapper.nim"])
     else:
         writeStderr(
             s = &"faltal: unknown library name: {target}",
