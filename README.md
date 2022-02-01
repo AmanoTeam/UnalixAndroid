@@ -1,8 +1,13 @@
+# Unalix
+
 Unalix for Android is an wrapper for the [Unalix-nim](https://github.com/AmanoTeam/Unalix-nim) library.
 
 #### Downloads
 
-You can grab the APK from the [releases](https://github.com/AmanoTeam/UnalixAndroid/releases/latest) page. It should work on any device or emulator running Android 5.0 or higher.
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+      alt="Get it on F-Droid"
+      height="80">](https://f-droid.org/en/packages/com.amanoteam.unalix)
+      
 
 #### Contributing
 
