@@ -1,9 +1,9 @@
 # Package
 
-version       = "0.1"
+version       = "0.2"
 author        = "SnwMds"
-description   = "A new awesome nimble package"
-license       = "LGPL-3.0-or-later"
+description   = "Build tool for Unalix"
+license       = "LGPL-3.0-only"
 srcDir        = "src"
 bin           = @["tool"]
 
@@ -11,4 +11,4 @@ bin           = @["tool"]
 # Dependencies
 
 requires "nim >= 1.6.0"
-requires "https://github.com/SnwMds/zippy#fix-permissions2"
+requires "zippy#head"
