@@ -11,4 +11,4 @@ bin           = @["tool"]
 # Dependencies
 
 requires "nim >= 1.6.0"
-requires "zippy#head"
+requires "https://github.com/SnwMds/zippy#fix-permissions2"
