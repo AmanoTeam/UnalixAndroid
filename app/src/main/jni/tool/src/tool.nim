@@ -212,8 +212,8 @@ of "build":
         echoAndRun(command = "./configure $1" % [CONFIGURE_FLAGS])
         echoAndRun(command = "make --jobs --silent")
 
-        moveFile(source = "./crypto/.libs/libcrypto.so", dest = JNI_LIBS / "libcrypto.so")
-        moveFile(source = "./ssl/.libs/libssl.so", dest = JNI_LIBS / "libssl.so")
+        moveFile(source = expandFilename(filename = "./crypto/.libs/libcrypto.so"), dest = JNI_LIBS / "libcrypto.so")
+        moveFile(source = expandFilename(filename = "./ssl/.libs/libssl.so"), dest = JNI_LIBS / "libssl.so")
         
         echoAndRun(command = "make distclean --silent")
     of "wrapper":
