@@ -18,9 +18,11 @@ public class PackageUtils {
 
 	private static final String CLEAR_URL_ACTIVITY = String.format("%s.%s", PACKAGE_NAME, "activities.ClearURLActivity");
 	private static final String UNSHORT_URL_ACTIVITY = String.format("%s.%s", PACKAGE_NAME, "activities.UnshortURLActivity");
+	private static final String COPY_TO_CLIPBOARD_ACTIVITY = String.format("%s.%s", PACKAGE_NAME, "activities.CopyToClipboardActivity");
 
-	private static final ComponentName CLEAR_URL_COMPONENT = new ComponentName(PACKAGE_NAME, CLEAR_URL_ACTIVITY);
-	private static final ComponentName UNSHORT_URL_COMPONENT = new ComponentName(PACKAGE_NAME, UNSHORT_URL_ACTIVITY);
+	public static final ComponentName CLEAR_URL_COMPONENT = new ComponentName(PACKAGE_NAME, CLEAR_URL_ACTIVITY);
+	public static final ComponentName UNSHORT_URL_COMPONENT = new ComponentName(PACKAGE_NAME, UNSHORT_URL_ACTIVITY);
+	public static final ComponentName COPY_TO_CLIPBOARD_COMPONENT = new ComponentName(PACKAGE_NAME, COPY_TO_CLIPBOARD_ACTIVITY);
 
 	private static final ComponentName[] CHOOSER_EXCLUDE_COMPONENTS = {
 		CLEAR_URL_COMPONENT,

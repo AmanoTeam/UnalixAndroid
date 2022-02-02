@@ -22,10 +22,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
-import androidx.preference.PreferenceScreen;
 
 import com.amanoteam.unalix.R;
 import com.amanoteam.unalix.fragments.SettingsFragment;
+import com.amanoteam.unalix.utilities.PackageUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -146,10 +146,9 @@ public class SettingsActivity extends AppCompatActivity {
 					Toast.makeText(context, "Please restart for changes to take effect", Toast.LENGTH_SHORT).show();
 				}
 			});
-	private final ComponentName clearUrlActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.activities.ClearURLActivity");
-	private final ComponentName unshortUrlActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.activities.UnshortURLActivity");
-	private final ComponentName copyToClipboardActivity = new ComponentName("com.amanoteam.unalix", "com.amanoteam.unalix.activities.CopyToClipboardActivity");
+
 	private PackageManager packageManager;
+
 	private final OnSharedPreferenceChangeListener onSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 		@Override
 		public void onSharedPreferenceChanged(final SharedPreferences preferences, final String key) {
@@ -157,30 +156,29 @@ public class SettingsActivity extends AppCompatActivity {
 			switch (key) {
 				case "disableClearURLActivity":
 					if (preferences.getBoolean(key, false)) {
-						packageManager.setComponentEnabledSetting(clearUrlActivity, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+						packageManager.setComponentEnabledSetting(PackageUtils.CLEAR_URL_COMPONENT, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
 					} else {
-						packageManager.setComponentEnabledSetting(clearUrlActivity, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+						packageManager.setComponentEnabledSetting(PackageUtils.CLEAR_URL_COMPONENT, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 					}
 					break;
 				case "disableUnshortURLActivity":
 					if (preferences.getBoolean(key, false)) {
-						packageManager.setComponentEnabledSetting(unshortUrlActivity, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+						packageManager.setComponentEnabledSetting(PackageUtils.UNSHORT_URL_COMPONENT, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
 					} else {
-						packageManager.setComponentEnabledSetting(unshortUrlActivity, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+						packageManager.setComponentEnabledSetting(PackageUtils.UNSHORT_URL_COMPONENT, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 					}
 					break;
 				case "disableCopyToClipboardActivity":
 					if (preferences.getBoolean(key, false)) {
-						packageManager.setComponentEnabledSetting(copyToClipboardActivity, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+						packageManager.setComponentEnabledSetting(PackageUtils.COPY_TO_CLIPBOARD_COMPONENT, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
 					} else {
-						packageManager.setComponentEnabledSetting(copyToClipboardActivity, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+						packageManager.setComponentEnabledSetting(PackageUtils.COPY_TO_CLIPBOARD_COMPONENT, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 					}
 					break;
 			}
 
 		}
 	};
-	private PreferenceScreen preferenceScreen;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -210,22 +208,21 @@ public class SettingsActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_settings);
 
 		// Action bar
-		final Toolbar settingsToolbar = (Toolbar) findViewById(R.id.settings_toolbar);
-		setSupportActionBar(settingsToolbar);
-
-		SettingsFragment settingsFragment = new SettingsFragment();
+		final Toolbar toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
+		setSupportActionBar(toolbar);
 
 		// Preferences screen
 		getSupportFragmentManager()
-				.beginTransaction()
-				.replace(R.id.frame_layout_settings, settingsFragment)
-				.commit();
+			.beginTransaction()
+			.replace(R.id.frame_layout_settings, new SettingsFragment())
+			.commit();
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		final MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.settings_menu, menu);
+
 		return true;
 	}
 
@@ -238,18 +235,16 @@ public class SettingsActivity extends AppCompatActivity {
 				final DateFormat date = new SimpleDateFormat("dd-MM-yyy_HH-mm-ss");
 
 				final Intent exportIntent = new Intent();
-
 				exportIntent.setAction(Intent.ACTION_CREATE_DOCUMENT);
 				exportIntent.addCategory(Intent.CATEGORY_OPENABLE);
 				exportIntent.setType("application/json");
-				exportIntent.putExtra(Intent.EXTRA_TITLE, "unalix_settings_" + date.format(currentLocalTime) + ".json");
+				exportIntent.putExtra(Intent.EXTRA_TITLE, String.format("unalix_settings_%s.json", date.format(currentLocalTime)));
 
 				exportPreferences.launch(exportIntent);
 
 				return true;
 			case R.id.settings_import:
 				final Intent importIntent = new Intent();
-
 				importIntent.setAction(Intent.ACTION_GET_CONTENT);
 				importIntent.addCategory(Intent.CATEGORY_OPENABLE);
 				importIntent.setType("*/*");
@@ -265,7 +260,7 @@ public class SettingsActivity extends AppCompatActivity {
 
 	@Override
 	public void onBackPressed() {
-		moveTaskToBack(true);
+		finish();
 	}
 
 }

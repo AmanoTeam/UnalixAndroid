@@ -26,10 +26,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
 
-	private final OnSharedPreferenceChangeListener onSharedPreferenceChangeListener = (settings, key) -> {
-		recreate();
-	};
 	private Unalix unalix;
+	private final OnSharedPreferenceChangeListener onSharedPreferenceChangeListener = (settings, key) -> {
+		// Update library preferences
+		unalix.setFromPreferences(this);
+	};
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -147,12 +148,9 @@ public class MainActivity extends AppCompatActivity {
 			case R.id.main_quit:
 				System.exit(0);
 			case R.id.settings_activity:
-				final Intent settingsIntent = new Intent(this, SettingsActivity.class);
-
-				settingsIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-				startActivity(settingsIntent);
+				final Intent activity = new Intent(this, SettingsActivity.class);
+				activity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				startActivity(activity);
 
 				return true;
 			default:
