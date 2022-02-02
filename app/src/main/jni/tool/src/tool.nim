@@ -53,19 +53,19 @@ while true:
                 )
         else:
             writeStderr(
-                s = "faltal: unrecognized argument: $1" % [getPrefixedArgument(parser.key)],
+                s = "fatal: unrecognized argument: $1" % [getPrefixedArgument(parser.key)],
                 exitCode = 1
             )
     of cmdArgument:
         if len(arguments) == 2:
-            writeStderr(s = "faltal: too many arguments", exitCode = 1)
+            writeStderr(s = "fatal: too many arguments", exitCode = 1)
         
         arguments.add(parser.key)
 
 if len(arguments) > 2:
-    writeStderr(s = "faltal: too many arguments", exitCode = 1)
+    writeStderr(s = "fatal: too many arguments", exitCode = 1)
 elif len(arguments) < 2:
-    writeStderr(s = "faltal: argument list too short", exitCode = 1)
+    writeStderr(s = "fatal: argument list too short", exitCode = 1)
 
 let
     command: string = arguments[0]
@@ -86,7 +86,7 @@ of "download":
         )
     else:
         writeStderr(
-            s = "faltal: unknown library name: $1" % [target],
+            s = "fatal: unknown library name: $1" % [target],
             exitCode = 1
         )
 of "patch":
@@ -94,14 +94,14 @@ of "patch":
     of "libressl":
         if not dirExists(dir = "../libressl"):
             writeStderr(
-                s = "faltal: no source directory found: did you forget to run './tool download libressl'?",
+                s = "fatal: no source directory found: did you forget to run './tool download libressl'?",
                 exitCode = 1
             )
 
         echoAndRun(command = "patch --force --strip=0 --input=../patches/libressl/crypto-x509-by_dir.c.patch --directory=../libressl")
     else:
         writeStderr(
-            s = "faltal: unknown library name: $1" % [target],
+            s = "fatal: unknown library name: $1" % [target],
             exitCode = 1
         )
 of "build":
@@ -109,19 +109,19 @@ of "build":
     
     if toolchain.isEmptyOrWhitespace():
         writeStderr(
-            s = "faltal: ANDROID_NDK is not defined",
+            s = "fatal: ANDROID_NDK is not defined",
             exitCode = 1
         )
     
     if not dirExists(dir = toolchain):
         writeStderr(
-            s = "faltal: ANDROID_NDK points to an invalid location",
+            s = "fatal: ANDROID_NDK points to an invalid location",
             exitCode = 1
         )
     
     if architecture.isEmptyOrWhitespace():
         writeStderr(
-            s = "faltal: missing required argument: -a/--architecture",
+            s = "fatal: missing required argument: -a/--architecture",
             exitCode = 1
         )
     
@@ -182,7 +182,7 @@ of "build":
     of "pcre":
         if not dirExists(dir = "../pcre"):
             writeStderr(
-                s = "faltal: no source directory found: did you forget to run './tool download pcre'?",
+                s = "fatal: no source directory found: did you forget to run './tool download pcre'?",
                 exitCode = 1
             )
         
@@ -200,7 +200,7 @@ of "build":
     of "libressl":
         if not dirExists(dir = "../libressl"):
             writeStderr(
-                s = "faltal: no source directory found: did you forget to run './tool download libressl'?",
+                s = "fatal: no source directory found: did you forget to run './tool download libressl'?",
                 exitCode = 1
             )
         
@@ -218,7 +218,7 @@ of "build":
         echoAndRun(command = "make distclean --silent")
     of "wrapper":
         if not dirExists(dir = "../wrapper"):
-            writeStderr(s = "faltal: no source directory found", exitCode = 1)
+            writeStderr(s = "fatal: no source directory found", exitCode = 1)
         
         setCurrentDir(newDir = "../wrapper")
         
@@ -257,11 +257,11 @@ of "build":
         echoAndRun(command = "nim compile $1 '$2'" % [parts.join(sep = " "), "./src/wrapper.nim"])
     else:
         writeStderr(
-            s = &"faltal: unknown library name: {target}",
+            s = &"fatal: unknown library name: {target}",
             exitCode = 1
         )
 else:
     writeStderr(
-        s = &"faltal: unknown command name: {command}",
+        s = &"fatal: unknown command name: {command}",
         exitCode = 1
     )
