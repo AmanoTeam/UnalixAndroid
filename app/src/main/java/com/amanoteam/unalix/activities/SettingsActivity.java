@@ -188,21 +188,6 @@ public class SettingsActivity extends AppCompatActivity {
 		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		preferences.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
 
-		// Dark mode stuff
-		final String appTheme = preferences.getString("appTheme", "follow_system");
-
-		switch (appTheme) {
-			case "follow_system":
-				AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-				break;
-			case "dark":
-				AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-				break;
-			default:
-				AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-				break;
-		}
-
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_settings);

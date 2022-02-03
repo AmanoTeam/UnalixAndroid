@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -30,6 +31,23 @@ public class MainActivity extends AppCompatActivity {
 	private final OnSharedPreferenceChangeListener onSharedPreferenceChangeListener = (settings, key) -> {
 		// Update library preferences
 		unalix.setFromPreferences(this);
+
+		if (key.equals("appTheme")) {
+			// Dark mode stuff
+			final String appTheme = settings.getString("appTheme", "follow_system");
+
+			switch (appTheme) {
+				case "follow_system":
+					AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+					break;
+				case "dark":
+					AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+					break;
+				default:
+					AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+					break;
+			}
+		}
 	};
 
 	@Override
