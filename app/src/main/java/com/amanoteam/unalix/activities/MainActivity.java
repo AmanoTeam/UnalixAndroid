@@ -13,12 +13,12 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
 
 import com.amanoteam.unalix.R;
 import com.amanoteam.unalix.utilities.PackageUtils;
 import com.amanoteam.unalix.wrappers.Unalix;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -44,11 +44,6 @@ public class MainActivity extends AppCompatActivity {
 		// Preferences stuff
 		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		settings.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
-
-		// Dark mode stuff
-		final String appTheme = settings.getString("appTheme", "follow_system");
-
-		PackageUtils.setAppTheme(appTheme);
 
 		super.onCreate(savedInstanceState);
 
@@ -148,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
 		});
 
 		// Action bar stuff
-		final Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+		final MaterialToolbar toolbar = findViewById(R.id.main_toolbar);
 		setSupportActionBar(toolbar);
 
 		// libunalix stuff

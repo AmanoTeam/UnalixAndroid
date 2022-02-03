@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.EditTextPreference;
@@ -27,6 +26,7 @@ import androidx.preference.ListPreference;
 import com.amanoteam.unalix.R;
 import com.amanoteam.unalix.fragments.SettingsFragment;
 import com.amanoteam.unalix.utilities.PackageUtils;
+import com.google.android.material.appbar.MaterialToolbar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -232,7 +232,7 @@ public class SettingsActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_settings);
 
 		// Action bar
-		final Toolbar toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
+		final MaterialToolbar toolbar = findViewById(R.id.settings_toolbar);
 		setSupportActionBar(toolbar);
 
 		settingsFragment = new SettingsFragment();
