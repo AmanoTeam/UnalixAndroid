@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,7 +13,6 @@ import android.view.View.OnClickListener;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
@@ -36,17 +34,7 @@ public class MainActivity extends AppCompatActivity {
 			// Dark mode stuff
 			final String appTheme = settings.getString("appTheme", "follow_system");
 
-			switch (appTheme) {
-				case "follow_system":
-					AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-					break;
-				case "dark":
-					AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-					break;
-				default:
-					AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-					break;
-			}
+			PackageUtils.setAppTheme(appTheme);
 		}
 	};
 
@@ -59,18 +47,7 @@ public class MainActivity extends AppCompatActivity {
 		// Dark mode stuff
 		final String appTheme = settings.getString("appTheme", "follow_system");
 
-		switch (appTheme) {
-			case "follow_system":
-				AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-				break;
-			case "dark":
-				AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-				break;
-			case "light":
-			default:
-				AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-				break;
-		}
+		PackageUtils.setAppTheme(appTheme);
 
 		super.onCreate(savedInstanceState);
 

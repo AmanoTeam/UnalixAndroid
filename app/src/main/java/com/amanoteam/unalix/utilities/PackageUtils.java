@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Parcelable;
 
+import androidx.appcompat.app.AppCompatDelegate;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,6 +82,21 @@ public class PackageUtils {
 
 		return chooser;
 
+	}
+
+	public static void setAppTheme(String appTheme) {
+		switch (appTheme) {
+			case "follow_system":
+				AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+				break;
+			case "dark":
+				AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+				break;
+			case "light":
+			default:
+				AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+				break;
+		}
 	}
 
 }
