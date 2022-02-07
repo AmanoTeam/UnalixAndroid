@@ -41,31 +41,22 @@ while true:
             architecture = parser.val
             
             if architecture.isEmptyOrWhitespace():
-                writeStderr(
-                    s = "fatal: missing required value for argument: $1" % [getPrefixedArgument(parser.key)],
-                    exitCode = 1
-                )
+                ! ("fatal: missing required value for argument: $1" % [getPrefixedArgument(parser.key)])
             
             if architecture notin ["arm", "arm64", "i386", "amd64"]:
-                writeStderr(
-                    s = "fatal: unsupported build architecture: $1" % [architecture],
-                    exitCode = 1
-                )
+                ! ("fatal: unsupported build architecture: $1" % [architecture])
         else:
-            writeStderr(
-                s = "fatal: unrecognized argument: $1" % [getPrefixedArgument(parser.key)],
-                exitCode = 1
-            )
+            ! ("fatal: unrecognized argument: $1" % [getPrefixedArgument(parser.key)])
     of cmdArgument:
         if len(arguments) == 2:
-            writeStderr(s = "fatal: too many arguments", exitCode = 1)
+            ! ("fatal: too many arguments")
         
         arguments.add(parser.key)
 
 if len(arguments) > 2:
-    writeStderr(s = "fatal: too many arguments", exitCode = 1)
+    ! ("fatal: too many arguments")
 elif len(arguments) < 2:
-    writeStderr(s = "fatal: argument list too short", exitCode = 1)
+    ! ("fatal: argument list too short")
 
 let
     command: string = arguments[0]
@@ -75,55 +66,37 @@ case command
 of "download":
     case target
     of "pcre":
-        downloadFile(
-            url = "https://megalink.dl.sourceforge.net/project/pcre/pcre/8.45/pcre-8.45.tar.gz",
+        downloadTarball(
+            url = "https://download.sourceforge.net/project/pcre/pcre/8.45/pcre-8.45.tar.gz",
             filename = getTempDir() / "pcre.tgz"
         )
     of "libressl":
-        downloadFile(
+        downloadTarball(
             url = "https://cdn.openbsd.org/pub/OpenBSD/LibreSSL/libressl-3.4.2.tar.gz",
             filename = getTempDir() / "libressl.tgz"
         )
     else:
-        writeStderr(
-            s = "fatal: unknown library name: $1" % [target],
-            exitCode = 1
-        )
+        ! ("fatal: unknown library name: $1" % [target])
 of "patch":
     case target
     of "libressl":
         if not dirExists(dir = "../libressl"):
-            writeStderr(
-                s = "fatal: no source directory found: did you forget to run './tool download libressl'?",
-                exitCode = 1
-            )
-
-        echoAndRun(command = "patch --force --strip=0 --input=../patches/libressl/crypto-x509-by_dir.c.patch --directory=../libressl")
+            ! ("fatal: no source directory found: did you forget to run './tool download libressl'?")
+        
+        ~ ("patch --force --strip=0 --input=../patches/libressl/crypto-x509-by_dir.c.patch --directory=../libressl")
     else:
-        writeStderr(
-            s = "fatal: unknown library name: $1" % [target],
-            exitCode = 1
-        )
+        ! ("fatal: unknown library name: $1" % [target])
 of "build":
     let toolchain: string = getEnv(key = "ANDROID_NDK")
     
     if toolchain.isEmptyOrWhitespace():
-        writeStderr(
-            s = "fatal: ANDROID_NDK is not defined",
-            exitCode = 1
-        )
+        ! ("fatal: ANDROID_NDK is not defined")
     
     if not dirExists(dir = toolchain):
-        writeStderr(
-            s = "fatal: ANDROID_NDK points to an invalid location",
-            exitCode = 1
-        )
+        ! ("fatal: ANDROID_NDK points to an invalid location")
     
     if architecture.isEmptyOrWhitespace():
-        writeStderr(
-            s = "fatal: missing required argument: -a/--architecture",
-            exitCode = 1
-        )
+        ! ("fatal: missing required argument: -a/--architecture")
     
     var
         CC, CXX, HOST, JNI_LIBS: string
@@ -167,62 +140,55 @@ of "build":
         ("CCFLAGS", "-s -DNDEBUG -Ofast -w -Wfatal-errors -flto=full"),
         ("CXXFLAGS", "-s -DNDEBUG -Ofast -w -Wfatal-errors -flto=full"),
     ]
-    
-    let parts: seq[string] = (
-        block:
-            collect newSeq: (
-                for (key, value) in FLAGS:
-                    "$1='$2'" % [key, value]
+
+    let CONFIGURE_FLAGS: string = "--silent --host='$1' $2" % [
+        HOST,
+        (
+            block: collect newSeq: (
+                for (key, value) in FLAGS: "$1='$2'" % [key, value]
             )
-    )
-    
-    let CONFIGURE_FLAGS: string = "--silent --host='$1' $2" % [HOST, parts.join(sep = " ")]
-    
+        ).join(sep = " ")
+    ]
+
     case target
     of "pcre":
         if not dirExists(dir = "../pcre"):
-            writeStderr(
-                s = "fatal: no source directory found: did you forget to run './tool download pcre'?",
-                exitCode = 1
-            )
+            ! "fatal: no source directory found: did you forget to run './tool download pcre'?"
         
         setCurrentDir(newDir = "../pcre")
         
         if fileExists(filename = "config.status"):
-            echoAndRun(command = "make distclean")
+            ~ "make distclean"
         
-        echoAndRun(command = "./configure $1" % [CONFIGURE_FLAGS])
-        echoAndRun(command = "make --jobs --silent")
+        ~ ("./configure $1" % [CONFIGURE_FLAGS])
+        ~ "make --jobs --silent"
         
         moveFile(source = "./.libs/libpcre.so", dest = JNI_LIBS / "libpcre.so")
         
-        echoAndRun(command = "make distclean --silent")
+        ~ "make distclean --silent"
     of "libressl":
         if not dirExists(dir = "../libressl"):
-            writeStderr(
-                s = "fatal: no source directory found: did you forget to run './tool download libressl'?",
-                exitCode = 1
-            )
+            ! "fatal: no source directory found: did you forget to run './tool download libressl'?"
         
         setCurrentDir(newDir = "../libressl")
         
         if fileExists(filename = "config.status"):
-            echoAndRun(command = "make distclean")
+            ~ "make distclean"
         
-        echoAndRun(command = "./configure $1" % [CONFIGURE_FLAGS])
-        echoAndRun(command = "make --jobs --silent")
+        ~ ("./configure $1" % [CONFIGURE_FLAGS])
+        ~ "make --jobs --silent"
 
         moveFile(source = expandFilename(filename = "./crypto/.libs/libcrypto.so"), dest = JNI_LIBS / "libcrypto.so")
         moveFile(source = expandFilename(filename = "./ssl/.libs/libssl.so"), dest = JNI_LIBS / "libssl.so")
         
-        echoAndRun(command = "make distclean --silent")
+        ~ "make distclean --silent"
     of "wrapper":
         if not dirExists(dir = "../wrapper"):
-            writeStderr(s = "fatal: no source directory found", exitCode = 1)
+            ! "fatal: no source directory found"
         
         setCurrentDir(newDir = "../wrapper")
         
-        echoAndRun(command = "nimble install --accept")
+        ~ "nimble install --accept"
         
         let FLAGS = [
             ("clang.exe", CC),
@@ -246,22 +212,17 @@ of "build":
             ("out", JNI_LIBS / "libunalix_jni.so")
         ]
         
-        let parts: seq[string] = (
-            block:
-                collect newSeq: (
-                    for (key, value) in FLAGS:
-                        "--$1:'$2'" % [key, value]
-                )
+        ~ (
+            "nim compile $1 '$2'" % [
+                (
+                    block: collect newSeq: (
+                        for (key, value) in FLAGS: "--$1:'$2'" % [key, value]
+                    )
+                ).join(sep = " "),
+                "./src/wrapper.nim"
+            ]
         )
-
-        echoAndRun(command = "nim compile $1 '$2'" % [parts.join(sep = " "), "./src/wrapper.nim"])
     else:
-        writeStderr(
-            s = &"fatal: unknown library name: {target}",
-            exitCode = 1
-        )
+        ! ("fatal: unknown library name: $1" % [target])
 else:
-    writeStderr(
-        s = &"fatal: unknown command name: {command}",
-        exitCode = 1
-    )
+    ! ("fatal: unknown command name: $1" % [command])
