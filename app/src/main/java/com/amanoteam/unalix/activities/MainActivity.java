@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 			final String text = urlInput.getText().toString();
 
 			if (TextUtils.isEmpty(text)) {
-				Toast.makeText(MainActivity.this, "There is no URL to clean", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), "There is no URL to clean", Toast.LENGTH_SHORT).show();
 				return;
 			}
 
@@ -82,11 +82,11 @@ public class MainActivity extends AppCompatActivity {
 			final String url = urlInput.getText().toString();
 
 			if (TextUtils.isEmpty(url)) {
-				Toast.makeText(MainActivity.this, "There is no URL to launch", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), "There is no URL to launch", Toast.LENGTH_SHORT).show();
 				return;
 			}
 
-			final Intent chooser = PackageUtils.createChooser(this, url, Intent.ACTION_VIEW);
+			final Intent chooser = PackageUtils.createChooser(getApplicationContext(), url, Intent.ACTION_VIEW);
 			startActivity(chooser);
 		});
 
@@ -96,11 +96,11 @@ public class MainActivity extends AppCompatActivity {
 			final String url = urlInput.getText().toString();
 
 			if (TextUtils.isEmpty(url)) {
-				Toast.makeText(MainActivity.this, "There is no URL to share", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), "There is no URL to share", Toast.LENGTH_SHORT).show();
 				return;
 			}
 
-			final Intent chooser = PackageUtils.createChooser(this, url, Intent.ACTION_SEND);
+			final Intent chooser = PackageUtils.createChooser(getApplicationContext(), url, Intent.ACTION_SEND);
 			startActivity(chooser);
 		});
 
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
 				final String url = urlInput.getText().toString();
 
 				if (TextUtils.isEmpty(url)) {
-					Toast.makeText(MainActivity.this, "URL input is already empty", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(), "URL input is already empty", Toast.LENGTH_SHORT).show();
 					return;
 				}
 
