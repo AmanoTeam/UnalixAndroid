@@ -8,6 +8,9 @@ Unalix for Android is an wrapper for the [Unalix-nim](https://github.com/AmanoTe
       alt="Get it on F-Droid"
       height="80">](https://f-droid.org/en/packages/com.amanoteam.unalix)
       
+#### Building
+
+See the [BUILDING.md](./BUILDING.md) for build instructions.
 
 #### Contributing
 
