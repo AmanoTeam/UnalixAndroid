@@ -49,7 +49,6 @@ public class PackageUtils {
 				return null;
 		}
 
-		
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 			final Intent chooser = Intent.createChooser(intent, url);
 			chooser.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -61,7 +60,7 @@ public class PackageUtils {
 		// Set package manager
 		final PackageManager packageManager = context.getPackageManager();
 
-		final List<Intent> intents = new ArrayList<>();
+		final List<Intent> intents = new ArrayList<Intent>();
 		final List<ResolveInfo> targets = packageManager.queryIntentActivities(intent, 0);
 
 		for (final ResolveInfo target : targets) {
@@ -81,10 +80,19 @@ public class PackageUtils {
 		chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, intents.toArray(new Parcelable[intents.size()]));
 
 		return chooser;
-
 	}
 
-	public static void setAppTheme(String appTheme) {
+	public static void disableComponent(final Context context, final ComponentName component) {
+		final PackageManager packageManager = context.getPackageManager();
+		packageManager.setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+	}
+
+	public static void enableComponent(final Context context, final ComponentName component) {
+		final PackageManager packageManager = context.getPackageManager();
+		packageManager.setComponentEnabledSetting(component, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+	}
+
+	public static void setAppTheme(final String appTheme) {
 		switch (appTheme) {
 			case "follow_system":
 				AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);

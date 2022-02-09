@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -145,32 +144,30 @@ public class SettingsActivity extends AppCompatActivity {
 				}
 			});
 
-	private PackageManager packageManager;
-
 	private final OnSharedPreferenceChangeListener onSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 		@Override
 		public void onSharedPreferenceChanged(final SharedPreferences preferences, final String key) {
-
+			
 			switch (key) {
 				case "disableClearURLActivity":
 					if (preferences.getBoolean(key, false)) {
-						packageManager.setComponentEnabledSetting(PackageUtils.CLEAR_URL_COMPONENT, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+						PackageUtils.disableComponent(getApplicationContext(), PackageUtils.CLEAR_URL_COMPONENT);
 					} else {
-						packageManager.setComponentEnabledSetting(PackageUtils.CLEAR_URL_COMPONENT, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+						PackageUtils.enableComponent(getApplicationContext(), PackageUtils.CLEAR_URL_COMPONENT);
 					}
 					break;
 				case "disableUnshortURLActivity":
 					if (preferences.getBoolean(key, false)) {
-						packageManager.setComponentEnabledSetting(PackageUtils.UNSHORT_URL_COMPONENT, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+						PackageUtils.disableComponent(getApplicationContext(), PackageUtils.UNSHORT_URL_COMPONENT);
 					} else {
-						packageManager.setComponentEnabledSetting(PackageUtils.UNSHORT_URL_COMPONENT, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+						PackageUtils.enableComponent(getApplicationContext(), PackageUtils.UNSHORT_URL_COMPONENT);
 					}
 					break;
 				case "disableCopyToClipboardActivity":
 					if (preferences.getBoolean(key, false)) {
-						packageManager.setComponentEnabledSetting(PackageUtils.COPY_TO_CLIPBOARD_COMPONENT, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+						PackageUtils.disableComponent(getApplicationContext(), PackageUtils.COPY_TO_CLIPBOARD_COMPONENT);
 					} else {
-						packageManager.setComponentEnabledSetting(PackageUtils.COPY_TO_CLIPBOARD_COMPONENT, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+						PackageUtils.enableComponent(getApplicationContext(), PackageUtils.COPY_TO_CLIPBOARD_COMPONENT);
 					}
 					break;
 			}
@@ -180,8 +177,6 @@ public class SettingsActivity extends AppCompatActivity {
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		packageManager = getPackageManager();
-
 		// Preferences stuff
 		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		preferences.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
@@ -205,7 +200,6 @@ public class SettingsActivity extends AppCompatActivity {
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		final MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.settings_menu, menu);
-
 		return true;
 	}
 
