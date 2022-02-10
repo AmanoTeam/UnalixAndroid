@@ -39,10 +39,10 @@ while true:
             writeStdout(s = helpMessage, exitCode = 0)
         of "a", "architecture":
             architecture = parser.val
-            
+
             if architecture.isEmptyOrWhitespace():
                 ! ("fatal: missing required value for argument: $1" % [getPrefixedArgument(parser.key)])
-            
+           
             if architecture notin ["arm", "arm64", "i386", "amd64"]:
                 ! ("fatal: unsupported build architecture: $1" % [architecture])
         else:
@@ -50,7 +50,7 @@ while true:
     of cmdArgument:
         if len(arguments) == 2:
             ! ("fatal: too many arguments")
-        
+
         arguments.add(parser.key)
 
 if len(arguments) > 2:
@@ -82,25 +82,25 @@ of "patch":
     of "libressl":
         if not dirExists(dir = "../libressl"):
             ! ("fatal: no source directory found: did you forget to run './tool download libressl'?")
-        
+
         ~ ("patch --force --strip=0 --input=../patches/libressl/crypto-x509-by_dir.c.patch --directory=../libressl")
     else:
         ! ("fatal: unknown library name: $1" % [target])
 of "build":
     let toolchain: string = getEnv(key = "ANDROID_NDK")
-    
+
     if toolchain.isEmptyOrWhitespace():
         ! ("fatal: ANDROID_NDK is not defined")
-    
+
     if not dirExists(dir = toolchain):
         ! ("fatal: ANDROID_NDK points to an invalid location")
-    
+
     if architecture.isEmptyOrWhitespace():
         ! ("fatal: missing required argument: -a/--architecture")
-    
+
     var
         CC, CXX, HOST, JNI_LIBS: string
-    
+
     case architecture
     of "arm":
         CC = toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang"
@@ -124,21 +124,34 @@ of "build":
         JNI_LIBS = absolutePath(path = "../../jniLibs/x86_64")
     else:
         discard
-    
+
+    let
+        AR: string = toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar"
+        AS: string = toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-as"
+        LD: string = toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/ld"
+        LIPO: string = toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-lipo"
+        RANLIB: string = toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ranlib"
+        OBJCOPY: string = toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-objcopy"
+        OBJDUMP: string = toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-objdump"
+        STRIP: string = toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip"
+        CFLAGS: string = "-Os -w -Wfatal-errors -flto=full"
+        CCFLAGS: string = deepCopy(CFLAGS)
+        CXXFLAGS: string = deepCopy(CFLAGS)
+
     let FLAGS = [
         ("CC", CC),
         ("CXX", CXX),
-        ("AR", toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar"),
-        ("AS", toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-as"),
-        ("LD", toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/ld"),
-        ("LIPO", toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-lipo"),
-        ("RANLIB", toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ranlib"),
-        ("OBJCOPY", toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-objcopy"),
-        ("OBJDUMP", toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-objdump"),
-        ("STRIP", toolchain / "toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip"),
-        ("CFLAGS", "-s -DNDEBUG -Ofast -w -Wfatal-errors -flto=full"),
-        ("CCFLAGS", "-s -DNDEBUG -Ofast -w -Wfatal-errors -flto=full"),
-        ("CXXFLAGS", "-s -DNDEBUG -Ofast -w -Wfatal-errors -flto=full"),
+        ("AR", AR),
+        ("AS", AS),
+        ("LD", LD),
+        ("LIPO", LIPO),
+        ("RANLIB", RANLIB),
+        ("OBJCOPY", OBJCOPY),
+        ("OBJDUMP", OBJDUMP),
+        ("STRIP", STRIP),
+        ("CFLAGS", CFLAGS),
+        ("CCFLAGS", CCFLAGS),
+        ("CXXFLAGS", CXXFLAGS)
     ]
 
     let CONFIGURE_FLAGS: string = "--silent --host='$1' $2" % [
@@ -154,42 +167,40 @@ of "build":
     of "pcre":
         if not dirExists(dir = "../pcre"):
             ! "fatal: no source directory found: did you forget to run './tool download pcre'?"
-        
+
         setCurrentDir(newDir = "../pcre")
-        
+
         if fileExists(filename = "config.status"):
             ~ "make distclean"
-        
+
         ~ ("./configure $1" % [CONFIGURE_FLAGS])
         ~ "make --jobs --silent"
-        
-        moveFile(source = "./.libs/libpcre.so", dest = JNI_LIBS / "libpcre.so")
-        
+
+        ~ ("$1 --strip-all $2 -o $3" % [STRIP, "./.libs/libpcre.so", JNI_LIBS / "libpcre.so"])
         ~ "make distclean --silent"
     of "libressl":
         if not dirExists(dir = "../libressl"):
             ! "fatal: no source directory found: did you forget to run './tool download libressl'?"
-        
+
         setCurrentDir(newDir = "../libressl")
-        
+
         if fileExists(filename = "config.status"):
             ~ "make distclean"
-        
+
         ~ ("./configure $1" % [CONFIGURE_FLAGS])
         ~ "make --jobs --silent"
 
-        moveFile(source = expandFilename(filename = "./crypto/.libs/libcrypto.so"), dest = JNI_LIBS / "libcrypto.so")
-        moveFile(source = expandFilename(filename = "./ssl/.libs/libssl.so"), dest = JNI_LIBS / "libssl.so")
-        
+        ~ ("$1 --strip-all $2 -o $3" % [STRIP, "./crypto/.libs/libcrypto.so", JNI_LIBS / "libcrypto.so"])
+        ~ ("$1 --strip-all $2 -o $3" % [STRIP, "./ssl/.libs/libssl.so", JNI_LIBS / "libssl.so"])
         ~ "make distclean --silent"
     of "wrapper":
         if not dirExists(dir = "../wrapper"):
             ! "fatal: no source directory found"
-        
+
         setCurrentDir(newDir = "../wrapper")
-        
+
         ~ "nimble install --accept"
-        
+
         let FLAGS = [
             ("clang.exe", CC),
             ("clang.linkerexe", CC),
@@ -200,18 +211,18 @@ of "build":
             ("define", "strip"),
             ("define", "danger"),
             ("define", "ssl"),
+            ("opt", "size"),
             ("define", "libressl"),
             ("define", "noSignalHandler"),
             ("panics", "on"),
             ("errorMax", "1"),
-            ("passC", "-DNDEBUG"),
-            ("passC", "-Ofast"),
             ("passC", "-flto=full"),
             ("passC", "-DNimMain=Java_com_amanoteam_unalix_wrappers_Unalix_initialize"),
+            ("passL", "-flto=full"),
             ("gc", "refc"),
             ("out", JNI_LIBS / "libunalix_jni.so")
         ]
-        
+
         ~ (
             "nim compile $1 '$2'" % [
                 (
