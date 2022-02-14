@@ -1,14 +1,14 @@
-### Requirements
-
-- A Unix-like operating system
-- [Nim compiler](https://nim-lang.org/install_unix.html) (`1.6.0` or higher is recommended)
-- [Android NDK](https://developer.android.com/ndk/downloads) (`r23b` or higher is recommended)
-
 ### Instructions
 
 Most of the core functionality of this application is provided by [Unalix-nim](https://github.com/AmanoTeam/Unalix-nim), which in thurn uses the PCRE and LibreSSL libraries.
 
 Unalix has a CLI tool that can be used to compile all of it's dependencies, so you don't need to worry about manually downloading or building them.
+
+#### Requirements
+
+- A Unix-like operating system
+- [Nim compiler](https://nim-lang.org/install_unix.html) (`1.6.0` or higher is recommended)
+- [Android NDK](https://developer.android.com/ndk/downloads) (`r23b` or higher is recommended)
 
 #### Get source code
 
@@ -26,7 +26,7 @@ Run the following commands:
 
 ```bash
 cd ./app/src/main/jni/tool
-nimble install
+nimble install --accept
 ```
 
 #### Build PCRE
@@ -36,6 +36,9 @@ To build the PCRE library, run the following commands:
 ```bash
 ./tool download pcre
 ./tool build pcre --architecture=arm
+./tool build pcre --architecture=arm64
+./tool build pcre --architecture=i386
+./tool build pcre --architecture=amd64
 ```
 
 #### Build LibreSSL
@@ -46,14 +49,20 @@ To build the LibreSSL library, run the following commands:
 ./tool download libressl
 ./tool patch libressl
 ./tool build libressl --architecture=arm
+./tool build libressl --architecture=arm64
+./tool build libressl --architecture=i386
+./tool build libressl --architecture=amd64
 ```
 
 #### Build JNI wrapper
 
-To build the JNI wrapper, run the following command:
+To build the JNI wrapper, run the following commands:
 
 ```bash
 ./tool build wrapper --architecture=arm
+./tool build wrapper --architecture=arm64
+./tool build wrapper --architecture=i386
+./tool build wrapper --architecture=amd64
 ```
 
 #### Build application
