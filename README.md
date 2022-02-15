@@ -1,3 +1,5 @@
+<img src="./fastlane/metadata/android/en-US/images/icon.png" width="150" align="right">
+
 # Unalix
 
 Unalix for Android is an wrapper for the [Unalix-nim](https://github.com/AmanoTeam/Unalix-nim) library.

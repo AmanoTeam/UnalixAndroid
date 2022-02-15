@@ -7,8 +7,9 @@ Unalix has a CLI tool that can be used to compile all of it's dependencies, so y
 #### Requirements
 
 - A Unix-like operating system
-- [Nim compiler](https://nim-lang.org/install_unix.html) (`1.6.0` or higher is recommended)
-- [Android NDK](https://developer.android.com/ndk/downloads) (`r23b` or higher is recommended)
+- [Nim compiler](https://nim-lang.org/install_unix.html) (version `1.6.0` or higher is recommended)
+- [Android NDK](https://developer.android.com/ndk/downloads) (version `r23b` or higher is recommended)
+- [JDK](https://adoptium.net/) (version `11` or higher is required)
 
 #### Get source code
 
@@ -66,8 +67,6 @@ To build the JNI wrapper, run the following commands:
 ```
 
 #### Build application
-
-We recommend using JDK 11 or higher to build the application. Older versions might work, but they weren't tested.
 
 Go to the root directory of the source code and run the following command:
 
