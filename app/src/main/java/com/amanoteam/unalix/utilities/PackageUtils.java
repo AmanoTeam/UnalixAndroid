@@ -51,8 +51,8 @@ public class PackageUtils {
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 			final Intent chooser = Intent.createChooser(intent, url);
-			chooser.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			chooser.putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, CHOOSER_EXCLUDE_COMPONENTS);
+			chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
 			return chooser;
 		}

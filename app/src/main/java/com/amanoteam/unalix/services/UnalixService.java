@@ -72,8 +72,6 @@ public class UnalixService extends Service {
 
 			final Intent chooser = PackageUtils.createChooser(context, cleanUrl, action);
 
-			chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
 			startActivity(chooser);
 
 			stopSelf(msg.arg1);
