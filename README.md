@@ -2,18 +2,16 @@
 
 # Unalix
 
-Unalix for Android is an wrapper for the [Unalix-nim](https://github.com/AmanoTeam/Unalix-nim) library.
+Simple tool that removes link masking/tracking and optionally resolves shortened links.
 
-#### Downloads
+## Downloads
 
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
-      alt="Get it on F-Droid"
-      height="80">](https://f-droid.org/en/packages/com.amanoteam.unalix)
-      
-#### Building
+Prebuilt release binaries of Unalix are available on [GitHub](https://github.com/AmanoTeam/UnalixAndroid/releases) and [F-Droid](https://f-droid.org/packages/com.amanoteam.unalix).
 
-See the [BUILDING.md](./BUILDING.md) for build instructions.
+## Building
 
-#### Contributing
+See the [BUILDING](./BUILDING.md) section for build instructions.
 
-If you have discovered a bug in this library and know how to fix it, fork this repository and open a Pull Request.
+## Contributing
+
+If you have discovered a bug in this application and know how to fix it, fork this repository and open a Pull Request.
