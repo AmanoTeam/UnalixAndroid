@@ -1,0 +1,4 @@
+* Migrate to Material Components
+* Simplify theme switching mode
+* Fix intent intercept not working on Android 9+
+* Update dependencies
