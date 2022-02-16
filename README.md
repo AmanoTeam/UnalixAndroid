@@ -1,5 +1,3 @@
-<img src="./fastlane/metadata/android/en-US/images/icon.png" width="150" align="right">
-
 # Unalix
 
 Simple tool that removes link masking/tracking and optionally resolves shortened links.
