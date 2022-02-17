@@ -83,10 +83,37 @@ jobs:
         signingKeyBase64: ${{ secrets.SIGNING_KEY }}
         alias: ${{ secrets.ALIAS }}
         keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-      env:
-        BUILD_TOOLS_VERSION: "30.0.2"
-    - name: Upload APK
+    - name: Rename signed APKs
+      run: |
+        mv app/build/outputs/apk/release/app-x86-release-signed.apk app/build/outputs/apk/release/app-x86-release.apk
+        mv app/build/outputs/apk/release/app-x86_64-release-signed.apk app/build/outputs/apk/release/app-x86_64-release.apk
+        mv app/build/outputs/apk/release/app-arm64-v8a-release-signed.apk app/build/outputs/apk/release/app-arm64-v8a-release.apk
+        mv app/build/outputs/apk/release/app-armeabi-v7a-release-signed.apk app/build/outputs/apk/release/app-armeabi-v7a-release.apk
+        mv app/build/outputs/apk/release/app-universal-release-signed.apk app/build/outputs/apk/release/app-universal-release.apk
+    - name: Set UNALIX_VERSION
+      run: echo "UNALIX_VERSION=v$(grep --only-matching --perl-regexp 'versionName\s\"\K([0-9\.]+)' app/build.gradle)+$(git rev-parse --short HEAD)" >> "${GITHUB_ENV}"
+    - name: Upload armeabi-v7a APK
       uses: actions/upload-artifact@main
       with:
-        name: build
-        path: app/build/outputs/apk/release/app-*-release-signed.apk
+        name: "unalix_${{ env.UNALIX_VERSION }}-github-release_armeabi-v7a"
+        path: app/build/outputs/apk/release/app-armeabi-v7a-release.apk
+    - name: Upload arm64-v8a APK
+      uses: actions/upload-artifact@main
+      with:
+        name: "unalix_${{ env.UNALIX_VERSION }}-github-release_arm64-v8a"
+        path: app/build/outputs/apk/release/app-arm64-v8a-release.apk
+    - name: Upload x86 APK
+      uses: actions/upload-artifact@main
+      with:
+        name: "unalix_${{ env.UNALIX_VERSION }}-github-release_x86"
+        path: app/build/outputs/apk/release/app-x86-release.apk
+    - name: Upload x86_64 APK
+      uses: actions/upload-artifact@main
+      with:
+        name: "unalix_${{ env.UNALIX_VERSION }}-github-release_x86_64"
+        path: app/build/outputs/apk/release/app-x86_64-release.apk
+    - name: Upload universal APK
+      uses: actions/upload-artifact@main
+      with:
+        name: "unalix_${{ env.UNALIX_VERSION }}-github-release_universal"
+        path: app/build/outputs/apk/release/app-universal-release.apk
