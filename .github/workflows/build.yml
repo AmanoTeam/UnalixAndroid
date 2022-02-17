@@ -4,9 +4,35 @@ on:
   push:
     branches:
         - '**'
+    paths:
+        - '*.java'
+        - '*.gradle'
+        - '*.xml'
+        - '*.patch'
+        - '*.nim'
+        - '*.nims'
+        - '*.nimble'
+        - '*.png'
+        - '*.properties'
+        - '*.jar'
+        - 'gradlew*'
+        - '*.yml'
   pull_request:
     branches:
         - '**'
+    paths:
+        - '*.java'
+        - '*.gradle'
+        - '*.xml'
+        - '*.patch'
+        - '*.nim'
+        - '*.nims'
+        - '*.nimble'
+        - '*.png'
+        - '*.properties'
+        - '*.jar'
+        - 'gradlew*'
+        - '*.yml'
 
 jobs:
   build:
