@@ -154,7 +154,7 @@ of "build":
         ("CXXFLAGS", CXXFLAGS)
     ]
 
-    let CONFIGURE_FLAGS: string = "--silent --host='$1' $2" % [
+    let GENERIC_CONFIGURE_FLAGS: string = "--silent --host='$1' --enable-shared --disable-static $2" % [
         HOST,
         (
             block: collect newSeq: (
@@ -173,7 +173,9 @@ of "build":
         if fileExists(filename = "config.status"):
             ~ "make distclean"
 
-        ~ ("./configure $1" % [CONFIGURE_FLAGS])
+        const PCRE_CONFIGURE_FLAGS: string = "--disable-cpp"
+
+        ~ ("./configure $1 $2" % [PCRE_CONFIGURE_FLAGS, GENERIC_CONFIGURE_FLAGS])
         ~ "make --jobs --silent"
 
         ~ ("$1 --strip-all $2 -o $3" % [STRIP, "./.libs/libpcre.so", JNI_LIBS / "libpcre.so"])
@@ -187,7 +189,9 @@ of "build":
         if fileExists(filename = "config.status"):
             ~ "make distclean"
 
-        ~ ("./configure $1" % [CONFIGURE_FLAGS])
+        const LIBRESSL_CONFIGURE_FLAGS: string = "--disable-tests"
+
+        ~ ("./configure $1 $2" % [LIBRESSL_CONFIGURE_FLAGS, GENERIC_CONFIGURE_FLAGS])
         ~ "make --jobs --silent"
 
         ~ ("$1 --strip-all $2 -o $3" % [STRIP, "./crypto/.libs/libcrypto.so", JNI_LIBS / "libcrypto.so"])
