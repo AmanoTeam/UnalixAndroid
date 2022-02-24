@@ -192,7 +192,8 @@ of "build":
         const LIBRESSL_CONFIGURE_FLAGS: string = "--disable-tests"
 
         ~ ("./configure $1 $2" % [LIBRESSL_CONFIGURE_FLAGS, GENERIC_CONFIGURE_FLAGS])
-        ~ "make --jobs --silent"
+        ~ "make --jobs --silent --directory='crypto'"
+        ~ "make --jobs --silent --directory='ssl'"
 
         ~ ("$1 --strip-all $2 -o $3" % [STRIP, "./crypto/.libs/libcrypto.so", JNI_LIBS / "libcrypto.so"])
         ~ ("$1 --strip-all $2 -o $3" % [STRIP, "./ssl/.libs/libssl.so", JNI_LIBS / "libssl.so"])
