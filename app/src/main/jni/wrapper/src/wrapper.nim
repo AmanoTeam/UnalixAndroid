@@ -73,5 +73,5 @@ proc unshortUrl(
                 )
             ).cstring
         )
-    except ConnectError as e:
+    except UnalixException as e:
         return env.NewStringUTF(env = env, s = (e.url).cstring)
