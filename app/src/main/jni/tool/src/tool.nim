@@ -219,12 +219,13 @@ of "build":
             ("opt", "size"),
             ("define", "libressl"),
             ("define", "noSignalHandler"),
+            ("define", "useMalloc"),
             ("panics", "on"),
             ("errorMax", "1"),
             ("passC", "-flto=full"),
             ("passC", "-DNimMain=Java_com_amanoteam_unalix_wrappers_Unalix_initialize"),
             ("passL", "-flto=full"),
-            ("gc", "refc"),
+            ("gc", "orc"),
             ("out", JNI_LIBS / "libunalix_jni.so")
         ]
 
