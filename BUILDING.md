@@ -7,7 +7,7 @@ Unalix has a CLI tool that can be used to compile all of it's dependencies, so y
 #### Requirements
 
 - A Unix-like operating system
-- [Nim compiler](https://nim-lang.org/install_unix.html) (version `1.6.0` or higher is recommended)
+- [Nim compiler](https://nim-lang.org/install_unix.html) (version `1.6.0` or higher is required)
 - [Android NDK](https://developer.android.com/ndk/downloads) (version `r23b` or higher is recommended)
 - [JDK](https://adoptium.net/) (version `11` or higher is required)
 
@@ -26,7 +26,7 @@ We will use this helper tool to build all the dependencies required by Unalix.
 Run the following commands:
 
 ```bash
-cd ./app/src/main/jni/tool
+cd ./UnalixAndroid/app/src/main/jni/tool
 nimble install --accept
 ```
 
