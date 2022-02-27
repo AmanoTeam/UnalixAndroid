@@ -72,7 +72,7 @@ of "download":
         )
     of "libressl":
         downloadTarball(
-            url = "https://cdn.openbsd.org/pub/OpenBSD/LibreSSL/libressl-3.4.2.tar.gz",
+            url = "https://cdn.openbsd.org/pub/OpenBSD/LibreSSL/libressl-3.5.0.tar.gz",
             filename = getTempDir() / "libressl.tgz"
         )
     else:
