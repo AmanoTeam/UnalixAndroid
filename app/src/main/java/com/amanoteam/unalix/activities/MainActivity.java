@@ -4,12 +4,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 		final AppCompatEditText urlInput = findViewById(R.id.url_input);
 
 		// "Clean URL" button listener
-		cleanUrlButton.setOnClickListener(view -> {
+		cleanUrlButton.setOnClickListener((final View view) -> {
 
 			final String text = urlInput.getText().toString();
 
@@ -76,8 +77,37 @@ public class MainActivity extends AppCompatActivity {
 			urlInput.setText(cleanedUrl);
 		});
 
+		// "Unshort URL" button listener
+		cleanUrlButton.setOnLongClickListener((final View view) -> {
+
+			final String text = urlInput.getText().toString();
+
+			if (TextUtils.isEmpty(text)) {
+				Toast.makeText(getApplicationContext(), "There is no URL to unshort", Toast.LENGTH_SHORT).show();
+				return true;
+			}
+
+			Toast.makeText(getApplicationContext(), "Resolving URL...", Toast.LENGTH_SHORT).show();
+
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					final String cleanedUrl = unalix.unshortUrl(text);
+
+					new Handler(Looper.getMainLooper()).post(new Runnable() {
+						@Override
+						public void run() {
+							urlInput.setText(cleanedUrl);
+						}
+					});
+				}
+			}).start();
+			
+			return true;
+		});
+
 		// "Open URL" button listener
-		openUrlButton.setOnClickListener(view -> {
+		openUrlButton.setOnClickListener((final View view) -> {
 
 			final String url = urlInput.getText().toString();
 
@@ -91,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 		});
 
 		// "Share URL" button listener
-		shareUrlButton.setOnClickListener(view -> {
+		shareUrlButton.setOnClickListener((final View view) -> {
 
 			final String url = urlInput.getText().toString();
 
@@ -105,18 +135,15 @@ public class MainActivity extends AppCompatActivity {
 		});
 
 		// "Clean URL input" button listener
-		clearInputButton.setOnClickListener(new OnClickListener() {
-			public void onClick(final View view) {
+		clearInputButton.setOnClickListener((final View view) -> {
+			final String url = urlInput.getText().toString();
 
-				final String url = urlInput.getText().toString();
-
-				if (TextUtils.isEmpty(url)) {
-					Toast.makeText(getApplicationContext(), "URL input is already empty", Toast.LENGTH_SHORT).show();
-					return;
-				}
-
-				urlInput.getText().clear();
+			if (TextUtils.isEmpty(url)) {
+				Toast.makeText(getApplicationContext(), "URL input is already empty", Toast.LENGTH_SHORT).show();
+				return;
 			}
+
+			urlInput.getText().clear();
 		});
 
 		// Action bar stuff
