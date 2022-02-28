@@ -10,8 +10,7 @@
 		<activity
 			android:name=".activities.ClearURLActivity"
 			android:exported="true"
-			android:label="Clean URL"
-			android:noHistory="true">
+			android:label="Clean URL">
 			<intent-filter>
 				<action android:name="android.intent.action.SEND" />
 				<category android:name="android.intent.category.DEFAULT" />
@@ -28,8 +27,7 @@
 		<activity
 			android:name=".activities.UnshortURLActivity"
 			android:exported="true"
-			android:label="Unshort URL"
-			android:noHistory="true">
+			android:label="Unshort URL">
 			<intent-filter>
 				<action android:name="android.intent.action.SEND" />
 				<category android:name="android.intent.category.DEFAULT" />
@@ -46,8 +44,7 @@
 		<activity
 			android:name=".activities.CopyToClipboardActivity"
 			android:exported="true"
-			android:label="Copy to clipboard"
-			android:noHistory="true">
+			android:label="Copy to clipboard">
 			<intent-filter>
 				<action android:name="android.intent.action.SEND" />
 				<category android:name="android.intent.category.DEFAULT" />

@@ -26,7 +26,7 @@ public class UnshortURLActivity extends AppCompatActivity {
 
 		startService(serviceIntent);
 
-		finish();
+		finishAndRemoveTask();
 	}
 
 }

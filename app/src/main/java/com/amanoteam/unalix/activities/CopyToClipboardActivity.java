@@ -23,7 +23,7 @@ public class CopyToClipboardActivity extends AppCompatActivity {
 
 		Toast.makeText(CopyToClipboardActivity.this, String.format("Copied %s to clipboard", urlToCopy), Toast.LENGTH_SHORT).show();
 
-		finish();
+		finishAndRemoveTask();
 	}
 
 }

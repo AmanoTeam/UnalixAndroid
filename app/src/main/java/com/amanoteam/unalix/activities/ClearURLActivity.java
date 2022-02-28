@@ -26,7 +26,7 @@ public class ClearURLActivity extends AppCompatActivity {
 
 		startService(serviceIntent);
 
-		finish();
+		finishAndRemoveTask();
 	}
 
 }
