@@ -16,15 +16,15 @@ public class ClearURLActivity extends AppCompatActivity {
 		final Intent intent = getIntent();
 		final String action = intent.getAction();
 
-		final Intent serviceIntent = new Intent(this, UnalixService.class);
-
 		final String uglyUrl = (action.equals(Intent.ACTION_SEND) ? intent.getStringExtra(Intent.EXTRA_TEXT) : intent.getData().toString());
 
-		serviceIntent.putExtra("originalAction", action);
-		serviceIntent.putExtra("uglyUrl", uglyUrl);
-		serviceIntent.putExtra("whatToDo", "clearUrl");
+		final Intent service = new Intent(this, UnalixService.class);
 
-		startService(serviceIntent);
+		service.putExtra("originalAction", action);
+		service.putExtra("uglyUrl", uglyUrl);
+		service.putExtra("whatToDo", "clearUrl");
+
+		startService(service);
 
 		finishAndRemoveTask();
 	}
