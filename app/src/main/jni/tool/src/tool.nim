@@ -2,18 +2,10 @@ import std/parseopt
 import std/strutils
 import std/os
 import std/sugar
-import std/strformat
 
 import ./utils
 
-const
-    toolVersion: string = "0.1"
-    helpMessage: string = "Usage: tool ACTION <LIBRARY-NAME> [PARAMETERS]..."
-    repository: string = staticExec(command = "git config --get remote.origin.url")
-    commit: string = staticExec(command = "git rev-parse --short HEAD")
-    versionInfo: string = &"tool v{toolVersion} ({repository}@{commit})\n" &
-        &"Compiled for {hostOS} ({hostCPU}) using Nim {NimVersion} " &
-        &"({CompileDate}, {CompileTime})\n"
+const helpMessage: string = "Usage: tool ACTION <LIBRARY-NAME> [PARAMETERS]..."
 
 setControlCHook(
     hook = proc(): void {.noconv.} =
@@ -33,8 +25,6 @@ while true:
         break
     of cmdShortOption, cmdLongOption:
         case parser.key
-        of "version", "v":
-            writeStdout(s = versionInfo, exitCode = 0)
         of "help", "h":
             writeStdout(s = helpMessage, exitCode = 0)
         of "a", "architecture":
