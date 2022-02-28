@@ -8,6 +8,10 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Parcelable;
+import android.view.View;
+
+import android.widget.Toast;
+import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
@@ -105,6 +109,16 @@ public class PackageUtils {
 				AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 				break;
 		}
+	}
+
+	public static void showSnackbar(final View view, final String text) {
+		final Snackbar snackbar = Snackbar.make(view, text, Snackbar.LENGTH_SHORT);
+		snackbar.show();
+	}
+
+	public static void showToast(final Context context, final String text) {
+		final Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
+		toast.show();
 	}
 
 }

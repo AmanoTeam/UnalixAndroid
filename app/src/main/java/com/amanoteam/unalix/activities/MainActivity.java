@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
@@ -22,6 +21,7 @@ import com.amanoteam.unalix.R;
 import com.amanoteam.unalix.utilities.PackageUtils;
 import com.amanoteam.unalix.wrappers.Unalix;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 			final String text = urlInput.getText().toString();
 
 			if (TextUtils.isEmpty(text)) {
-				Toast.makeText(getApplicationContext(), "There is no URL to clean", Toast.LENGTH_SHORT).show();
+				PackageUtils.showSnackbar(view, "There is no URL to clean");
 				return;
 			}
 
@@ -83,11 +83,11 @@ public class MainActivity extends AppCompatActivity {
 			final String text = urlInput.getText().toString();
 
 			if (TextUtils.isEmpty(text)) {
-				Toast.makeText(getApplicationContext(), "There is no URL to unshort", Toast.LENGTH_SHORT).show();
+				PackageUtils.showSnackbar(view, "There is no URL to unshort");
 				return true;
 			}
 
-			Toast.makeText(getApplicationContext(), "Resolving URL...", Toast.LENGTH_SHORT).show();
+			PackageUtils.showSnackbar(view, "Resolving URL");
 
 			new Thread(new Runnable() {
 				@Override
@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
 						@Override
 						public void run() {
 							urlInput.setText(cleanedUrl);
+							PackageUtils.showSnackbar(view, "Done");
 						}
 					});
 				}
@@ -112,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
 			final String url = urlInput.getText().toString();
 
 			if (TextUtils.isEmpty(url)) {
-				Toast.makeText(getApplicationContext(), "There is no URL to launch", Toast.LENGTH_SHORT).show();
+				PackageUtils.showSnackbar(view, "There is no URL to launch");
 				return;
 			}
 
@@ -126,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
 			final String url = urlInput.getText().toString();
 
 			if (TextUtils.isEmpty(url)) {
-				Toast.makeText(getApplicationContext(), "There is no URL to share", Toast.LENGTH_SHORT).show();
+				PackageUtils.showSnackbar(view, "There is no URL to share");
 				return;
 			}
 
@@ -139,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
 			final String url = urlInput.getText().toString();
 
 			if (TextUtils.isEmpty(url)) {
-				Toast.makeText(getApplicationContext(), "URL input is already empty", Toast.LENGTH_SHORT).show();
+				PackageUtils.showSnackbar(view, "URL input is already empty");
 				return;
 			}
 

@@ -4,8 +4,8 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
+import com.amanoteam.unalix.utilities.PackageUtils;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class CopyToClipboardActivity extends AppCompatActivity {
@@ -21,7 +21,7 @@ public class CopyToClipboardActivity extends AppCompatActivity {
 		final ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 		clipboard.setPrimaryClip(ClipData.newPlainText("Clean URL", urlToCopy));
 
-		Toast.makeText(CopyToClipboardActivity.this, String.format("Copied %s to clipboard", urlToCopy), Toast.LENGTH_SHORT).show();
+		PackageUtils.showToast(this, String.format("Copied %s to clipboard", urlToCopy));
 
 		finishAndRemoveTask();
 	}
