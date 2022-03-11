@@ -10,6 +10,8 @@ android {
 		versionName "0.7"
 	}
 
+	ndkVersion "23.1.7779620"
+
 	buildTypes {
 		debug {
 			debuggable true
@@ -35,6 +37,17 @@ android {
 			universalApk true
 		}
 	}
+
+    externalNativeBuild {
+        // Encapsulates your CMake build configurations.
+        // For ndk-build, instead use the ndkBuild block.
+        cmake {
+            // Specifies a path to your CMake build script that's
+            // relative to the build.gradle file.
+            path "src/CMakeLists.txt"
+        }
+    }
+
 }
 
 repositories {

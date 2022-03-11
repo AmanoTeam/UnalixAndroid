@@ -1,0 +1,3 @@
+[submodule "app/src/main/cpp/bearssl"]
+	path = app/src/main/cpp/bearssl
+	url = https://www.bearssl.org/git/BearSSL
