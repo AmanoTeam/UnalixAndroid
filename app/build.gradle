@@ -8,10 +8,22 @@ android {
 		targetSdkVersion 31
 		versionCode 8
 		versionName "0.7"
+		
+		externalNativeBuild {
+			cmake {
+				arguments "-DANDROID_STL=c++_shared", "-DCMAKE_CXX_FLAGS_RELEASE=-w -Wfatal-errors -Oz -flto=full", "-DCMAKE_CXX_FLAGS_RELWITHDEBINFO=-w -Wfatal-errors -Oz -flto=full", "-DCMAKE_C_FLAGS_RELEASE=-w -Wfatal-errors -Oz -flto=full", "-DCMAKE_C_FLAGS_RELWITHDEBINFO=-w -Wfatal-errors -Oz -flto=full"
+			}
+		}
 	}
-
+	
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
+    }
+	
 	ndkVersion "23.1.7779620"
-
+	
 	buildTypes {
 		debug {
 			debuggable true
@@ -28,7 +40,7 @@ android {
 			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 		}
 	}
-
+	
 	splits {
 		abi {
 			enable true
@@ -37,16 +49,6 @@ android {
 			universalApk true
 		}
 	}
-
-    externalNativeBuild {
-        // Encapsulates your CMake build configurations.
-        // For ndk-build, instead use the ndkBuild block.
-        cmake {
-            // Specifies a path to your CMake build script that's
-            // relative to the build.gradle file.
-            path "src/CMakeLists.txt"
-        }
-    }
 
 }
 
