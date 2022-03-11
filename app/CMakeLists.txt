@@ -322,7 +322,7 @@ add_library( # Specifies the name of the library.
 			src/main/cpp/bearssl/src/x509/x509_minimal_full.c)
 
 add_library( # Specifies the name of the library.
-			unalix
+			unalix_jni
 
 			# Sets the library as a shared library.
 			SHARED
@@ -331,8 +331,9 @@ add_library( # Specifies the name of the library.
 			src/main/cpp/unalixcpp/src/clear_url.cpp
 			src/main/cpp/unalixcpp/src/unshort_url.cpp
 			src/main/cpp/unalixcpp/src/uri.cpp
-			src/main/cpp/unalixcpp/src/utils.cpp)
+			src/main/cpp/unalixcpp/src/utils.cpp
+			src/main/cpp/unalixcpp/src/unalix_jni.cpp)
 
 target_link_libraries(
-			unalix
+			unalix_jni
 			bearssl)

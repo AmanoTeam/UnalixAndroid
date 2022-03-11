@@ -9,7 +9,6 @@ public class Unalix {
 
 	static {
 		System.loadLibrary("unalix_jni");
-		initialize();
 	}
 
 	private boolean ignoreReferralMarketing = false;
@@ -18,13 +17,8 @@ public class Unalix {
 	private boolean ignoreRawRules = false;
 	private boolean ignoreRedirections = false;
 	private boolean skipBlocked = false;
-	private boolean stripDuplicates = false;
-	private boolean stripEmpty = false;
-	private boolean parseDocuments = false;
 	private int timeout = 3000;
 	private int maxRedirects = 13;
-
-	private static native void initialize();
 
 	private native String clearUrl(
 			final String url,
@@ -33,9 +27,7 @@ public class Unalix {
 			final boolean ignoreExceptions,
 			final boolean ignoreRawRules,
 			final boolean ignoreRedirections,
-			final boolean skipBlocked,
-			final boolean stripDuplicates,
-			final boolean stripEmpty
+			final boolean skipBlocked
 	);
 
 	public String clearUrl(final String url) {
@@ -46,9 +38,7 @@ public class Unalix {
 				this.ignoreExceptions,
 				this.ignoreRawRules,
 				this.ignoreRedirections,
-				this.skipBlocked,
-				this.stripDuplicates,
-				this.stripEmpty
+				this.skipBlocked
 		);
 	}
 
@@ -60,9 +50,6 @@ public class Unalix {
 			final boolean ignoreRawRules,
 			final boolean ignoreRedirections,
 			final boolean skipBlocked,
-			final boolean stripDuplicates,
-			final boolean stripEmpty,
-			final boolean parseDocuments,
 			final int timeout,
 			final int maxRedirects
 	);
@@ -76,9 +63,6 @@ public class Unalix {
 				this.ignoreRawRules,
 				this.ignoreRedirections,
 				this.skipBlocked,
-				this.stripDuplicates,
-				this.stripEmpty,
-				this.parseDocuments,
 				this.timeout,
 				this.maxRedirects
 		);
@@ -106,18 +90,6 @@ public class Unalix {
 
 	private void setSkipBlocked(final boolean value) {
 		this.skipBlocked = value;
-	}
-
-	private void setStripDuplicates(final boolean value) {
-		this.stripDuplicates = value;
-	}
-
-	private void setStripEmpty(final boolean value) {
-		this.stripEmpty = value;
-	}
-
-	private void setParseDocuments(final boolean value) {
-		this.parseDocuments = value;
 	}
 
 	private void setTimeout(final int value) {
@@ -149,15 +121,6 @@ public class Unalix {
 
 		final boolean skipBlocked = settings.getBoolean("skipBlocked", false);
 		setSkipBlocked(skipBlocked);
-
-		final boolean stripDuplicates = settings.getBoolean("stripDuplicates", false);
-		setStripDuplicates(stripDuplicates);
-
-		final boolean stripEmpty = settings.getBoolean("stripEmpty", false);
-		setStripEmpty(stripEmpty);
-
-		final boolean parseDocuments = settings.getBoolean("parseDocuments", false);
-		setParseDocuments(parseDocuments);
 
 		final int timeout = Integer.parseInt(settings.getString("timeout", "3000"));
 		setTimeout(timeout);
