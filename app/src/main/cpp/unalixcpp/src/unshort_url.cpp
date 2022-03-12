@@ -173,7 +173,25 @@ const std::string unshort_url(
 		
 		data.append("\r\n");
 		
-		int fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+		struct addrinfo hints = {};
+		hints.ai_family = PF_UNSPEC;
+		hints.ai_socktype = SOCK_STREAM;
+		
+		struct addrinfo *res = {};
+		
+		int rc;
+		
+		rc = getaddrinfo((uri.get_host()).c_str(), std::to_string(port).c_str(), &hints, &res);
+		
+		if (rc != 0) {
+			DNSError e;
+			e.set_message(std::string("getaddrinfo: ") + std::string(gai_strerror(rc)));
+			e.set_url(this_url);
+			
+			throw(e);
+		}
+		
+		int fd = socket(res -> ai_family, res -> ai_socktype, res -> ai_protocol);
 		
 		if (fd == -1) {
 			SocketError e;
@@ -182,8 +200,6 @@ const std::string unshort_url(
 			
 			throw(e);
 		}
-		
-		int rc;
 		
 		const int optval = 1;
 		rc = setsockopt(fd, SOL_TCP, TCP_NODELAY, &optval, sizeof(optval));
@@ -222,25 +238,6 @@ const std::string unshort_url(
 			
 			SocketError e;
 			e.set_message(std::string("setsockopt: ") + std::string(strerror(errno)));
-			e.set_url(this_url);
-			
-			throw(e);
-		}
-		
-		struct addrinfo hints = {};
-		hints.ai_family = AF_INET;
-		hints.ai_socktype = SOCK_STREAM;
-		hints.ai_protocol = IPPROTO_TCP;
-		
-		struct addrinfo *res = {};
-		
-		rc = getaddrinfo((uri.get_host()).c_str(), std::to_string(port).c_str(), &hints, &res);
-		
-		if (rc != 0) {
-			close(fd);
-			
-			DNSError e;
-			e.set_message(std::string("getaddrinfo: ") + std::string(gai_strerror(rc)));
 			e.set_url(this_url);
 			
 			throw(e);
