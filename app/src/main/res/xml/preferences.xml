@@ -44,7 +44,7 @@
 	</PreferenceCategory>
 	<PreferenceCategory android:title="HTTP settings">
 		<ListPreference
-			android:defaultValue="3000"
+			android:defaultValue="3"
 			android:entries="@array/timeout_entries"
 			android:entryValues="@array/timeout_values"
 			android:key="timeout"

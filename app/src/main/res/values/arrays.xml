@@ -17,18 +17,18 @@
 		<item>15 seconds</item>
 	</string-array>
 	<string-array name="timeout_values">
-		<item>3000</item>
-		<item>6000</item>
-		<item>9000</item>
-		<item>12000</item>
-		<item>15000</item>
+		<item>3</item>
+		<item>6</item>
+		<item>9</item>
+		<item>12</item>
+		<item>15</item>
 	</string-array>
 	<string-array name="max_redirects_entries">
-		<item>8</item>
-		<item>13</item>
-		<item>18</item>
-		<item>23</item>
-		<item>28</item>
+		<item>8 redirects</item>
+		<item>13 redirects</item>
+		<item>18 redirects</item>
+		<item>23 redirects</item>
+		<item>28 redirects</item>
 	</string-array>
 	<string-array name="max_redirects_values">
 		<item>8</item>

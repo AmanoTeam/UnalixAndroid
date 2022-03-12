@@ -17,7 +17,7 @@ public class Unalix {
 	private boolean ignoreRawRules = false;
 	private boolean ignoreRedirections = false;
 	private boolean skipBlocked = false;
-	private int timeout = 3000;
+	private int timeout = 3;
 	private int maxRedirects = 13;
 
 	private native String clearUrl(
@@ -122,7 +122,7 @@ public class Unalix {
 		final boolean skipBlocked = settings.getBoolean("skipBlocked", false);
 		setSkipBlocked(skipBlocked);
 
-		final int timeout = Integer.parseInt(settings.getString("timeout", "3000"));
+		final int timeout = Integer.parseInt(settings.getString("timeout", "3"));
 		setTimeout(timeout);
 
 		final int maxRedirects = Integer.parseInt(settings.getString("maxRedirects", "13"));
