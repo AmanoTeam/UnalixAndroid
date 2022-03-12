@@ -15,6 +15,7 @@ JNIEXPORT jstring JNICALL Java_com_amanoteam_unalix_wrappers_Unalix_clearUrl
 		jboolean skipBlocked
 	);
 
+extern "C"
 
 JNIEXPORT jstring JNICALL Java_com_amanoteam_unalix_wrappers_Unalix_unshortUrl
 	(
