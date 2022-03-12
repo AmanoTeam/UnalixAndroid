@@ -4,7 +4,6 @@
 
 #include "unalix.hpp"
 #include "unalix_jni.hpp"
-#include "exceptions.hpp"
 
 jstring Java_com_amanoteam_unalix_wrappers_Unalix_clearUrl (
 	JNIEnv *env,
