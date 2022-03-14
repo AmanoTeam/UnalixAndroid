@@ -1,5 +1,9 @@
 #include <bearssl.h>
 
+/*
+Automatically generated trust anchors. Use '../external/ssl.hpp.py' to modify/regenerate.
+*/
+
 static const unsigned char TA0_DN[] = {
 	0x30, 0x57, 0x31, 0x0B, 0x30, 0x09, 0x06, 0x03, 0x55, 0x04, 0x06, 0x13,
 	0x02, 0x42, 0x45, 0x31, 0x19, 0x30, 0x17, 0x06, 0x03, 0x55, 0x04, 0x0A,
@@ -7638,6 +7642,7 @@ static const br_x509_trust_anchor TAs[133] = {
 };
 
 #define TAs_NUM   133
+
 
 /*
  * Low-level data write callback for the simplified SSL I/O API.

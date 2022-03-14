@@ -8,7 +8,7 @@ source = """\
 #include <vector>
 
 /*
-Automatically generated rules. Use 'rulesets.hpp.py' to modify/regenerate.
+Automatically generated rules. Use '../external/rulesets.hpp.py' to modify/regenerate.
 */
 
 struct Ruleset {{
@@ -89,7 +89,7 @@ ignored_providers = (
 rulesets = []
 
 for raw_url in urls:
-	print(f"Fetching data from {raw_url}...")
+	print("Fetching data from %s" % raw_url)
 
 	url = urllib.parse.urlparse(url = raw_url)
 
