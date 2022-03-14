@@ -82,6 +82,7 @@ public class PackageUtils {
 
 		final Intent chooser = Intent.createChooser(intents.remove(0), url);
 		chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, intents.toArray(new Parcelable[intents.size()]));
+		chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
 		return chooser;
 	}
