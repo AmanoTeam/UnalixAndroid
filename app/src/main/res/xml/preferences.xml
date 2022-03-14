@@ -28,19 +28,9 @@
 			android:title="ignoreRedirections" />
 		<CheckBoxPreference
 			android:defaultValue="false"
-			android:key="stripDuplicates"
-			android:summary="Strip fields with duplicate names (might break the URL)"
-			android:title="stripDuplicates" />
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="stripEmpty"
-			android:summary="Strip fields with empty values (might break the URL)"
-			android:title="stripEmpty" />
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="parseDocuments"
-			android:summary="Look for redirect URLs in the response body when there is no HTTP redirect to follow"
-			android:title="parseDocuments" />
+			android:key="skipBlocked"
+			android:summary="Ignore rules for blocked domains"
+			android:title="skipBlocked" />
 	</PreferenceCategory>
 	<PreferenceCategory android:title="HTTP settings">
 		<ListPreference

@@ -62,11 +62,8 @@ public class SettingsActivity extends AppCompatActivity {
 						obj.put("ignoreRawRules", preferences.getBoolean("ignoreRawRules", false));
 						obj.put("ignoreRedirections", preferences.getBoolean("ignoreRedirections", false));
 						obj.put("skipBlocked", preferences.getBoolean("skipBlocked", false));
-						obj.put("stripDuplicates", preferences.getBoolean("stripDuplicates", false));
-						obj.put("stripEmpty", preferences.getBoolean("stripEmpty", false));
-						obj.put("parseDocuments", preferences.getBoolean("parseDocuments", false));
-
-						obj.put("timeout", Integer.valueOf(preferences.getString("timeout", "3000")));
+						
+						obj.put("timeout", Integer.valueOf(preferences.getString("timeout", "3")));
 						obj.put("maxRedirects", Integer.valueOf(preferences.getString("maxRedirects", "13")));
 
 						obj.put("appTheme", preferences.getString("appTheme", "follow_system"));
@@ -122,10 +119,7 @@ public class SettingsActivity extends AppCompatActivity {
 						editor.putBoolean("ignoreRawRules", obj.getBoolean("ignoreRawRules"));
 						editor.putBoolean("ignoreRedirections", obj.getBoolean("ignoreRedirections"));
 						editor.putBoolean("skipBlocked", obj.getBoolean("skipBlocked"));
-						editor.putBoolean("stripDuplicates", obj.getBoolean("stripDuplicates"));
-						editor.putBoolean("stripEmpty", obj.getBoolean("stripEmpty"));
-						editor.putBoolean("parseDocuments", obj.getBoolean("parseDocuments"));
-
+						
 						editor.putString("timeout", String.valueOf(obj.getInt("timeout")));
 						editor.putString("maxRedirects", String.valueOf(obj.getInt("maxRedirects")));
 
