@@ -9,10 +9,10 @@ import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
@@ -46,6 +46,7 @@ public class SettingsActivity extends AppCompatActivity {
 				if (result.getResultCode() == Activity.RESULT_OK) {
 
 					final Context context = getApplicationContext();
+					final View view = findViewById(android.R.id.content);
 
 					final Intent intent = result.getData();
 					final Uri fileUri = intent.getData();
@@ -75,12 +76,12 @@ public class SettingsActivity extends AppCompatActivity {
 
 						outputStream.write(obj.toString().getBytes());
 						outputStream.close();
-					} catch (IOException | JSONException e) {
-						Toast.makeText(context, "Error exporting preferences file", Toast.LENGTH_SHORT).show();
+					} catch (final IOException | JSONException e) {
+						PackageUtils.showSnackbar(view, "Error exporting preferences file");
 						return;
 					}
 
-					Toast.makeText(context, "Export successful", Toast.LENGTH_SHORT).show();
+					PackageUtils.showSnackbar(view, "Export successful");
 				}
 			});
 
@@ -90,6 +91,7 @@ public class SettingsActivity extends AppCompatActivity {
 				if (result.getResultCode() == Activity.RESULT_OK) {
 
 					final Context context = getApplicationContext();
+					final View view = findViewById(android.R.id.content);
 
 					final Intent intent = result.getData();
 					final Uri fileUri = intent.getData();
@@ -103,8 +105,9 @@ public class SettingsActivity extends AppCompatActivity {
 
 						String inputLine;
 
-						while ((inputLine = bufferedReader.readLine()) != null)
+						while ((inputLine = bufferedReader.readLine()) != null) {
 							stringBuilder.append(inputLine);
+						}
 
 						inputStream.close();
 
@@ -129,12 +132,12 @@ public class SettingsActivity extends AppCompatActivity {
 						editor.putBoolean("disableCopyToClipboardActivity", obj.getBoolean("disableCopyToClipboardActivity"));
 
 						editor.commit();
-					} catch (IOException | JSONException e) {
-						Toast.makeText(context, "Error importing preferences file", Toast.LENGTH_SHORT).show();
+					} catch (final IOException | JSONException e) {
+						PackageUtils.showSnackbar(view, "Error importing preferences file");
 						return;
 					}
 
-					Toast.makeText(context, "Please restart for changes to take effect", Toast.LENGTH_SHORT).show();
+					PackageUtils.showSnackbar(view, "Please restart for changes to take effect");
 				}
 			});
 
