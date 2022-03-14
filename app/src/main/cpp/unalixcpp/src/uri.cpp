@@ -10,8 +10,8 @@ const std::string URI::to_string() {
 		this -> host +
 		((this -> port == 0) ? "" : ":"  + std::to_string(this -> port)) +
 		path +
-		query +
-		fragment
+		((query.size() > 0 && query[0] != '?') ? "?" + query : query) +
+		((fragment.size() > 0 && fragment[0] != '#') ? "#" + fragment : fragment)
 	);
 }
 
