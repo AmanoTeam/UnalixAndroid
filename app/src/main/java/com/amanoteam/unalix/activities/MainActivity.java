@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
 
@@ -22,6 +21,7 @@ import com.amanoteam.unalix.utilities.PackageUtils;
 import com.amanoteam.unalix.wrappers.Unalix;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 		final FloatingActionButton shareUrlButton = findViewById(R.id.share_url_button);
 		final FloatingActionButton clearInputButton = findViewById(R.id.clear_input_button);
 
-		final AppCompatEditText urlInput = findViewById(R.id.url_input);
+		final TextInputEditText urlInput = findViewById(R.id.url_input);
 
 		// "Clean URL" button listener
 		cleanUrlButton.setOnClickListener((final View view) -> {
@@ -167,7 +167,8 @@ public class MainActivity extends AppCompatActivity {
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.main_quit:
-				System.exit(0);
+				finishAndRemoveTask();
+				return true;
 			case R.id.settings_activity:
 				final Intent activity = new Intent(this, SettingsActivity.class);
 				activity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
