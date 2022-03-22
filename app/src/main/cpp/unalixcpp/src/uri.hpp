@@ -8,6 +8,7 @@ struct URI {
 		std::string path;
 		std::string query;
 		std::string fragment;
+	
 	public:
 		URI(
 			const std::string scheme,
@@ -25,56 +26,33 @@ struct URI {
 			fragment(fragment)
 		{}
 		
-		const std::string get_scheme() const {
-			return this -> scheme;
-		}
+		// Getters
+		const std::string get_scheme() const;
 		
-		void set_scheme(const std::string value) {
-			this -> scheme = value;
-		}
+		const std::string get_host() const;
 		
-		const std::string get_host() const {
-			return this -> host;
-		}
+		const int get_port() const;
 		
-		void set_host(const std::string value) {
-			this -> host = value;
-		}
+		const std::string get_path() const;
 		
-		const int get_port() const {
-			return this -> port;
-		}
+		const std::string get_query() const;
 		
-		void set_port(const int value) {
-			this -> port = value;
-		}
-		
-		const std::string get_path() const {
-			return this -> path;
-		}
-		
-		void set_path(const std::string value) {
-			this -> path = value;
-		}
-		
-		const std::string get_query() const {
-			return this -> query;
-		}
-		
-		void set_query(const std::string value) {
-			this -> query = value;
-		}
-		
-		const std::string get_fragment() const {
-			return this -> fragment;
-		}
-		
-		void set_fragment(const std::string value) {
-			this -> fragment = value;
-		}
+		const std::string get_fragment() const;
 		
 		static URI from_string(const std::string &str);
 		
-		const std::string to_string();
+		const std::string to_string() const;
 		
+		// Setters
+		void set_scheme(const std::string value);
+		
+		void set_host(const std::string value);
+		
+		void set_port(const int value);
+		
+		void set_path(const std::string value);
+		
+		void set_query(const std::string value);
+		
+		void set_fragment(const std::string value);
 };

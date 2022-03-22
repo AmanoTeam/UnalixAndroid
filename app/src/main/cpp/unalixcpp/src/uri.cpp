@@ -3,7 +3,32 @@
 
 #include "uri.hpp"
 
-const std::string URI::to_string() {
+// Getters
+const std::string URI::get_scheme() const {
+	return this -> scheme;
+}
+
+const std::string URI::get_host() const {
+	return this -> host;
+}
+
+const int URI::get_port() const {
+	return this -> port;
+}
+
+const std::string URI::get_path() const {
+	return this -> path;
+}
+
+const std::string URI::get_query() const {
+	return this -> query;
+}
+
+const std::string URI::get_fragment() const {
+	return this -> fragment;
+}
+
+const std::string URI::to_string() const {
 	return (
 		this -> scheme +
 		"://" +
@@ -79,4 +104,29 @@ URI URI::from_string(const std::string &str) {
 	
 	return uri;
 
+}
+
+// Setters
+void URI::set_scheme(const std::string value) {
+	this -> scheme = value;
+}
+
+void URI::set_host(const std::string value) {
+	this -> host = value;
+}
+
+void URI::set_port(const int value) {
+	this -> port = value;
+}
+
+void URI::set_path(const std::string value) {
+	this -> path = value;
+}
+
+void URI::set_query(const std::string value) {
+	this -> query = value;
+}
+
+void URI::set_fragment(const std::string value) {
+	this -> fragment = value;
 }

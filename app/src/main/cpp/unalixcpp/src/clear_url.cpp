@@ -1,4 +1,3 @@
-#include <fstream>
 #include <vector>
 #include <string>
 #include <regex>
@@ -12,12 +11,12 @@ const std::string RULE_SUFFIX = "(?:(?:=|%3[Dd])[^&]*)";
 
 const std::string clear_url(
 	const std::string url,
-	const bool ignore_referral_marketing = false,
-	const bool ignore_rules = false,
-	const bool ignore_exceptions = false,
-	const bool ignore_raw_rules = false,
-	const bool ignore_redirections  = false,
-	const bool skip_blocked = false
+	const bool ignore_referral_marketing,
+	const bool ignore_rules,
+	const bool ignore_exceptions,
+	const bool ignore_raw_rules,
+	const bool ignore_redirections,
+	const bool skip_blocked
 ) {
 	
 	std::string this_url = url;
