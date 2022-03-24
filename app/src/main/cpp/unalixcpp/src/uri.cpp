@@ -1,4 +1,5 @@
 #include <string>
+#include <iostream>
 #include <algorithm>
 
 #include "uri.hpp"
@@ -71,7 +72,14 @@ URI URI::from_string(const std::string &str) {
 	std::string::const_iterator path_start = std::find(host_start, str_end, '/');
 	std::string::const_iterator query_start = std::find(str.begin(), str.end(), '?');
 	std::string::const_iterator fragment_start = std::find(str.begin(), str.end(), '#');
-	std::string::const_iterator host_end = std::find(scheme_end, (path_start != str_end) ? path_start : query_start, ':');
+	
+	std::string::const_iterator host_end;
+	
+	if (std::string(scheme_end, scheme_end + 1) == "[") {
+		host_end = std::find(host_start, path_start, ']') + 1;
+	} else {
+		host_end = std::find(scheme_end, (path_start != str_end) ? path_start : query_start, ':');
+	}
 
 	host = std::string(host_start, host_end);
 
