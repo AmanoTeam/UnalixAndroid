@@ -45,6 +45,19 @@
 			android:entryValues="@array/max_redirects_values"
 			android:key="maxRedirects"
 			android:title="Max redirects" />
+		<ListPreference
+			android:title="DNS"
+			android:key="dns"
+			android:defaultValue="follow_system"
+			android:entries="@array/dns_entries"
+			android:entryValues="@array/dns_values" >
+		</ListPreference>
+		<EditTextPreference
+			android:enabled="false"
+			android:title="Set custom DNS"
+			android:hint="&lt;scheme&gt;://&lt;hostname&gt;:&lt;port&gt;/&lt;path&gt;"
+			android:key="custom_dns" >
+		</EditTextPreference>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="App settings">
 		<ListPreference

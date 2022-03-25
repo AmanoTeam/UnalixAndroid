@@ -37,4 +37,22 @@
 		<item>23</item>
 		<item>28</item>
 	</string-array>
+	<string-array name="dns_entries">
+		<item>Follow system</item>
+		<item>Cloudflare</item>
+		<item>Google</item>
+		<item>Quad9</item>
+		<item>AdGuard</item>
+		<item>Applied Privacy</item>
+		<item>Custom</item>
+	</string-array>
+	<string-array name="dns_values">
+		<item>follow_system</item>
+		<item>tls://one.one.one.one</item>
+		<item>tls://dns.google</item>
+		<item>tls://dns10.quad9.net</item>
+		<item>tls://dns.adguard.com</item>
+		<item>tls://dot1.applied-privacy.net</item>
+		<item>custom</item>
+	</string-array>
 </resources>

@@ -19,6 +19,7 @@ public class Unalix {
 	private boolean skipBlocked = false;
 	private int timeout = 3;
 	private int maxRedirects = 13;
+	private String dns = "";
 
 	private native String clearUrl(
 			final String url,
@@ -51,7 +52,8 @@ public class Unalix {
 			final boolean ignoreRedirections,
 			final boolean skipBlocked,
 			final int timeout,
-			final int maxRedirects
+			final int maxRedirects,
+			final String dns
 	);
 
 	public String unshortUrl(final String url) {
@@ -64,7 +66,8 @@ public class Unalix {
 				this.ignoreRedirections,
 				this.skipBlocked,
 				this.timeout,
-				this.maxRedirects
+				this.maxRedirects,
+				this.dns
 		);
 	}
 
@@ -100,6 +103,10 @@ public class Unalix {
 		this.maxRedirects = value;
 	}
 
+	private void setDns(final String value) {
+		this.dns = value;
+	}
+
 	public void setFromPreferences(final Context context) {
 
 		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
@@ -127,7 +134,20 @@ public class Unalix {
 
 		final int maxRedirects = Integer.parseInt(settings.getString("maxRedirects", "13"));
 		setMaxRedirects(maxRedirects);
+		
+		final String dns = settings.getString("dns", "");
+		
+		if (dns.equals("follow_system")) {
+			setDns("");
+		} else if (dns.equals("custom")) {
+			final String customDns = settings.getString("custom_dns", "");
+			
+			if (!customDns.equals("")) {
+				setDns(customDns);
+			}
+		} else {
+			setDns(dns);
+		}
 
 	}
-
 }

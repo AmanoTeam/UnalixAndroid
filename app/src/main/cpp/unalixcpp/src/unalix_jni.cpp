@@ -17,10 +17,10 @@ jstring Java_com_amanoteam_unalix_wrappers_Unalix_clearUrl (
 	jboolean skipBlocked
 ) {
 	
-	const char *str = env -> GetStringUTFChars(url, NULL);
+	const char *url_ = env -> GetStringUTFChars(url, NULL);
 	
 	const std::string result = clear_url(
-		str,
+		url_,
 		(bool) ignoreReferralMarketing,
 		(bool) ignoreRules,
 		(bool) ignoreExceptions,
@@ -29,7 +29,7 @@ jstring Java_com_amanoteam_unalix_wrappers_Unalix_clearUrl (
 		(bool) skipBlocked
 	);
 	
-	env -> ReleaseStringUTFChars(url, str);
+	env -> ReleaseStringUTFChars(url, url_);
 	
 	return env -> NewStringUTF(result.c_str());
 }
@@ -45,15 +45,18 @@ jstring Java_com_amanoteam_unalix_wrappers_Unalix_unshortUrl (
 	jboolean ignoreRedirections,
 	jboolean skipBlocked,
 	jint timeout,
-	jint maxRedirects
+	jint maxRedirects,
+	jstring dns
 ) {
 	
-	const char *str = env -> GetStringUTFChars(url, NULL);
+	const char *url_ = env -> GetStringUTFChars(url, NULL);
+	const char *dns_ = env -> GetStringUTFChars(dns, NULL);
+	
 	std::string result;
 	
 	try {
 	 	result = unshort_url(
-			str,
+			url_,
 			(bool) ignoreReferralMarketing,
 			(bool) ignoreRules,
 			(bool) ignoreExceptions,
@@ -61,13 +64,15 @@ jstring Java_com_amanoteam_unalix_wrappers_Unalix_unshortUrl (
 			(bool) ignoreRedirections,
 			(bool) skipBlocked,
 			(int) timeout,
-			(int) maxRedirects
+			(int) maxRedirects,
+			dns_
 		);
 	} catch (const UnalixException e) {
 		result = e.get_url();
 	}
 	
-	env -> ReleaseStringUTFChars(url, str);
+	env -> ReleaseStringUTFChars(url, url_);
+	env -> ReleaseStringUTFChars(dns, dns_);
 	
 	return env -> NewStringUTF(result.c_str());
 }

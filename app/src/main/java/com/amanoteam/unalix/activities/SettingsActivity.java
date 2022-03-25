@@ -19,6 +19,8 @@ import androidx.activity.result.contract.ActivityResultContracts.StartActivityFo
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
+import androidx.preference.PreferenceScreen;
+import androidx.preference.EditTextPreference;
 
 import com.amanoteam.unalix.R;
 import com.amanoteam.unalix.fragments.SettingsFragment;
@@ -39,6 +41,9 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class SettingsActivity extends AppCompatActivity {
+
+	private SettingsFragment settingsFragment;
+	private PreferenceScreen preferenceScreen;
 
 	// "Export" preferences listener
 	private final ActivityResultLauncher<Intent> exportPreferences = registerForActivityResult(new StartActivityForResult(),
@@ -66,6 +71,8 @@ public class SettingsActivity extends AppCompatActivity {
 						
 						obj.put("timeout", Integer.valueOf(preferences.getString("timeout", "3")));
 						obj.put("maxRedirects", Integer.valueOf(preferences.getString("maxRedirects", "13")));
+						obj.put("dns", preferences.getString("dns", ""));
+						obj.put("custom_dns", preferences.getString("custom_dns", ""));
 
 						obj.put("appTheme", preferences.getString("appTheme", "follow_system"));
 						obj.put("disableClearURLActivity", preferences.getBoolean("disableClearURLActivity", false));
@@ -125,6 +132,8 @@ public class SettingsActivity extends AppCompatActivity {
 						
 						editor.putString("timeout", String.valueOf(obj.getInt("timeout")));
 						editor.putString("maxRedirects", String.valueOf(obj.getInt("maxRedirects")));
+						editor.putString("dns", obj.getString("maxRedirects"));
+						editor.putString("custom_dns", obj.getString("custom_dns"));
 
 						editor.putString("appTheme", obj.getString("appTheme"));
 						editor.putBoolean("disableClearURLActivity", obj.getBoolean("disableClearURLActivity"));
@@ -167,6 +176,21 @@ public class SettingsActivity extends AppCompatActivity {
 						PackageUtils.enableComponent(getApplicationContext(), PackageUtils.COPY_TO_CLIPBOARD_COMPONENT);
 					}
 					break;
+				case "dns":
+					if (preferenceScreen == null) {
+						break;
+					}
+					
+					final EditTextPreference customDns = (EditTextPreference) preferenceScreen.findPreference("custom_dns");
+					
+					if (preferences.getString(key, "follow_system").equals("custom")) {
+						customDns.setEnabled(true);
+					} else {
+						customDns.setEnabled(false);
+					}
+					
+					break;
+		
 			}
 
 		}
@@ -186,13 +210,31 @@ public class SettingsActivity extends AppCompatActivity {
 		final Toolbar toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
 		setSupportActionBar(toolbar);
 
+		settingsFragment = new SettingsFragment();
+
 		// Preferences screen
 		getSupportFragmentManager()
 			.beginTransaction()
-			.replace(R.id.frame_layout_settings, new SettingsFragment())
+			.replace(R.id.frame_layout_settings, settingsFragment)
 			.commit();
 	}
-
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		
+		preferenceScreen = settingsFragment.getPreferenceScreen();
+		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		
+		final EditTextPreference customDns = (EditTextPreference) preferenceScreen.findPreference("custom_dns");
+		
+		if (preferences.getString("dns", "follow_system").equals("custom")) {
+			customDns.setEnabled(true);
+		} else {
+			customDns.setEnabled(false);
+		}
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		final MenuInflater inflater = getMenuInflater();

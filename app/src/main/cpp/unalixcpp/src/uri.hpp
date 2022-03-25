@@ -31,6 +31,8 @@ struct URI {
 		
 		const std::string get_host() const;
 		
+		const std::string get_ipv6_host() const;
+		
 		const int get_port() const;
 		
 		const std::string get_path() const;
@@ -38,6 +40,8 @@ struct URI {
 		const std::string get_query() const;
 		
 		const std::string get_fragment() const;
+		
+		const bool is_ipv6() const;
 		
 		static URI from_string(const std::string &str);
 		

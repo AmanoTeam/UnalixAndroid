@@ -1,5 +1,4 @@
 #include <string>
-#include <iostream>
 #include <algorithm>
 
 #include "uri.hpp"
@@ -11,6 +10,11 @@ const std::string URI::get_scheme() const {
 
 const std::string URI::get_host() const {
 	return this -> host;
+}
+
+const std::string URI::get_ipv6_host() const {
+	const std::string hostname = this -> get_host();
+	return hostname.substr(1, hostname.size() - 2);
 }
 
 const int URI::get_port() const {
@@ -27,6 +31,11 @@ const std::string URI::get_query() const {
 
 const std::string URI::get_fragment() const {
 	return this -> fragment;
+}
+
+const bool URI::is_ipv6() const {
+	const std::string hostname = this -> get_host();
+	return (hostname[0] == '[');
 }
 
 const std::string URI::to_string() const {

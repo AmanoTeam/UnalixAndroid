@@ -29,5 +29,6 @@ JNIEXPORT jstring JNICALL Java_com_amanoteam_unalix_wrappers_Unalix_unshortUrl
 		jboolean ignoreRedirections,
 		jboolean skipBlocked,
 		jint timeout,
-		jint maxRedirects
+		jint maxRedirects,
+		jstring dns
 	);

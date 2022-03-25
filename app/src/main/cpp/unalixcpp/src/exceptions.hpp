@@ -11,6 +11,10 @@ struct UnalixException : public std::exception {
 			this -> message = value;
 		}
 		
+		const std::string get_message() const {
+			return this -> message;
+		}
+		
 		const void set_url(const std::string value) {
 			this -> url = value;
 		}
