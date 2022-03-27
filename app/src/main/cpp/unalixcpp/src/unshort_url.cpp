@@ -9,7 +9,6 @@
 #include <linux/tcp.h>
 #include <unistd.h>
 #include <netdb.h>
-
 #include <bearssl.h>
 
 #include "clear_url.hpp"
@@ -18,7 +17,7 @@
 #include "uri.hpp"
 #include "dns.hpp"
 #include "exceptions.hpp"
-#include "http_utils.hpp"
+#include "socket_utils.hpp"
 
 // Setters
 void Response::set_http_version(const float value) {
@@ -173,7 +172,10 @@ const std::string unshort_url(
 		
 		data.append("\r\n");
 		
-		int fd;
+		int socket_domain;
+		
+		struct sockaddr* socket_address;
+		int socket_address_size;
 		
 		if (dns == "") {
 			struct addrinfo hints = {};
@@ -182,51 +184,22 @@ const std::string unshort_url(
 			
 			struct addrinfo *res = {};
 			
-			int rc = getaddrinfo((uri.get_host()).c_str(), std::to_string(port).c_str(), &hints, &res);
+			const int rc = getaddrinfo((uri.get_host()).c_str(), std::to_string(port).c_str(), &hints, &res);
 			
 			if (rc != 0) {
-				DNSError e;
-				e.set_message(std::string("getaddrinfo: ") + std::string(gai_strerror(rc)));
+				GAIError e;
+				e.set_message(gai_strerror(rc));
 				e.set_url(this_url);
 				
 				throw(e);
 			}
 			
-			fd = socket(res -> ai_family, res -> ai_socktype, res -> ai_protocol);
+			socket_address = res -> ai_addr;
+			socket_address_size = res -> ai_addrlen;
 			
-			if (fd == -1) {
-				SocketError e;
-				e.set_message(std::string("socket: ") + std::string(strerror(errno)));
-				e.set_url(this_url);
-				
-				throw(e);
-			}
+			socket_domain = res -> ai_family;
 			
-			set_socket_timeout(fd, timeout);
-			
-			rc = connect(fd, res -> ai_addr, res -> ai_addrlen);
-			
-			if (rc == -1) {
-				close(fd);
-				
-				SocketError e;
-				e.set_message(std::string("connect: ") + std::string(strerror(errno)));
-				e.set_url(this_url);
-				
-				throw(e);
-			}
-						
 			freeaddrinfo(res);
-			
-			if (rc == -1) {
-				close(fd);
-				
-				SocketError e;
-				e.set_message(std::string("connect: ") + std::string(strerror(errno)));
-				e.set_url(this_url);
-				
-				throw(e);
-			}
 		} else {
 			const QType qtypes[2] = {A, AAAA};
 			
@@ -254,69 +227,28 @@ const std::string unshort_url(
 				
 				switch (qtype) {
 					case A:
-						{
-							fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-							
-							if (fd == -1) {
-								SocketError e;
-								e.set_message(std::string("socket: ") + std::string(strerror(errno)));
-								e.set_url(this_url);
-								
-								throw(e);
-							}
-							
-							set_socket_timeout(fd, timeout);
-							
-							struct sockaddr_in addr;
-							addr.sin_family = AF_INET;
-							addr.sin_addr.s_addr = inet_addr(address.c_str());
-							addr.sin_port = htons(port);
-							
-							const int rc = connect(fd, (struct sockaddr*) &addr, sizeof(struct sockaddr));
-							
-							if (rc == -1) {
-								close(fd);
-								
-								SocketError e;
-								e.set_message(std::string("connect: ") + std::string(strerror(errno)));
-								e.set_url(this_url);
-								
-								throw(e);
-							}
-						}
+						struct sockaddr_in addr_v4;
+						addr_v4.sin_family = AF_INET;
+						addr_v4.sin_addr.s_addr = inet_addr(address.c_str());
+						addr_v4.sin_port = htons(port);
+						
+						socket_address = (struct sockaddr*) &addr_v4;
+						socket_address_size = sizeof(struct sockaddr);
+						
+						socket_domain = addr_v4.sin_family;
+						
 						break;
 					case AAAA:
-						{
-							fd = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP);
-							
-							if (fd == -1) {
-								SocketError e;
-								e.set_message(std::string("socket: ") + std::string(strerror(errno)));
-								e.set_url(this_url);
-								
-								throw(e);
-							}
-							
-							set_socket_timeout(fd, timeout);
-							
-							struct sockaddr_in6 addr;
-							addr.sin6_family = AF_INET6;
-							inet_pton(AF_INET6, address.c_str(), &addr.sin6_addr);
-							addr.sin6_port = htons(port);
-							
-							
-							const int rc = connect(fd, (struct sockaddr*) &addr, sizeof(addr));
-							
-							if (rc == -1) {
-								close(fd);
-								
-								SocketError e;
-								e.set_message(std::string("connect: ") + std::string(strerror(errno)));
-								e.set_url(this_url);
-								
-								throw(e);
-							}
-						}
+						struct sockaddr_in6 addr_v6;
+						addr_v6.sin6_family = AF_INET6;
+						inet_pton(AF_INET6, address.c_str(), &addr_v6.sin6_addr);
+						addr_v6.sin6_port = htons(port);
+						
+						socket_address = (struct sockaddr*) &addr_v6;
+						socket_address_size = sizeof(addr_v6);
+						
+						socket_domain = addr_v6.sin6_family;
+						
 						break;
 				}
 				
@@ -324,20 +256,21 @@ const std::string unshort_url(
 			}
 		}
 		
-		const int optval = 1;
-		const int rc = setsockopt(fd, SOL_TCP, TCP_NODELAY, &optval, sizeof(optval));
+		int fd = create_socket(socket_domain, SOCK_STREAM, IPPROTO_TCP, timeout);
 		
-		if (rc == -1) {
+		const int rc = connect(fd, socket_address, socket_address_size);
+		
+		if (rc < 0) {
 			close(fd);
 			
-			SocketError e;
-			e.set_message(std::string("setsockopt: ") + std::string(strerror(errno)));
+			ConnectError e;
+			e.set_message(strerror(errno));
 			e.set_url(this_url);
 			
 			throw(e);
 		}
 		
-		char buffer[3096];
+		char buffer[1024];
 		
 		if (uri.get_scheme() == "https") {
 			br_ssl_client_context sc;
@@ -358,38 +291,36 @@ const std::string unshort_url(
 			close(fd);
 			
 			if (br_ssl_engine_current_state(&sc.eng) == BR_SSL_CLOSED) {
-				const int err = br_ssl_engine_last_error(&sc.eng);
+				const int rc = br_ssl_engine_last_error(&sc.eng);
 				
-				if (err != 0) {
+				if (rc != 0) {
 					SSLError e;
-					e.set_message("br_ssl_engine_last_error: " + std::to_string(err));
+					e.set_message("ssl error " + std::to_string(rc));
 					e.set_url(this_url);
 					
 					throw(e);
 				}
 			}
 		} else {
-			int length;
+			int size = send(fd, data.c_str(), data.length(), NULL);
 			
-			length = send(fd, data.c_str(), data.length(), NULL);
-			
-			if (length == -1) {
+			if (size < 0) {
 				close(fd);
 				
-				SocketError e;
-				e.set_message(std::string("send: ") + std::string(strerror(errno)));
+				SendError e;
+				e.set_message(strerror(errno));
 				e.set_url(this_url);
 				
 				throw(e);
 			}
 			
-			length = recv(fd, buffer, sizeof(buffer), NULL);
+			size = recv(fd, buffer, sizeof(buffer), NULL);
 			
-			if (length == -1) {
+			if (size < 0) {
 				close(fd);
 				
-				SocketError e;
-				e.set_message(std::string("recv: ") + std::string(strerror(errno)));
+				RecvError e;
+				e.set_message(strerror(errno));
 				e.set_url(this_url);
 				
 				throw(e);
@@ -569,7 +500,6 @@ const std::string unshort_url(
 		std::string::const_iterator header_end = status_code_end;
 		
 		while (header_end != headers_end) {
-			
 			const std::string::const_iterator header_start = std::find(header_end, headers_end, '\r') + 2;
 			header_end = std::find(header_start, headers_end, '\r');
 			

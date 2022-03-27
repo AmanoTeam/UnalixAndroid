@@ -41,6 +41,8 @@ struct URI {
 		
 		const std::string get_fragment() const;
 		
+		const bool is_ipv4() const;
+		
 		const bool is_ipv6() const;
 		
 		static URI from_string(const std::string &str);

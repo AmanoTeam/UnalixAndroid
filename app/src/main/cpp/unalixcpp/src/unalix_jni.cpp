@@ -1,6 +1,8 @@
 #include <string>
+#include <typeinfo>
 
 #include <jni.h>
+#include <android/log.h>
 
 #include "unalix.hpp"
 #include "unalix_jni.hpp"
@@ -67,7 +69,12 @@ jstring Java_com_amanoteam_unalix_wrappers_Unalix_unshortUrl (
 			(int) maxRedirects,
 			dns_
 		);
-	} catch (const UnalixException e) {
+	} catch (const UnalixException &e) {
+		const std::string name = typeid(e).name();
+		const std::string message = e.what();
+		
+		__android_log_write(ANDROID_LOG_ERROR, "libunalix_jni", (name + ": " + message).c_str());
+		
 		result = e.get_url();
 	}
 	

@@ -1,6 +1,8 @@
 #include <string>
 #include <algorithm>
 
+#include <arpa/inet.h>
+
 #include "uri.hpp"
 
 // Getters
@@ -33,9 +35,18 @@ const std::string URI::get_fragment() const {
 	return this -> fragment;
 }
 
+const bool URI::is_ipv4() const {
+	struct sockaddr_in addr;
+	const int rc = inet_pton(AF_INET, (this -> get_host()).c_str(), &addr.sin_addr);
+	
+	return (rc == 1);
+}
+
 const bool URI::is_ipv6() const {
-	const std::string hostname = this -> get_host();
-	return (hostname[0] == '[');
+	struct sockaddr_in6 addr;
+	const int rc = inet_pton(AF_INET6, (this -> get_ipv6_host()).c_str(), &addr.sin6_addr);
+	
+	return (rc == 1);
 }
 
 const std::string URI::to_string() const {

@@ -5,10 +5,13 @@ import http.client
 import urllib.parse
 import hashlib
 
-CA_CERT_URL = "https://curl.se/ca/cacert-2022-02-01.pem"
-CA_CERT_SHA256 = "1d9195b76d2ea25c2b5ae9bee52d05075244d78fcd9c58ee0b6fac47d395a5eb"
+CA_CERT_URL = "https://curl.se/ca/cacert-2022-03-18.pem"
+CA_CERT_SHA256 = "2d0575e481482551a6a4f9152e7d2ab4bafaeaee5f2606edb829c2fdb3713336"
 
 source = """\
+#include <unistd.h>
+#include <errno.h>
+
 #include <bearssl.h>
 
 /*
@@ -53,6 +56,7 @@ static int sock_read(void *ctx, unsigned char *buf, size_t len)
 		return (int)rlen;
 	}}
 }}
+
 """
 
 url = urllib.parse.urlparse(url = CA_CERT_URL)

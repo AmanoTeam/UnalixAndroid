@@ -28,10 +28,14 @@ struct UnalixException : public std::exception {
 		}
 };
 
+struct GAIError : public UnalixException {};
 struct SocketError : public UnalixException {};
+struct ConnectError : public SocketError {};
+struct SendError : public SocketError {};
+struct RecvError : public SocketError {};
 struct SSLError : public UnalixException {};
-struct ConnectError : public UnalixException {};
 struct UnsupportedProtocolError : public UnalixException {};
 struct RemoteProtocolError : public UnalixException {};
 struct TooManyRedirectsError : public UnalixException {};
 struct DNSError : public UnalixException {};
+struct ValueError : public UnalixException {};

@@ -1,1 +1,0 @@
-void set_socket_timeout(const int fd, const int seconds);
