@@ -333,7 +333,8 @@ add_library( # Specifies the name of the library.
 			src/main/cpp/unalixcpp/src/uri.cpp
 			src/main/cpp/unalixcpp/src/utils.cpp
 			src/main/cpp/unalixcpp/src/dns.cpp
-			src/main/cpp/unalixcpp/src/socket_utils.cpp
+			src/main/cpp/unalixcpp/src/socket.cpp
+			src/main/cpp/unalixcpp/src/ssl.cpp
 			src/main/cpp/unalixcpp/src/unalix_jni.cpp)
 
 target_link_libraries(

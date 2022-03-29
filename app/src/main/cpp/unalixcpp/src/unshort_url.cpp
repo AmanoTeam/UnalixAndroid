@@ -9,7 +9,6 @@
 #include <linux/tcp.h>
 #include <unistd.h>
 #include <netdb.h>
-#include <bearssl.h>
 
 #include "clear_url.hpp"
 #include "unshort_url.hpp"
@@ -17,7 +16,7 @@
 #include "uri.hpp"
 #include "dns.hpp"
 #include "exceptions.hpp"
-#include "socket_utils.hpp"
+#include "socket.hpp"
 
 // Setters
 void Response::set_http_version(const float value) {
@@ -172,43 +171,24 @@ const std::string unshort_url(
 		
 		data.append("\r\n");
 		
-		int socket_domain;
+		std::string addr;
+		int addr_family;
 		
-		struct sockaddr* socket_address;
-		int socket_address_size;
-		
-		if (dns == "") {
-			struct addrinfo hints = {};
-			hints.ai_family = PF_UNSPEC;
-			hints.ai_socktype = SOCK_STREAM;
-			
-			struct addrinfo *res = {};
-			
-			const int rc = getaddrinfo((uri.get_host()).c_str(), std::to_string(port).c_str(), &hints, &res);
-			
-			if (rc != 0) {
-				GAIError e;
-				e.set_message(gai_strerror(rc));
-				e.set_url(this_url);
-				
-				throw(e);
-			}
-			
-			socket_address = res -> ai_addr;
-			socket_address_size = res -> ai_addrlen;
-			
-			socket_domain = res -> ai_family;
-			
-			freeaddrinfo(res);
+		if (uri.is_ipv4()) {
+			addr = uri.get_host();
+			addr_family = AF_INET;
+		} else if (uri.is_ipv6()) {
+			addr = uri.get_ipv6_host();
+			addr_family = AF_INET6;
+		} else if (dns == "") {
+			addr = get_address(uri.get_host(), addr_family);
 		} else {
 			const QType qtypes[2] = {A, AAAA};
 			
-			std::string address;
-			
 			for (const QType qtype : qtypes) {
 				try {
-					address = dns_query(uri.get_host(), qtype, timeout, dns);
-				} catch (DNSError& e) {
+					addr = dns_query(uri.get_host(), qtype, timeout, dns);
+				} catch (UnalixException &e) {
 					if (e.get_message() == "Domain doesn't exists") {
 						e.set_url(this_url);
 						throw;
@@ -220,124 +200,74 @@ const std::string unshort_url(
 					
 					e.set_url(this_url);
 					throw;
-				} catch (UnalixException& e) {
-					e.set_url(this_url);
-					throw;
 				}
 				
-				switch (qtype) {
-					case A:
-						struct sockaddr_in addr_v4;
-						addr_v4.sin_family = AF_INET;
-						addr_v4.sin_addr.s_addr = inet_addr(address.c_str());
-						addr_v4.sin_port = htons(port);
-						
-						socket_address = (struct sockaddr*) &addr_v4;
-						socket_address_size = sizeof(struct sockaddr);
-						
-						socket_domain = addr_v4.sin_family;
-						
-						break;
-					case AAAA:
-						struct sockaddr_in6 addr_v6;
-						addr_v6.sin6_family = AF_INET6;
-						inet_pton(AF_INET6, address.c_str(), &addr_v6.sin6_addr);
-						addr_v6.sin6_port = htons(port);
-						
-						socket_address = (struct sockaddr*) &addr_v6;
-						socket_address_size = sizeof(addr_v6);
-						
-						socket_domain = addr_v6.sin6_family;
-						
-						break;
-				}
+				addr_family = (qtype == A) ? AF_INET : AF_INET6;
 				
 				break;
 			}
 		}
 		
-		int fd = create_socket(socket_domain, SOCK_STREAM, IPPROTO_TCP, timeout);
+		struct sockaddr* socket_address;
+		int socket_address_size;
 		
-		const int rc = connect(fd, socket_address, socket_address_size);
+		switch (addr_family) {
+			case AF_INET:
+				struct sockaddr_in addr_v4;
+				addr_v4.sin_family = addr_family;
+				addr_v4.sin_addr.s_addr = inet_addr(addr.c_str());
+				addr_v4.sin_port = htons(port);
+				
+				socket_address = (struct sockaddr*) &addr_v4;
+				socket_address_size = sizeof(struct sockaddr_in);
+				
+				break;
+			case AF_INET6:
+				struct sockaddr_in6 addr_v6;
+				addr_v6.sin6_family = addr_family;
+				inet_pton(addr_family, addr.c_str(), &addr_v6.sin6_addr);
+				addr_v6.sin6_port = htons(port);
+				
+				socket_address = (struct sockaddr*) &addr_v6;
+				socket_address_size = sizeof(sockaddr_in6);
+				
+				break;
+		}
 		
-		if (rc < 0) {
-			close(fd);
+		int fd;
+		
+		const char* request = data.c_str();
+		const size_t request_size = data.length();
+		
+		char response[1024];
+		const size_t response_size = sizeof(response);
+		
+		try {
+			fd = create_socket(addr_family, SOCK_STREAM, IPPROTO_TCP, timeout);
 			
-			ConnectError e;
-			e.set_message(strerror(errno));
+			connect_socket(fd, socket_address, socket_address_size);
+			
+			if (uri.get_scheme() == "https") {
+				send_encrypted_data(fd, uri.get_host().c_str(), request, request_size, response, response_size);
+			} else {
+				send_tcp_data(fd, request, request_size, response, response_size);
+			}
+		} catch (UnalixException &e) {
 			e.set_url(this_url);
-			
-			throw(e);
+			throw;
 		}
+			
+		close(fd);
 		
-		char buffer[1024];
-		
-		if (uri.get_scheme() == "https") {
-			br_ssl_client_context sc;
-			br_x509_minimal_context xc;
-			unsigned char iobuf[BR_SSL_BUFSIZE_BIDI];
-			br_sslio_context ioc;
-			
-			br_ssl_client_init_full(&sc, &xc, TAs, TAs_NUM);
-			br_ssl_engine_set_buffer(&sc.eng, iobuf, sizeof(iobuf), 1);
-			br_ssl_client_reset(&sc, (uri.get_host()).c_str(), 0);
-			br_sslio_init(&ioc, &sc.eng, sock_read, &fd, sock_write, &fd);
-			
-			br_sslio_write_all(&ioc, data.c_str(), data.length());
-			br_sslio_flush(&ioc);
-			
-			br_sslio_read(&ioc, buffer, sizeof(buffer));
-			
-			close(fd);
-			
-			if (br_ssl_engine_current_state(&sc.eng) == BR_SSL_CLOSED) {
-				const int rc = br_ssl_engine_last_error(&sc.eng);
-				
-				if (rc != 0) {
-					SSLError e;
-					e.set_message("ssl error " + std::to_string(rc));
-					e.set_url(this_url);
-					
-					throw(e);
-				}
-			}
-		} else {
-			int size = send(fd, data.c_str(), data.length(), NULL);
-			
-			if (size < 0) {
-				close(fd);
-				
-				SendError e;
-				e.set_message(strerror(errno));
-				e.set_url(this_url);
-				
-				throw(e);
-			}
-			
-			size = recv(fd, buffer, sizeof(buffer), NULL);
-			
-			if (size < 0) {
-				close(fd);
-				
-				RecvError e;
-				e.set_message(strerror(errno));
-				e.set_url(this_url);
-				
-				throw(e);
-			}
-			
-			close(fd);
-		}
-		
-		const std::string raw_response = buffer;
+		const std::string raw_response = response;
 		
 		const size_t index = raw_response.find("\r\n\r\n");
 		const std::string raw_headers = raw_response.substr(0, index);
 		const std::string body = raw_response.substr(index + 4, raw_response.length());
 		
-		Response response = Response();
+		Response r = Response();
 		
-		response.set_body(body);
+		r.set_body(body);
 		
 		const std::string::const_iterator headers_start = raw_headers.begin();
 		const std::string::const_iterator headers_end = raw_headers.end();
@@ -355,7 +285,7 @@ const std::string unshort_url(
 			throw(e);
 		}
 		
-		response.set_http_version(http_version);
+		r.set_http_version(http_version);
 		
 		const std::string::const_iterator status_code_start = std::find(http_version_end, headers_end, ' ') + 1;
 		const std::string::const_iterator status_code_end = std::find(status_code_start, headers_end, ' ');
@@ -493,8 +423,8 @@ const std::string unshort_url(
 				throw(e);
 		}
 		
-		response.set_status_message(status_message);
-		response.set_status_code(status_code);
+		r.set_status_message(status_message);
+		r.set_status_code(status_code);
 		
 		std::vector<std::tuple<std::string, std::string>> headers;
 		std::string::const_iterator header_end = status_code_end;
@@ -513,14 +443,14 @@ const std::string unshort_url(
 			headers.push_back(std::make_tuple(key, value));
 		}
 		
-		response.set_headers(headers);
+		r.set_headers(headers);
 		
 		std::string location;
 		
-		if (response.get_status_code() >= 300 && response.get_status_code() <= 399 && response.has_header("Location")) {
-			location = response.get_header("Location");
-		} else if (response.get_status_code() >= 200 && response.get_status_code() <= 299 && response.has_header("Content-Location")) {
-			location = response.get_header("Content-Location");
+		if (r.get_status_code() >= 300 && r.get_status_code() <= 399 && r.has_header("Location")) {
+			location = r.get_header("Location");
+		} else if (r.get_status_code() >= 200 && r.get_status_code() <= 299 && r.has_header("Content-Location")) {
+			location = r.get_header("Content-Location");
 		}
 		
 		if (location != "") {

@@ -8,6 +8,7 @@ RFC 7858 - Specification for DNS over Transport Layer Security (TLS)
 #include <sstream>
 #include <iomanip>
 #include <vector>
+#include <iostream>
 
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -17,13 +18,50 @@ RFC 7858 - Specification for DNS over Transport Layer Security (TLS)
 #include <unistd.h>
 #include <netdb.h>
 
-#include <bearssl.h>
-
 #include "dns.hpp"
 #include "uri.hpp"
 #include "ssl.hpp"
 #include "exceptions.hpp"
-#include "socket_utils.hpp"
+#include "socket.hpp"
+
+const std::string get_address(
+	const std::string hostname,
+	int family
+) {
+	
+	struct addrinfo hints = {};
+	hints.ai_family = PF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+	
+	struct addrinfo *res = {};
+	
+	int rc;
+	
+	rc = getaddrinfo(hostname.c_str(), "0", &hints, &res);
+		
+	if (rc != 0) {
+		GAIError e;
+		e.set_message(gai_strerror(rc));
+		
+		throw(e);
+	}
+	
+	family = res -> ai_family;
+	
+	char host[NI_MAXHOST];
+	rc = getnameinfo(res -> ai_addr, res -> ai_addrlen, host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+	
+	freeaddrinfo(res);
+	
+	if (rc != 0) {
+		GAIError e;
+		e.set_message(gai_strerror(rc));
+		
+		throw(e);
+	}
+	
+	return std::string(host);
+}
 
 const std::vector<char> encode_query(
 	const std::string name,
@@ -127,7 +165,6 @@ const std::string dns_query(
 	
 	DNSSpecification spec;
 	
-	int socket_domain;
 	int socket_type;
 	
 	URI uri = URI::from_string(server);
@@ -151,75 +188,7 @@ const std::string dns_query(
 		throw(e);
 	}
 	
-	int port = uri.get_port();
-		
-	if (port == 0) {
-		switch (spec) {
-			case DNS_SPEC_DOH:
-				port = DEFAULT_DOH_PORT;
-				break;
-			case DNS_SPEC_DOT:
-				port = DEFAULT_DOT_PORT;
-				break;
-			case DNS_SPEC_WIREFORMAT_UDP:
-			case DNS_SPEC_WIREFORMAT_TCP:
-				port = DEFAULT_WIREFORMAT_PORT;
-				break;
-		}
-	}
-	
-	struct sockaddr_in addr_v4;
-	struct sockaddr_in6 addr_v6;
-	
-	struct sockaddr* socket_address;
-	int socket_address_size;
-	
-	if (!uri.is_ipv4() && !uri.is_ipv6()) {
-		struct addrinfo hints = {};
-		hints.ai_family = PF_UNSPEC;
-		hints.ai_socktype = SOCK_STREAM;
-		
-		struct addrinfo *res = {};
-		
-		const int rc = getaddrinfo(uri.get_host().c_str(), std::to_string(port).c_str(), &hints, &res);
-		
-		if (rc != 0) {
-			GAIError e;
-			e.set_message(gai_strerror(rc));
-			
-			throw(e);
-		}
-		
-		socket_domain = res -> ai_family;
-		
-		socket_address = res -> ai_addr;
-		socket_address_size = res -> ai_addrlen;
-		
-		freeaddrinfo(res);
-	} else {
-		if (uri.is_ipv4()) {
-			//struct sockaddr_in addr;
-			addr_v4.sin_family = AF_INET;
-			addr_v4.sin_addr.s_addr = inet_addr(uri.get_host().c_str());
-			addr_v4.sin_port = htons(port);
-			
-			socket_address = (struct sockaddr*) &addr_v4;
-			socket_address_size = sizeof(struct sockaddr);
-			
-			socket_domain = AF_INET;
-		} else {
-			//struct sockaddr_in6 addr;
-			addr_v6.sin6_family = AF_INET6;
-			inet_pton(AF_INET6, uri.get_ipv6_host().c_str(), &addr_v6.sin6_addr);
-			addr_v6.sin6_port = htons(port);
-			
-			socket_address = (struct sockaddr*) &addr_v6;
-			socket_address_size = sizeof(addr_v6);
-			
-			socket_domain = AF_INET6;
-		}
-	}
-	
+	// Encode raw DNS query
 	std::vector<char> query;
 	
 	switch (spec) {
@@ -238,103 +207,84 @@ const std::string dns_query(
 	const char* buffer = query.data();
 	const int buffer_size = query.size();
 	
-	int fd = create_socket(socket_domain, socket_type, IPPROTO_IP, timeout);
-	
-	char response[1024];
-	int response_size;
-	
-	if (socket_type == SOCK_STREAM) {
-		const int rc = connect(fd, socket_address, socket_address_size);
+	// Get address of the DNS server
+	int port = uri.get_port();
 		
-		if (rc < 0) {
-			close(fd);
-			
-			ConnectError e;
-			e.set_message(strerror(errno));
-			
-			throw(e);
+	if (port == 0) {
+		switch (spec) {
+			case DNS_SPEC_DOH:
+				port = DEFAULT_DOH_PORT;
+				break;
+			case DNS_SPEC_DOT:
+				port = DEFAULT_DOT_PORT;
+				break;
+			case DNS_SPEC_WIREFORMAT_UDP:
+			case DNS_SPEC_WIREFORMAT_TCP:
+				port = DEFAULT_WIREFORMAT_PORT;
+				break;
 		}
-		
-		if (spec == DNS_SPEC_DOH || spec == DNS_SPEC_DOT) {
-			br_ssl_client_context sc;
-			br_x509_minimal_context xc;
-			unsigned char iobuf[BR_SSL_BUFSIZE_BIDI];
-			br_sslio_context ioc;
-			
-			br_ssl_client_init_full(&sc, &xc, TAs, TAs_NUM);
-			br_ssl_engine_set_buffer(&sc.eng, iobuf, sizeof(iobuf), 1);
-			br_ssl_client_reset(&sc, uri.get_host().c_str(), 0);
-			br_sslio_init(&ioc, &sc.eng, sock_read, &fd, sock_write, &fd);
-			
-			br_sslio_write_all(&ioc, buffer, buffer_size);
-			br_sslio_flush(&ioc);
-			
-			response_size = br_sslio_read(&ioc, response, sizeof(response));
-			
-			close(fd);
-			
-			if (br_ssl_engine_current_state(&sc.eng) == BR_SSL_CLOSED) {
-				const int rc = br_ssl_engine_last_error(&sc.eng);
-				
-				if (rc != 0) {
-					SSLError e;
-					e.set_message("ssl error " + std::to_string(rc));
-					
-					throw(e);
-				}
-			}
-		} else {
-			const int size = send(fd, buffer, buffer_size, NULL);
-			
-			if (size < 0) {
-				close(fd);
-				
-				SendError e;
-				e.set_message(strerror(errno));
-				
-				throw(e);
-			}
-			
-			response_size = recv(fd, response, sizeof(response), NULL);
-			
-			if (response_size < 0) {
-				close(fd);
-				
-				RecvError e;
-				e.set_message(strerror(errno));
-				
-				throw(e);
-			}
-			
-			close(fd);
-		}
-	} else {
-		const int size = sendto(fd, buffer, buffer_size, NULL, socket_address, socket_address_size);
-		
-		if (size < 0) {
-			close(fd);
-			
-			SendError e;
-			e.set_message(strerror(errno));
-			
-			throw(e);
-		}
-		
-		response_size = recvfrom(fd, response, sizeof(response), 0, NULL, NULL);
-		
-		if (size < 0) {
-			close(fd);
-			
-			RecvError e;
-			e.set_message(strerror(errno));
-			
-			throw(e);
-		}
-		
-		close(fd);
 	}
 	
-	// https://datatracker.ietf.org/doc/html/rfc1035#section-4.1.1
+	std::string addr;
+	int addr_family;
+	
+	if (uri.is_ipv4()) {
+		addr = uri.get_host();
+		addr_family = AF_INET;
+	} else if (uri.is_ipv6()) {
+		addr = uri.get_ipv6_host();
+		addr_family = AF_INET6;
+	} else {
+		addr = get_address(uri.get_host(), addr_family);
+	}
+	
+	struct sockaddr* socket_address;
+	int socket_address_size;
+	
+	switch (addr_family) {
+		case AF_INET:
+			struct sockaddr_in addr_v4;
+			addr_v4.sin_family = addr_family;
+			addr_v4.sin_addr.s_addr = inet_addr(addr.c_str());
+			addr_v4.sin_port = htons(port);
+			
+			socket_address = (struct sockaddr*) &addr_v4;
+			socket_address_size = sizeof(struct sockaddr_in);
+			
+			break;
+		case AF_INET6:
+			struct sockaddr_in6 addr_v6;
+			addr_v6.sin6_family = addr_family;
+			inet_pton(addr_family, addr.c_str(), &addr_v6.sin6_addr);
+			addr_v6.sin6_port = htons(port);
+			
+			socket_address = (struct sockaddr*) &addr_v6;
+			socket_address_size = sizeof(sockaddr_in6);
+			
+			break;
+	}
+	
+	// Send query
+	char response[1024];
+	size_t response_size;
+	
+	int fd = create_socket(addr_family, socket_type, IPPROTO_IP, timeout);
+	
+	if (socket_type == SOCK_STREAM) {
+		connect_socket(fd, socket_address, socket_address_size);
+		
+		if (spec == DNS_SPEC_DOH || spec == DNS_SPEC_DOT) {
+			response_size = send_encrypted_data(fd, uri.get_host().c_str(), buffer, buffer_size, response, sizeof(response));
+		} else {
+			response_size = send_tcp_data(fd, buffer, buffer_size, response, sizeof(response));
+		}
+	} else {
+		response_size = send_udp_data(fd, buffer, buffer_size, response, sizeof(response), socket_address, socket_address_size);
+	}
+	
+	close(fd);
+	
+	// Parse query
 	unsigned int rcode[2];
 	
 	for (int index = 0; index < response_size; index++) {
