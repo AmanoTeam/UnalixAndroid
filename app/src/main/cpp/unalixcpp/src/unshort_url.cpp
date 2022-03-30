@@ -17,6 +17,7 @@
 #include "dns.hpp"
 #include "exceptions.hpp"
 #include "socket.hpp"
+#include "socks5.hpp"
 
 // Setters
 void Response::set_http_version(const float value) {
@@ -102,7 +103,10 @@ const std::string unshort_url(
 	const bool skip_blocked,
 	const int timeout,
 	const int max_redirects,
-	const std::string dns
+	const std::string dns,
+	const std::string proxy,
+	const std::string proxy_username,
+	const std::string proxy_password
 ) {
 	
 	int total_redirects = 0;
@@ -171,95 +175,114 @@ const std::string unshort_url(
 		
 		data.append("\r\n");
 		
-		std::string addr;
-		int addr_family;
+		std::string raw_response;
 		
-		if (uri.is_ipv4()) {
-			addr = uri.get_host();
-			addr_family = AF_INET;
-		} else if (uri.is_ipv6()) {
-			addr = uri.get_ipv6_host();
-			addr_family = AF_INET6;
-		} else if (dns == "") {
-			addr = get_address(uri.get_host(), addr_family);
-		} else {
-			const QType qtypes[2] = {A, AAAA};
+		if (proxy == "") {
+			std::string addr;
+			int addr_family;
 			
-			for (const QType qtype : qtypes) {
-				try {
-					addr = dns_query(uri.get_host(), qtype, timeout, dns);
-				} catch (UnalixException &e) {
-					if (e.get_message() == "Domain doesn't exists") {
+			if (uri.is_ipv4()) {
+				addr = uri.get_host();
+				addr_family = AF_INET;
+			} else if (uri.is_ipv6()) {
+				addr = uri.get_ipv6_host();
+				addr_family = AF_INET6;
+			} else if (dns == "") {
+				addr = get_address(uri.get_host(), addr_family);
+			} else {
+				const QType qtypes[2] = {A, AAAA};
+				
+				for (const QType qtype : qtypes) {
+					try {
+						addr = dns_query(uri.get_host(), qtype, timeout, dns);
+					} catch (UnalixException &e) {
+						if (e.get_message() == "Domain doesn't exists") {
+							e.set_url(this_url);
+							throw;
+						}
+						
+						if (qtype == A) {
+							continue;
+						}
+						
 						e.set_url(this_url);
 						throw;
 					}
 					
-					if (qtype == A) {
-						continue;
-					}
+					addr_family = (qtype == A) ? AF_INET : AF_INET6;
 					
-					e.set_url(this_url);
-					throw;
+					break;
 				}
+			}
+			
+			struct sockaddr* socket_address;
+			int socket_address_size;
+			
+			switch (addr_family) {
+				case AF_INET:
+					struct sockaddr_in addr_v4;
+					addr_v4.sin_family = addr_family;
+					addr_v4.sin_addr.s_addr = inet_addr(addr.c_str());
+					addr_v4.sin_port = htons(port);
+					
+					socket_address = (struct sockaddr*) &addr_v4;
+					socket_address_size = sizeof(struct sockaddr_in);
+					
+					break;
+				case AF_INET6:
+					struct sockaddr_in6 addr_v6;
+					addr_v6.sin6_family = addr_family;
+					inet_pton(addr_family, addr.c_str(), &addr_v6.sin6_addr);
+					addr_v6.sin6_port = htons(port);
+					
+					socket_address = (struct sockaddr*) &addr_v6;
+					socket_address_size = sizeof(sockaddr_in6);
+					
+					break;
+			}
+			
+			int fd;
+			
+			const char* request = data.c_str();
+			const size_t request_size = data.length();
+			
+			char response[1024];
+			const size_t response_size = sizeof(response);
+			
+			try {
+				fd = create_socket(addr_family, SOCK_STREAM, IPPROTO_TCP, timeout);
 				
-				addr_family = (qtype == A) ? AF_INET : AF_INET6;
+				connect_socket(fd, socket_address, socket_address_size);
 				
-				break;
+				if (uri.get_scheme() == "https") {
+					send_encrypted_data(fd, uri.get_host().c_str(), request, request_size, response, response_size);
+				} else {
+					send_tcp_data(fd, request, request_size, response, response_size);
+				}
+			} catch (UnalixException &e) {
+				e.set_url(this_url);
+				throw;
+			}
+				
+			close(fd);
+			
+			raw_response = std::string(response);
+		} else {
+			try {
+				raw_response = send_proxied_tcp_data(
+					data,
+					uri.get_host(),
+					(uri.get_scheme() == "https") ? 443 : port,
+					proxy,
+					proxy_username,
+					proxy_password,
+					timeout
+				);
+			} catch (UnalixException &e) {
+				e.set_url(this_url);
+				throw;
 			}
 		}
-		
-		struct sockaddr* socket_address;
-		int socket_address_size;
-		
-		switch (addr_family) {
-			case AF_INET:
-				struct sockaddr_in addr_v4;
-				addr_v4.sin_family = addr_family;
-				addr_v4.sin_addr.s_addr = inet_addr(addr.c_str());
-				addr_v4.sin_port = htons(port);
-				
-				socket_address = (struct sockaddr*) &addr_v4;
-				socket_address_size = sizeof(struct sockaddr_in);
-				
-				break;
-			case AF_INET6:
-				struct sockaddr_in6 addr_v6;
-				addr_v6.sin6_family = addr_family;
-				inet_pton(addr_family, addr.c_str(), &addr_v6.sin6_addr);
-				addr_v6.sin6_port = htons(port);
-				
-				socket_address = (struct sockaddr*) &addr_v6;
-				socket_address_size = sizeof(sockaddr_in6);
-				
-				break;
-		}
-		
-		int fd;
-		
-		const char* request = data.c_str();
-		const size_t request_size = data.length();
-		
-		char response[1024];
-		const size_t response_size = sizeof(response);
-		
-		try {
-			fd = create_socket(addr_family, SOCK_STREAM, IPPROTO_TCP, timeout);
-			
-			connect_socket(fd, socket_address, socket_address_size);
-			
-			if (uri.get_scheme() == "https") {
-				send_encrypted_data(fd, uri.get_host().c_str(), request, request_size, response, response_size);
-			} else {
-				send_tcp_data(fd, request, request_size, response, response_size);
-			}
-		} catch (UnalixException &e) {
-			e.set_url(this_url);
-			throw;
-		}
-			
-		close(fd);
-		
-		const std::string raw_response = response;
 		
 		const size_t index = raw_response.find("\r\n\r\n");
 		const std::string raw_headers = raw_response.substr(0, index);

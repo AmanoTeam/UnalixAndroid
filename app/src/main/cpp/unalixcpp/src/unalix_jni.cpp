@@ -1,8 +1,6 @@
 #include <string>
-#include <typeinfo>
 
 #include <jni.h>
-#include <android/log.h>
 
 #include "unalix.hpp"
 #include "unalix_jni.hpp"
@@ -48,11 +46,17 @@ jstring Java_com_amanoteam_unalix_wrappers_Unalix_unshortUrl (
 	jboolean skipBlocked,
 	jint timeout,
 	jint maxRedirects,
-	jstring dns
+	jstring dns,
+	jstring proxy,
+	jstring proxyUsername,
+	jstring proxyPassword
 ) {
 	
 	const char *url_ = env -> GetStringUTFChars(url, NULL);
 	const char *dns_ = env -> GetStringUTFChars(dns, NULL);
+	const char *proxy_ = env -> GetStringUTFChars(proxy, NULL);
+	const char *proxyUsername_ = env -> GetStringUTFChars(proxyUsername, NULL);
+	const char *proxyPassword_ = env -> GetStringUTFChars(proxyPassword, NULL);
 	
 	std::string result;
 	
@@ -67,19 +71,20 @@ jstring Java_com_amanoteam_unalix_wrappers_Unalix_unshortUrl (
 			(bool) skipBlocked,
 			(int) timeout,
 			(int) maxRedirects,
-			dns_
+			dns_,
+			proxy_,
+			proxyUsername_,
+			proxyPassword_
 		);
-	} catch (const UnalixException &e) {
-		const std::string name = typeid(e).name();
-		const std::string message = e.what();
-		
-		__android_log_write(ANDROID_LOG_ERROR, "libunalix_jni", (name + ": " + message).c_str());
-		
+	} catch (const UnalixException e) {
 		result = e.get_url();
 	}
 	
 	env -> ReleaseStringUTFChars(url, url_);
 	env -> ReleaseStringUTFChars(dns, dns_);
+	env -> ReleaseStringUTFChars(proxy, proxy_);
+	env -> ReleaseStringUTFChars(proxyUsername, proxyUsername_);
+	env -> ReleaseStringUTFChars(proxyPassword, proxyPassword_);
 	
 	return env -> NewStringUTF(result.c_str());
 }

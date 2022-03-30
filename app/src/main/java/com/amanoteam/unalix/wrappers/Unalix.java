@@ -2,6 +2,7 @@ package com.amanoteam.unalix.wrappers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
 import androidx.preference.PreferenceManager;
 
@@ -17,9 +18,15 @@ public class Unalix {
 	private boolean ignoreRawRules = false;
 	private boolean ignoreRedirections = false;
 	private boolean skipBlocked = false;
+	
 	private int timeout = 3;
 	private int maxRedirects = 13;
+	
 	private String dns = "";
+	
+	private String proxy = "";
+	private String proxyUsername = "";
+	private String proxyPassword = "";
 
 	private native String clearUrl(
 			final String url,
@@ -53,7 +60,10 @@ public class Unalix {
 			final boolean skipBlocked,
 			final int timeout,
 			final int maxRedirects,
-			final String dns
+			final String dns,
+			final String proxy,
+			final String proxyUsername,
+			final String proxyPassword
 	);
 
 	public String unshortUrl(final String url) {
@@ -67,7 +77,10 @@ public class Unalix {
 				this.skipBlocked,
 				this.timeout,
 				this.maxRedirects,
-				this.dns
+				this.dns,
+				this.proxy,
+				this.proxyUsername,
+				this.proxyPassword
 		);
 	}
 
@@ -106,48 +119,81 @@ public class Unalix {
 	private void setDns(final String value) {
 		this.dns = value;
 	}
+	
+	private void setProxy(final String value) {
+		this.proxy = value;
+	}
+	
+	private void setProxyUsername(final String value) {
+		this.proxyUsername = value;
+	}
+	
+	private void setProxyPassword(final String value) {
+		this.proxyPassword = value;
+	}
 
 	public void setFromPreferences(final Context context) {
 
-		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-		final boolean ignoreReferralMarketing = settings.getBoolean("ignoreReferralMarketing", false);
+		final boolean ignoreReferralMarketing = preferences.getBoolean("ignoreReferralMarketing", false);
 		setIgnoreReferralMarketing(ignoreReferralMarketing);
 
-		final boolean ignoreRules = settings.getBoolean("ignoreRules", false);
+		final boolean ignoreRules = preferences.getBoolean("ignoreRules", false);
 		setIgnoreRules(ignoreRules);
 
-		final boolean ignoreExceptions = settings.getBoolean("ignoreExceptions", false);
+		final boolean ignoreExceptions = preferences.getBoolean("ignoreExceptions", false);
 		setIgnoreExceptions(ignoreExceptions);
 
-		final boolean ignoreRawRules = settings.getBoolean("ignoreRawRules", false);
+		final boolean ignoreRawRules = preferences.getBoolean("ignoreRawRules", false);
 		setIgnoreRawRules(ignoreRawRules);
 
-		final boolean ignoreRedirections = settings.getBoolean("ignoreRedirections", false);
+		final boolean ignoreRedirections = preferences.getBoolean("ignoreRedirections", false);
 		setIgnoreRedirections(ignoreRedirections);
 
-		final boolean skipBlocked = settings.getBoolean("skipBlocked", false);
+		final boolean skipBlocked = preferences.getBoolean("skipBlocked", false);
 		setSkipBlocked(skipBlocked);
 
-		final int timeout = Integer.parseInt(settings.getString("timeout", "3"));
+		final int timeout = Integer.parseInt(preferences.getString("timeout", "3"));
 		setTimeout(timeout);
 
-		final int maxRedirects = Integer.parseInt(settings.getString("maxRedirects", "13"));
+		final int maxRedirects = Integer.parseInt(preferences.getString("maxRedirects", "13"));
 		setMaxRedirects(maxRedirects);
 		
-		final String dns = settings.getString("dns", "");
+		final String dns = preferences.getString("dns", "");
+		final String customDns = preferences.getString("customDns", "");
 		
 		if (dns.equals("follow_system")) {
 			setDns("");
 		} else if (dns.equals("custom")) {
-			final String customDns = settings.getString("custom_dns", "");
-			
 			if (!customDns.equals("")) {
 				setDns(customDns);
 			}
 		} else {
 			setDns(dns);
 		}
-
+		
+		final boolean socks5Proxy = preferences.getBoolean("socks5Proxy", false);
+		
+		if (socks5Proxy) {
+			final String proxyAddress = preferences.getString("proxyAddress", "");
+			final int proxyPort = Integer.parseInt(preferences.getString("proxyPort", "8081"));
+			
+			if (!TextUtils.isEmpty(proxyAddress)) {
+				final String proxy = String.format("socks5://%s:%d", proxyAddress, proxyPort);
+				setProxy(proxy);
+				
+				final boolean proxyAuthentication = preferences.getBoolean("proxyAuthentication", false);
+				
+				if (proxyAuthentication) {
+					final String proxyUsername = preferences.getString("proxyUsername", "");
+					setProxyUsername(proxyUsername);
+					
+					final String proxyPassword = preferences.getString("proxyPassword", "");
+					setProxyPassword(proxyPassword);
+				}
+			}
+		}
+		
 	}
 }

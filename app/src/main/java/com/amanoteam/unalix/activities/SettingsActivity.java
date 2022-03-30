@@ -21,6 +21,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.EditTextPreference;
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.ListPreference;
 
 import com.amanoteam.unalix.R;
 import com.amanoteam.unalix.fragments.SettingsFragment;
@@ -72,7 +74,17 @@ public class SettingsActivity extends AppCompatActivity {
 						obj.put("timeout", Integer.valueOf(preferences.getString("timeout", "3")));
 						obj.put("maxRedirects", Integer.valueOf(preferences.getString("maxRedirects", "13")));
 						obj.put("dns", preferences.getString("dns", ""));
-						obj.put("custom_dns", preferences.getString("custom_dns", ""));
+						obj.put("customDns", preferences.getString("customDns", ""));
+
+						obj.put("socks5Proxy", preferences.getBoolean("socks5Proxy", false));
+						
+						obj.put("proxyAddress", preferences.getString("proxyAddress", ""));
+						obj.put("proxyPort", preferences.getString("proxyPort", ""));
+						
+						obj.put("proxyAuthentication", preferences.getBoolean("proxyAuthentication", false));
+						
+						obj.put("proxyUsername", preferences.getString("proxyUsername", ""));
+						obj.put("proxyPassword", preferences.getString("proxyPassword", ""));
 
 						obj.put("appTheme", preferences.getString("appTheme", "follow_system"));
 						obj.put("disableClearURLActivity", preferences.getBoolean("disableClearURLActivity", false));
@@ -133,7 +145,17 @@ public class SettingsActivity extends AppCompatActivity {
 						editor.putString("timeout", String.valueOf(obj.getInt("timeout")));
 						editor.putString("maxRedirects", String.valueOf(obj.getInt("maxRedirects")));
 						editor.putString("dns", obj.getString("maxRedirects"));
-						editor.putString("custom_dns", obj.getString("custom_dns"));
+						editor.putString("customDns", obj.getString("customDns"));
+
+						editor.putBoolean("socks5Proxy", obj.getBoolean("socks5Proxy"));
+
+						editor.putString("proxyAddress", obj.getString("proxyAddress"));
+						editor.putString("proxyPort", String.valueOf(obj.getInt("proxyPort")));
+						
+						editor.putBoolean("proxyAuthentication", obj.getBoolean("proxyAuthentication"));
+						
+						editor.putString("proxyUsername", obj.getString("proxyUsername"));
+						editor.putString("proxyPassword", obj.getString("proxyPassword"));
 
 						editor.putString("appTheme", obj.getString("appTheme"));
 						editor.putBoolean("disableClearURLActivity", obj.getBoolean("disableClearURLActivity"));
@@ -177,11 +199,7 @@ public class SettingsActivity extends AppCompatActivity {
 					}
 					break;
 				case "dns":
-					if (preferenceScreen == null) {
-						break;
-					}
-					
-					final EditTextPreference customDns = (EditTextPreference) preferenceScreen.findPreference("custom_dns");
+					final EditTextPreference customDns = preferenceScreen.findPreference("customDns");
 					
 					if (preferences.getString(key, "follow_system").equals("custom")) {
 						customDns.setEnabled(true);
@@ -190,7 +208,10 @@ public class SettingsActivity extends AppCompatActivity {
 					}
 					
 					break;
-		
+				case "socks5Proxy":
+				case "proxyAuthentication":
+					updateProxyPreferences(preferences, preferenceScreen);
+					break;
 			}
 
 		}
@@ -198,10 +219,6 @@ public class SettingsActivity extends AppCompatActivity {
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		// Preferences stuff
-		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		preferences.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
-
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_settings);
@@ -223,16 +240,12 @@ public class SettingsActivity extends AppCompatActivity {
 	protected void onStart() {
 		super.onStart();
 		
-		preferenceScreen = settingsFragment.getPreferenceScreen();
+		// Preferences stuff
 		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		preferences.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
 		
-		final EditTextPreference customDns = (EditTextPreference) preferenceScreen.findPreference("custom_dns");
-		
-		if (preferences.getString("dns", "follow_system").equals("custom")) {
-			customDns.setEnabled(true);
-		} else {
-			customDns.setEnabled(false);
-		}
+		preferenceScreen = settingsFragment.getPreferenceScreen();
+		updateProxyPreferences(preferences, preferenceScreen);
 	}
 	
 	@Override
@@ -277,6 +290,55 @@ public class SettingsActivity extends AppCompatActivity {
 	@Override
 	public void onBackPressed() {
 		finish();
+	}
+	
+	public void updateProxyPreferences(final SharedPreferences preferences, final PreferenceScreen pScreen) {
+		final ListPreference dns = pScreen.findPreference("dns");
+		final EditTextPreference customDns = pScreen.findPreference("customDns");
+		
+		final EditTextPreference proxyAddress = pScreen.findPreference("proxyAddress");
+		final EditTextPreference proxyPort = pScreen.findPreference("proxyPort");
+		
+		final CheckBoxPreference proxyAuthentication = pScreen.findPreference("proxyAuthentication");
+		
+		final EditTextPreference proxyUsername = pScreen.findPreference("proxyUsername");
+		final EditTextPreference proxyPassword = pScreen.findPreference("proxyPassword");
+		
+		final boolean socks5Proxy = preferences.getBoolean("socks5Proxy", false);
+		
+		if (socks5Proxy) {
+			proxyAddress.setEnabled(true);
+			proxyPort.setEnabled(true);
+			proxyAuthentication.setEnabled(true);
+			
+			dns.setEnabled(false);
+			customDns.setEnabled(false);
+			
+			final boolean proxyAuthenticationPref = preferences.getBoolean("proxyAuthentication", false);
+			
+			if (proxyAuthenticationPref) {
+				proxyUsername.setEnabled(true);
+				proxyPassword.setEnabled(true);
+			} else {
+				proxyUsername.setEnabled(false);
+				proxyPassword.setEnabled(false);
+			}
+		} else {
+			proxyAddress.setEnabled(false);
+			proxyPort.setEnabled(false);
+			proxyAuthentication.setEnabled(false);
+			
+			dns.setEnabled(true);
+			
+			proxyUsername.setEnabled(false);
+			proxyPassword.setEnabled(false);
+		}
+		
+		if (dns.isEnabled()) {
+			if (preferences.getString("dns", "follow_system").equals("custom")) {
+				customDns.setEnabled(true);
+			}
+		}
 	}
 
 }

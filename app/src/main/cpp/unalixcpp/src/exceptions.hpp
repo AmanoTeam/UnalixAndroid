@@ -39,3 +39,4 @@ struct RemoteProtocolError : public UnalixException {};
 struct TooManyRedirectsError : public UnalixException {};
 struct DNSError : public UnalixException {};
 struct ValueError : public UnalixException {};
+struct Socks5Error : public UnalixException {};

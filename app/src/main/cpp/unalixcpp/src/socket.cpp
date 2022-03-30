@@ -106,13 +106,25 @@ const ssize_t send_tcp_data(
 	
 	size = recv(fd, dst, dst_size, NULL);
 	
-	if (size < 2) {
-		close(fd);
-	
-		RecvError e;
-		e.set_message(strerror(errno));
-		
-		throw(e);
+	switch (size) {
+		case -1:
+			close(fd);
+			
+			{
+				RecvError e;
+				e.set_message(strerror(errno));
+				
+				throw(e);
+			}
+		case 0:
+			close(fd);
+			
+			{
+				RecvError e;
+				e.set_message("Server closed connection unexpectedly");
+				
+				throw(e);
+			}
 	}
 	
 	return size;
@@ -143,13 +155,25 @@ const ssize_t send_udp_data(
 	
 	size = recvfrom(fd, dst, dst_size, NULL, NULL, NULL);
 	
-	if (size < 2) {
-		close(fd);
-	
-		RecvError e;
-		e.set_message(strerror(errno));
-		
-		throw(e);
+	switch (size) {
+		case -1:
+			close(fd);
+			
+			{
+				RecvError e;
+				e.set_message(strerror(errno));
+				
+				throw(e);
+			}
+		case 0:
+			close(fd);
+			
+			{
+				RecvError e;
+				e.set_message("Server closed connection unexpectedly");
+				
+				throw(e);
+			}
 	}
 	
 	return size;

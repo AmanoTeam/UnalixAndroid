@@ -56,7 +56,42 @@
 			android:enabled="false"
 			android:title="Set custom DNS"
 			android:hint="&lt;scheme&gt;://&lt;hostname&gt;:&lt;port&gt;/&lt;path&gt;"
-			android:key="custom_dns" >
+			android:key="customDns" >
+		</EditTextPreference>
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="socks5Proxy"
+			android:summary="Protect your privacy by routing all DNS and HTTP(S) traffic to a SOCKS5 server"
+			android:title="SOCKS5 proxy" />
+		<EditTextPreference
+			android:enabled="false"
+			android:title="Address"
+			android:summary="Proxy address"
+			android:key="proxyAddress" >
+		</EditTextPreference>
+		<EditTextPreference
+			android:defaultValue="8081"
+			android:enabled="false"
+			android:title="Port"
+			android:summary="Proxy port"
+			android:key="proxyPort" >
+		</EditTextPreference>
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="proxyAuthentication"
+			android:summary="Some servers may required you to provide some credentials before connecting to it"
+			android:title="Authentication" />
+		<EditTextPreference
+			android:enabled="false"
+			android:title="Username"
+			android:summary="Proxy username"
+			android:key="proxyUsername" >
+		</EditTextPreference>
+		<EditTextPreference
+			android:enabled="false"
+			android:title="Password"
+			android:summary="Proxy password"
+			android:key="proxyPassword" >
 		</EditTextPreference>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="App settings">

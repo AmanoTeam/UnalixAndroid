@@ -61,5 +61,8 @@ const std::string unshort_url(
 	const bool skip_blocked = false,
 	const int timeout = 5,
 	const int max_redirects = 13,
-	const std::string dns = ""
+	const std::string dns = "",
+	const std::string proxy = "",
+	const std::string proxy_username = "",
+	const std::string proxy_password = ""
 );
