@@ -69,14 +69,13 @@ struct Ruleset {{
 		}}
 }};
 
-static const std::vector<Ruleset> rulesets = {{
+const std::vector<Ruleset> rulesets = {{
 	{}
 }};
 """
 
 urls = (
 	"https://rules1.clearurls.xyz/data/data.minify.json",
-	"https://raw.githubusercontent.com/AmanoTeam/Unalix/master/unalix/package_data/rulesets/unalix.json"
 )
 
 ignored_providers = (
