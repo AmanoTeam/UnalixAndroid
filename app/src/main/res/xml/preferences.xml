@@ -38,26 +38,33 @@
 			android:entries="@array/timeout_entries"
 			android:entryValues="@array/timeout_values"
 			android:key="timeout"
+			android:summary="Max number of seconds to wait for a response before  closing the connection"
 			android:title="Timeout" />
 		<ListPreference
 			android:defaultValue="13"
 			android:entries="@array/max_redirects_entries"
 			android:entryValues="@array/max_redirects_values"
 			android:key="maxRedirects"
+			android:summary="Max number o HTTP redirects to follow"
 			android:title="Max redirects" />
+	</PreferenceCategory>
+	<PreferenceCategory android:title="DNS settings">
 		<ListPreference
 			android:title="DNS"
 			android:key="dns"
+			android:summary="Bypass censorship by forwarding your DNS queries to a third-party server"
 			android:defaultValue="follow_system"
 			android:entries="@array/dns_entries"
 			android:entryValues="@array/dns_values" >
 		</ListPreference>
 		<EditTextPreference
 			android:enabled="false"
-			android:title="Set custom DNS"
-			android:hint="&lt;scheme&gt;://&lt;hostname&gt;:&lt;port&gt;/&lt;path&gt;"
+			android:title="Set DNS"
+			android:summary="Set a custom DNS server"
 			android:key="customDns" >
 		</EditTextPreference>
+	</PreferenceCategory>
+	<PreferenceCategory android:title="Proxy settings">
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="socks5Proxy"
@@ -79,7 +86,7 @@
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="proxyAuthentication"
-			android:summary="Some servers may required you to provide some credentials before connecting to it"
+			android:summary="A SOCKS5 server may required you to provide some credentials before connecting to it"
 			android:title="Authentication" />
 		<EditTextPreference
 			android:enabled="false"
@@ -100,6 +107,7 @@
 			android:entries="@array/app_theme_entries"
 			android:entryValues="@array/app_theme_values"
 			android:key="appTheme"
+			android:summary="Switch between dark and light theme"
 			android:title="Theme" />
 		<CheckBoxPreference
 			android:defaultValue="false"
