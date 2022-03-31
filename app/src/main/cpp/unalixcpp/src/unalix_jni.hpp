@@ -30,6 +30,7 @@ JNIEXPORT jstring JNICALL Java_com_amanoteam_unalix_wrappers_Unalix_unshortUrl
 		jboolean skipBlocked,
 		jint timeout,
 		jint maxRedirects,
+		jstring userAgent,
 		jstring dns,
 		jstring proxy,
 		jstring proxy_username,

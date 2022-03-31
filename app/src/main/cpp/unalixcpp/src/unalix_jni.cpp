@@ -46,6 +46,7 @@ jstring Java_com_amanoteam_unalix_wrappers_Unalix_unshortUrl (
 	jboolean skipBlocked,
 	jint timeout,
 	jint maxRedirects,
+	jstring userAgent,
 	jstring dns,
 	jstring proxy,
 	jstring proxyUsername,
@@ -53,6 +54,7 @@ jstring Java_com_amanoteam_unalix_wrappers_Unalix_unshortUrl (
 ) {
 	
 	const char *url_ = env -> GetStringUTFChars(url, NULL);
+	const char *userAgent_ = env -> GetStringUTFChars(userAgent, NULL);
 	const char *dns_ = env -> GetStringUTFChars(dns, NULL);
 	const char *proxy_ = env -> GetStringUTFChars(proxy, NULL);
 	const char *proxyUsername_ = env -> GetStringUTFChars(proxyUsername, NULL);
@@ -71,6 +73,7 @@ jstring Java_com_amanoteam_unalix_wrappers_Unalix_unshortUrl (
 			(bool) skipBlocked,
 			(int) timeout,
 			(int) maxRedirects,
+			userAgent_,
 			dns_,
 			proxy_,
 			proxyUsername_,
@@ -81,6 +84,7 @@ jstring Java_com_amanoteam_unalix_wrappers_Unalix_unshortUrl (
 	}
 	
 	env -> ReleaseStringUTFChars(url, url_);
+	env -> ReleaseStringUTFChars(userAgent, userAgent_);
 	env -> ReleaseStringUTFChars(dns, dns_);
 	env -> ReleaseStringUTFChars(proxy, proxy_);
 	env -> ReleaseStringUTFChars(proxyUsername, proxyUsername_);

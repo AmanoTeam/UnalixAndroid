@@ -47,8 +47,7 @@ struct Response {
 const std::string request_headers[][2] = {
 	{"Accept", "*/*"},
 	{"Accept-Encoding", "identity"},
-	{"Connection", "close"},
-	{"User-Agent", "UnalixAndroid/0.8 (+https://github.com/AmanoTeam/UnalixAndroid)"}
+	{"Connection", "close"}
 };
 
 const std::string unshort_url(
@@ -61,6 +60,7 @@ const std::string unshort_url(
 	const bool skip_blocked = false,
 	const int timeout = 5,
 	const int max_redirects = 13,
+	const std::string user_agent = "UnalixAndroid (+https://github.com/AmanoTeam/UnalixAndroid)",
 	const std::string dns = "",
 	const std::string proxy = "",
 	const std::string proxy_username = "",

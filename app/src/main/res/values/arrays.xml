@@ -55,4 +55,40 @@
 		<item>tls://dot1.applied-privacy.net</item>
 		<item>custom</item>
 	</string-array>
+    <string-array name="user_agent_entries">
+        <item>Unalix (default)</item>
+        <item>Chrome on Windows</item>
+        <item>Chrome on macOS</item>
+        <item>Chrome on Linux</item>
+        <item>Chrome on iOS</item>
+        <item>Chrome on Android</item>
+        <item>Firefox on Windows</item>
+        <item>Firefox on macOS</item>
+        <item>Firefox on Linux</item>
+        <item>Firefox on iOS</item>
+        <item>Firefox on Android</item>
+        <item>Safari on macOS</item>
+        <item>Safari on iOS</item>
+        <item>Safari on iPad</item>
+        <item>Safari on iPod</item>
+        <item>Custom</item>
+    </string-array>
+    <string-array name="user_agent_values">
+        <item>default</item>
+        <item>Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36</item>
+        <item>Mozilla/5.0 (Macintosh; Intel Mac OS X 12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36</item>
+        <item>Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36</item>
+        <item>Mozilla/5.0 (iPhone; CPU iPhone OS 15_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/100.0.4896.56 Mobile/15E148 Safari/604.1</item>
+        <item>Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.58 Mobile Safari/537.36</item>
+        <item>Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:98.0) Gecko/20100101 Firefox/98.0</item>
+        <item>Mozilla/5.0 (Macintosh; Intel Mac OS X 12.3; rv:98.0) Gecko/20100101 Firefox/98.0</item>
+        <item>Mozilla/5.0 (X11; Linux i686; rv:98.0) Gecko/20100101 Firefox/98.0</item>
+        <item>Mozilla/5.0 (iPhone; CPU iPhone OS 12_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) FxiOS/98.0 Mobile/15E148 Safari/605.1.15</item>
+        <item>Mozilla/5.0 (Android 12; Mobile; rv:68.0) Gecko/68.0 Firefox/98.0</item>
+        <item>Mozilla/5.0 (Macintosh; Intel Mac OS X 12_3) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.3 Safari/605.1.15</item>
+        <item>Mozilla/5.0 (iPhone; CPU iPhone OS 15_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.3 Mobile/15E148 Safari/604.1</item>
+        <item>Mozilla/5.0 (iPad; CPU OS 15_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.3 Mobile/15E148 Safari/604.1</item>
+        <item>Mozilla/5.0 (iPod touch; CPU iPhone 15_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.3 Mobile/15E148 Safari/604.1</item>
+        <item>custom</item>
+    </string-array>
 </resources>

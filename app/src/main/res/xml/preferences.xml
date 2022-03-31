@@ -46,7 +46,21 @@
 			android:entryValues="@array/max_redirects_values"
 			android:key="maxRedirects"
 			android:summary="Max number o HTTP redirects to follow"
-			android:title="Max redirects" />
+			android:title="Redirects" />
+		<ListPreference
+			android:title="User agent"
+			android:key="userAgent"
+			android:summary="Set the default User-Agent string for HTTP requests"
+			android:defaultValue="default"
+			android:entries="@array/user_agent_entries"
+			android:entryValues="@array/user_agent_values" >
+		</ListPreference>
+		<EditTextPreference
+			android:enabled="false"
+			android:title="Set user agent"
+			android:summary="Set a custom User-Agent string"
+			android:key="customUserAgent" >
+		</EditTextPreference>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="DNS settings">
 		<ListPreference
@@ -68,7 +82,7 @@
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="socks5Proxy"
-			android:summary="Protect your privacy by routing all DNS and HTTP(S) traffic to a SOCKS5 server"
+			android:summary="Protect your privacy by routing all DNS and HTTP traffic to a SOCKS5 server"
 			android:title="SOCKS5 proxy" />
 		<EditTextPreference
 			android:enabled="false"

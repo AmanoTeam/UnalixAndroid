@@ -103,6 +103,7 @@ const std::string unshort_url(
 	const bool skip_blocked,
 	const int timeout,
 	const int max_redirects,
+	const std::string user_agent,
 	const std::string dns,
 	const std::string proxy,
 	const std::string proxy_username,
@@ -172,6 +173,8 @@ const std::string unshort_url(
 			
 			data.append(key + ": " + value + "\r\n");
 		}
+		
+		data.append("User-Agent: " + user_agent + "\r\n");
 		
 		data.append("\r\n");
 		

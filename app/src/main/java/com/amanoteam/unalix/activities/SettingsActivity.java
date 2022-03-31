@@ -212,6 +212,14 @@ public class SettingsActivity extends AppCompatActivity {
 				case "proxyAuthentication":
 					updateProxyPreferences(preferences, preferenceScreen);
 					break;
+				case "userAgent":
+					final EditTextPreference customUserAgent = preferenceScreen.findPreference("customUserAgent");
+					
+					if (preferences.getString(key, "").equals("custom")) {
+						customUserAgent.setEnabled(true);
+					} else {
+						customUserAgent.setEnabled(false);
+					}
 			}
 
 		}
@@ -246,6 +254,13 @@ public class SettingsActivity extends AppCompatActivity {
 		
 		preferenceScreen = settingsFragment.getPreferenceScreen();
 		updateProxyPreferences(preferences, preferenceScreen);
+		
+		final String userAgent = preferences.getString("userAgent", "");
+		
+		if (userAgent.equals("custom")) {
+			final EditTextPreference customUserAgent = preferenceScreen.findPreference("customUserAgent");
+			customUserAgent.setEnabled(true);
+		}
 	}
 	
 	@Override

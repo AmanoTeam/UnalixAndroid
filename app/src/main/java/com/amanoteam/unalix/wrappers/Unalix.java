@@ -21,6 +21,7 @@ public class Unalix {
 	
 	private int timeout = 3;
 	private int maxRedirects = 13;
+	private String userAgent = "UnalixAndroid (+https://github.com/AmanoTeam/UnalixAndroid)";
 	
 	private String dns = "";
 	
@@ -60,6 +61,7 @@ public class Unalix {
 			final boolean skipBlocked,
 			final int timeout,
 			final int maxRedirects,
+			final String userAgent,
 			final String dns,
 			final String proxy,
 			final String proxyUsername,
@@ -77,6 +79,7 @@ public class Unalix {
 				this.skipBlocked,
 				this.timeout,
 				this.maxRedirects,
+				this.userAgent,
 				this.dns,
 				this.proxy,
 				this.proxyUsername,
@@ -110,6 +113,10 @@ public class Unalix {
 
 	private void setTimeout(final int value) {
 		this.timeout = value;
+	}
+	
+	private void setUserAgent(final String value) {
+		this.userAgent = value;
 	}
 
 	private void setMaxRedirects(final int value) {
@@ -160,17 +167,18 @@ public class Unalix {
 		final int maxRedirects = Integer.parseInt(preferences.getString("maxRedirects", "13"));
 		setMaxRedirects(maxRedirects);
 		
+		final String userAgent = preferences.getString("userAgent", "");
+		final String customUserAgent = preferences.getString("customUserAgent", "");
+		
+		if (!userAgent.equals("default")) {
+			setUserAgent((userAgent.equals("custom")) ? customUserAgent : userAgent);
+		}
+		
 		final String dns = preferences.getString("dns", "");
 		final String customDns = preferences.getString("customDns", "");
 		
-		if (dns.equals("follow_system")) {
-			setDns("");
-		} else if (dns.equals("custom")) {
-			if (!customDns.equals("")) {
-				setDns(customDns);
-			}
-		} else {
-			setDns(dns);
+		if (!dns.equals("follow_system")) {
+			setDns((dns.equals("custom")) ? customDns : dns);
 		}
 		
 		final boolean socks5Proxy = preferences.getBoolean("socks5Proxy", false);
