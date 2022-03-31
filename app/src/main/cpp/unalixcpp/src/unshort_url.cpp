@@ -461,7 +461,13 @@ const std::string unshort_url(
 			const std::string::const_iterator key_end = std::find(header_start, header_end, ':');
 			
 			const std::string key = std::string(header_start, key_end);
-			const std::string value = std::string(key_end + 2, header_end);
+			const std::string::const_iterator value_start = key_end + 2;
+			
+			if (value_start > header_end) {
+				break;
+			}
+			
+			const std::string value = std::string(value_start, header_end);
 			
 			headers.push_back(std::make_tuple(key, value));
 		}
