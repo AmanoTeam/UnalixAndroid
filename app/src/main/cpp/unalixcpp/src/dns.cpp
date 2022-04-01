@@ -8,7 +8,6 @@ RFC 7858 - Specification for DNS over Transport Layer Security (TLS)
 #include <sstream>
 #include <iomanip>
 #include <vector>
-#include <iostream>
 
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -26,7 +25,7 @@ RFC 7858 - Specification for DNS over Transport Layer Security (TLS)
 
 const std::string get_address(
 	const std::string hostname,
-	int family
+	int *family
 ) {
 	
 	struct addrinfo hints = {};
@@ -46,7 +45,7 @@ const std::string get_address(
 		throw(e);
 	}
 	
-	family = res -> ai_family;
+	*family = res -> ai_family;
 	
 	char host[NI_MAXHOST];
 	rc = getnameinfo(res -> ai_addr, res -> ai_addrlen, host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
@@ -209,7 +208,7 @@ const std::string dns_query(
 	
 	// Get address of the DNS server
 	int port = uri.get_port();
-		
+	
 	if (port == 0) {
 		switch (spec) {
 			case DNS_SPEC_DOH:
@@ -235,33 +234,28 @@ const std::string dns_query(
 		addr = uri.get_ipv6_host();
 		addr_family = AF_INET6;
 	} else {
-		addr = get_address(uri.get_host(), addr_family);
+		addr = get_address(uri.get_host(), &addr_family);
 	}
 	
-	struct sockaddr* socket_address;
-	int socket_address_size;
+	const struct sockaddr* s_addr;
+	socklen_t s_addr_size;
 	
-	switch (addr_family) {
-		case AF_INET:
-			struct sockaddr_in addr_v4;
-			addr_v4.sin_family = addr_family;
-			addr_v4.sin_addr.s_addr = inet_addr(addr.c_str());
-			addr_v4.sin_port = htons(port);
-			
-			socket_address = (struct sockaddr*) &addr_v4;
-			socket_address_size = sizeof(struct sockaddr_in);
-			
-			break;
-		case AF_INET6:
-			struct sockaddr_in6 addr_v6;
-			addr_v6.sin6_family = addr_family;
-			inet_pton(addr_family, addr.c_str(), &addr_v6.sin6_addr);
-			addr_v6.sin6_port = htons(port);
-			
-			socket_address = (struct sockaddr*) &addr_v6;
-			socket_address_size = sizeof(sockaddr_in6);
-			
-			break;
+	if (addr_family == AF_INET) {
+		struct sockaddr_in addr_in;
+		addr_in.sin_family = addr_family;
+		addr_in.sin_port = htons(port);
+		inet_pton(addr_family, addr.c_str(), &addr_in.sin_addr);
+		
+		s_addr = (struct sockaddr*) &addr_in;
+		s_addr_size = sizeof(addr_in);
+	} else {
+		struct sockaddr_in6 addr_in;
+		addr_in.sin6_family = addr_family;
+		addr_in.sin6_port = htons(port);
+		inet_pton(addr_family, addr.c_str(), &addr_in.sin6_addr);
+		
+		s_addr = (struct sockaddr*) &addr_in;
+		s_addr_size = sizeof(addr_in);
 	}
 	
 	// Send query
@@ -271,7 +265,7 @@ const std::string dns_query(
 	int fd = create_socket(addr_family, socket_type, IPPROTO_IP, timeout);
 	
 	if (socket_type == SOCK_STREAM) {
-		connect_socket(fd, socket_address, socket_address_size);
+		connect_socket(fd, s_addr, s_addr_size);
 		
 		if (spec == DNS_SPEC_DOH || spec == DNS_SPEC_DOT) {
 			response_size = send_encrypted_data(fd, uri.get_host().c_str(), buffer, buffer_size, response, sizeof(response));
@@ -279,7 +273,7 @@ const std::string dns_query(
 			response_size = send_tcp_data(fd, buffer, buffer_size, response, sizeof(response));
 		}
 	} else {
-		response_size = send_udp_data(fd, buffer, buffer_size, response, sizeof(response), socket_address, socket_address_size);
+		response_size = send_udp_data(fd, buffer, buffer_size, response, sizeof(response), s_addr, s_addr_size);
 	}
 	
 	close(fd);

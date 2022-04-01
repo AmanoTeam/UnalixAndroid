@@ -23,5 +23,5 @@ const std::string dns_query(
 
 const std::string get_address(
 	const std::string hostname,
-	int family
+	int *family
 );

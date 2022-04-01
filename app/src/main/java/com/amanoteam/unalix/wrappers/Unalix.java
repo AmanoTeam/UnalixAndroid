@@ -8,26 +8,62 @@ import androidx.preference.PreferenceManager;
 
 public class Unalix {
 
+	final private static boolean DEFAULT_IGNORE_REFERRAL_MARKETING = false;
+	final private static boolean DEFAULT_IGNORE_RULES = false;
+	final private static boolean DEFAULT_IGNORE_EXCEPTIONS = false;
+	final private static boolean DEFAULT_IGNORE_RAWRULES = false;
+	final private static boolean DEFAULT_IGNORE_REDIRECTIONS = false;
+	final private static boolean DEFAULT_SKIP_BLOCKED = false;
+
+	final private static int DEFAULT_TIMEOUT = 3;
+	final private static int DEFAULT_MAX_REDIRECTS = 13;
+	final private static String DEFAULT_USER_AGENT = "UnalixAndroid (+https://github.com/AmanoTeam/UnalixAndroid)";
+
+	final private static String DEFAULT_DNS = "";
+	
+	final private static String DEFAULT_PROXY = "";
+	final private static String DEFAULT_PROXY_USERNAME = "";
+	final private static String DEFAULT_PROXY_PASSWORD = "";
+	
 	static {
 		System.loadLibrary("unalix_jni");
 	}
-
-	private boolean ignoreReferralMarketing = false;
-	private boolean ignoreRules = false;
-	private boolean ignoreExceptions = false;
-	private boolean ignoreRawRules = false;
-	private boolean ignoreRedirections = false;
-	private boolean skipBlocked = false;
 	
-	private int timeout = 3;
-	private int maxRedirects = 13;
-	private String userAgent = "UnalixAndroid (+https://github.com/AmanoTeam/UnalixAndroid)";
+	private boolean ignoreReferralMarketing;
+	private boolean ignoreRules;
+	private boolean ignoreExceptions;
+	private boolean ignoreRawRules;
+	private boolean ignoreRedirections;
+	private boolean skipBlocked;
 	
-	private String dns = "";
+	private int timeout;
+	private int maxRedirects;
+	private String userAgent;
 	
-	private String proxy = "";
-	private String proxyUsername = "";
-	private String proxyPassword = "";
+	private String dns;
+	
+	private String proxy;
+	private String proxyUsername;
+	private String proxyPassword;
+	
+	public Unalix() {
+		setIgnoreReferralMarketing(DEFAULT_IGNORE_REFERRAL_MARKETING);
+		setIgnoreRules(DEFAULT_IGNORE_RULES);
+		setIgnoreExceptions(DEFAULT_IGNORE_EXCEPTIONS);
+		setIgnoreRawRules(DEFAULT_IGNORE_RAWRULES);
+		setIgnoreRedirections(DEFAULT_IGNORE_REDIRECTIONS);
+		setSkipBlocked(DEFAULT_SKIP_BLOCKED);
+		
+		setTimeout(DEFAULT_TIMEOUT);
+		setMaxRedirects(DEFAULT_MAX_REDIRECTS);
+		setUserAgent(DEFAULT_USER_AGENT);
+		
+		setDns(DEFAULT_DNS);
+		
+		setProxy(DEFAULT_PROXY);
+		setProxyUsername(DEFAULT_PROXY_USERNAME);
+		setProxyPassword(DEFAULT_PROXY_PASSWORD);
+	}
 
 	private native String clearUrl(
 			final String url,
@@ -115,12 +151,12 @@ public class Unalix {
 		this.timeout = value;
 	}
 	
-	private void setUserAgent(final String value) {
-		this.userAgent = value;
-	}
-
 	private void setMaxRedirects(final int value) {
 		this.maxRedirects = value;
+	}
+	
+	private void setUserAgent(final String value) {
+		this.userAgent = value;
 	}
 
 	private void setDns(final String value) {
@@ -170,14 +206,18 @@ public class Unalix {
 		final String userAgent = preferences.getString("userAgent", "");
 		final String customUserAgent = preferences.getString("customUserAgent", "");
 		
-		if (!userAgent.equals("default")) {
+		if (userAgent.equals("default")) {
+			setUserAgent(DEFAULT_USER_AGENT);
+		} else {
 			setUserAgent((userAgent.equals("custom")) ? customUserAgent : userAgent);
 		}
 		
 		final String dns = preferences.getString("dns", "");
 		final String customDns = preferences.getString("customDns", "");
 		
-		if (!dns.equals("follow_system")) {
+		if (dns.equals("follow_system")) {
+			setDns(DEFAULT_DNS);
+		} else {
 			setDns((dns.equals("custom")) ? customDns : dns);
 		}
 		
@@ -187,7 +227,9 @@ public class Unalix {
 			final String proxyAddress = preferences.getString("proxyAddress", "");
 			final int proxyPort = Integer.parseInt(preferences.getString("proxyPort", "8081"));
 			
-			if (!TextUtils.isEmpty(proxyAddress)) {
+			if (TextUtils.isEmpty(proxyAddress)) {
+				setProxy(DEFAULT_PROXY);
+			} else {
 				final String proxy = String.format("socks5://%s:%d", proxyAddress, proxyPort);
 				setProxy(proxy);
 				
@@ -201,6 +243,10 @@ public class Unalix {
 					setProxyPassword(proxyPassword);
 				}
 			}
+		} else {
+			setProxy(DEFAULT_PROXY);
+			setProxyUsername(DEFAULT_PROXY_USERNAME);
+			setProxyPassword(DEFAULT_PROXY_PASSWORD);
 		}
 		
 	}

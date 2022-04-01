@@ -62,3 +62,5 @@ struct URI {
 		
 		void set_fragment(const std::string value);
 };
+
+#pragma once

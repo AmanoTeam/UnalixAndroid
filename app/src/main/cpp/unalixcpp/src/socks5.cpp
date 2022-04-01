@@ -74,7 +74,7 @@ const std::string send_proxied_tcp_data(
 		addr = uri.get_ipv6_host();
 		addr_family = AF_INET6;
 	} else {
-		addr = get_address(uri.get_host(), addr_family);
+		addr = get_address(uri.get_host(), &addr_family);
 	}
 	
 	int socks_port = uri.get_port();
@@ -83,35 +83,30 @@ const std::string send_proxied_tcp_data(
 		socks_port = 8081;
 	}
 	
-	struct sockaddr* socket_address;
-	int socket_address_size;
+	const struct sockaddr* s_addr;
+	socklen_t s_addr_size;
 	
-	switch (addr_family) {
-		case AF_INET:
-			struct sockaddr_in addr_v4;
-			addr_v4.sin_family = addr_family;
-			addr_v4.sin_addr.s_addr = inet_addr(addr.c_str());
-			addr_v4.sin_port = htons(socks_port);
-			
-			socket_address = (struct sockaddr*) &addr_v4;
-			socket_address_size = sizeof(struct sockaddr_in);
-			
-			break;
-		case AF_INET6:
-			struct sockaddr_in6 addr_v6;
-			addr_v6.sin6_family = addr_family;
-			inet_pton(addr_family, addr.c_str(), &addr_v6.sin6_addr);
-			addr_v6.sin6_port = htons(socks_port);
-			
-			socket_address = (struct sockaddr*) &addr_v6;
-			socket_address_size = sizeof(sockaddr_in6);
-			
-			break;
+	if (addr_family == AF_INET) {
+		struct sockaddr_in addr_in;
+		addr_in.sin_family = addr_family;
+		addr_in.sin_port = htons(port);
+		inet_pton(addr_family, addr.c_str(), &addr_in.sin_addr);
+		
+		s_addr = (struct sockaddr*) &addr_in;
+		s_addr_size = sizeof(addr_in);
+	} else {
+		struct sockaddr_in6 addr_in;
+		addr_in.sin6_family = addr_family;
+		addr_in.sin6_port = htons(port);
+		inet_pton(addr_family, addr.c_str(), &addr_in.sin6_addr);
+		
+		s_addr = (struct sockaddr*) &addr_in;
+		s_addr_size = sizeof(addr_in);
 	}
 	
 	int fd = create_socket(addr_family, SOCK_STREAM, IPPROTO_TCP, timeout);
 	
-	connect_socket(fd, socket_address, socket_address_size);
+	connect_socket(fd, s_addr, s_addr_size);
 	
 	const char hello[] = {0x05, 0x01, 0x00};
 	char hello_response[2];

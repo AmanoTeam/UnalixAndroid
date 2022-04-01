@@ -122,12 +122,14 @@ const std::string requote_uri(const std::string &str){
 	return result;
 }
 
-const std::string strip_query(const std::string &query) {
+const std::string strip_query(const std::string &query, const char query_start) {
+	
+	const char characters[] = {query_start, '&', '\0'};
 	
 	std::ostringstream os;
 
 	for (std::string::size_type index = 0; index < query.size(); index++) {
-		if (strchr("?&", query[index]) && ((query.size() > index + 1 && strchr("?&", query[index + 1]) || index + 1 == query.size()))) {
+		if (strchr(characters, query[index]) && ((query.size() > index + 1 && strchr(characters, query[index + 1]) || index + 1 == query.size()))) {
 			index++;
 		} else {
 			os << query[index];
@@ -137,7 +139,7 @@ const std::string strip_query(const std::string &query) {
 	std::string result = os.str();
 	
 	if (result.size() > 0 && result[0] == '&') {
-		result[0] = '?';
+		result[0] = query_start;
 	}
 	
 	return result;

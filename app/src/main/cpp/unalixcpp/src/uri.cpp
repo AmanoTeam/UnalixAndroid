@@ -51,10 +51,10 @@ const bool URI::is_ipv6() const {
 
 const std::string URI::to_string() const {
 	return (
-		this -> scheme +
+		scheme +
 		"://" +
-		this -> host +
-		((this -> port == 0) ? "" : ":"  + std::to_string(this -> port)) +
+		host +
+		((port == 0) ? "" : ":"  + std::to_string(port)) +
 		path +
 		((query.size() > 0 && query[0] != '?') ? "?" + query : query) +
 		((fragment.size() > 0 && fragment[0] != '#') ? "#" + fragment : fragment)
@@ -110,7 +110,12 @@ URI URI::from_string(const std::string &str) {
 	}
 
 	if (path_start != str_end) {
-		path = std::string(path_start, query_start);
+		if (query_start > fragment_start) {
+			query_start = str_end;
+			path = std::string(path_start, fragment_start);
+		} else {
+			path = std::string(path_start, query_start);
+		}
 	}
 
 	if (query_start != str_end) {

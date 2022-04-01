@@ -150,7 +150,7 @@ const std::string clear_url(
 			}
 			
 			if (uri.get_fragment() != "") {
-				uri.set_fragment(strip_query(uri.get_fragment()));
+				uri.set_fragment(strip_query(uri.get_fragment(), '#'));
 			}
 			
 			this_url = uri.to_string();

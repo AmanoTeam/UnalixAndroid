@@ -71,18 +71,18 @@ public class SettingsActivity extends AppCompatActivity {
 						obj.put("ignoreRedirections", preferences.getBoolean("ignoreRedirections", false));
 						obj.put("skipBlocked", preferences.getBoolean("skipBlocked", false));
 						
-						obj.put("timeout", Integer.valueOf(preferences.getString("timeout", "3")));
-						obj.put("maxRedirects", Integer.valueOf(preferences.getString("maxRedirects", "13")));
+						obj.put("timeout", Integer.valueOf(preferences.getString("timeout", "")));
+						obj.put("maxRedirects", Integer.valueOf(preferences.getString("maxRedirects", "")));
+						obj.put("userAgent", preferences.getString("userAgent", ""));
+						obj.put("customUserAgent", preferences.getString("customUserAgent", ""));
+						
 						obj.put("dns", preferences.getString("dns", ""));
 						obj.put("customDns", preferences.getString("customDns", ""));
 
 						obj.put("socks5Proxy", preferences.getBoolean("socks5Proxy", false));
-						
 						obj.put("proxyAddress", preferences.getString("proxyAddress", ""));
 						obj.put("proxyPort", preferences.getString("proxyPort", ""));
-						
 						obj.put("proxyAuthentication", preferences.getBoolean("proxyAuthentication", false));
-						
 						obj.put("proxyUsername", preferences.getString("proxyUsername", ""));
 						obj.put("proxyPassword", preferences.getString("proxyPassword", ""));
 
@@ -144,16 +144,16 @@ public class SettingsActivity extends AppCompatActivity {
 						
 						editor.putString("timeout", String.valueOf(obj.getInt("timeout")));
 						editor.putString("maxRedirects", String.valueOf(obj.getInt("maxRedirects")));
-						editor.putString("dns", obj.getString("maxRedirects"));
+						editor.putString("userAgent", obj.getString("userAgent"));
+						editor.putString("customUserAgent", obj.getString("customUserAgent"));
+						
+						editor.putString("dns", obj.getString("dns"));
 						editor.putString("customDns", obj.getString("customDns"));
 
 						editor.putBoolean("socks5Proxy", obj.getBoolean("socks5Proxy"));
-
 						editor.putString("proxyAddress", obj.getString("proxyAddress"));
 						editor.putString("proxyPort", String.valueOf(obj.getInt("proxyPort")));
-						
 						editor.putBoolean("proxyAuthentication", obj.getBoolean("proxyAuthentication"));
-						
 						editor.putString("proxyUsername", obj.getString("proxyUsername"));
 						editor.putString("proxyPassword", obj.getString("proxyPassword"));
 
