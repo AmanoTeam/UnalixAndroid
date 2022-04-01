@@ -114,14 +114,11 @@ const std::string send_proxied_tcp_data(
 	connect_socket(fd, socket_address, socket_address_size);
 	
 	const char hello[] = {0x05, 0x01, 0x00};
-	const size_t hello_size = sizeof(hello);
+	char hello_response[2];
 	
-	char response[1024];
-	const size_t response_size = sizeof(response);
+	send_tcp_data(fd, hello, sizeof(hello), hello_response, sizeof(hello_response));
 	
-	send_tcp_data(fd, hello, hello_size, response, response_size);
-	
-	const char socks_version = response[0];
+	const char socks_version = hello_response[0];
 	
 	if (socks_version != 0x05) {
 		close(fd);
@@ -132,7 +129,7 @@ const std::string send_proxied_tcp_data(
 		throw(e);
 	}
 	
-	char reply_status = response[1];
+	char reply_status = hello_response[1];
 	
 	/*
 	 Authentication
@@ -148,9 +145,10 @@ const std::string send_proxied_tcp_data(
 		authentication.push_back((char) password.length());
 		authentication.insert(authentication.end(), password.begin(), password.end());
 		
-		send_tcp_data(fd, authentication.data(), authentication.size(), response, response_size);
+		char auth[2];
+		send_tcp_data(fd, authentication.data(), authentication.size(), auth, sizeof(auth));
 		
-		reply_status = response[1];
+		reply_status = auth[1];
 	}
 	
 	if (reply_status != 0x00) {
@@ -171,9 +169,10 @@ const std::string send_proxied_tcp_data(
 	question.insert(question.end(), hostname.begin(), hostname.end());
 	question.insert(question.end(), {(char) (port >> 8), (char) (port & 0xFF)});
 	
-	send_tcp_data(fd, question.data(), question.size(), response, response_size);
+	char answer[10];
+	send_tcp_data(fd, question.data(), question.size(), answer, sizeof(answer));
 	
-	reply_status = response[1];
+	reply_status = answer[1];
 	
 	if (reply_status != 0x00) {
 		close(fd);
@@ -187,10 +186,12 @@ const std::string send_proxied_tcp_data(
 	/*
 	  Send HTTP request through SOCKS5 server
 	*/
+	char response[1024];
+	
 	if (port == 443) {
-		send_encrypted_data(fd, hostname.c_str(), data.c_str(), data.length(), response, response_size);
+		send_encrypted_data(fd, hostname.c_str(), data.c_str(), data.length(), response, sizeof(response));
 	} else {
-		send_tcp_data(fd, data.c_str(), data.length(), response, response_size);
+		send_tcp_data(fd, data.c_str(), data.length(), response, sizeof(response));
 	}
 	
 	close(fd);
