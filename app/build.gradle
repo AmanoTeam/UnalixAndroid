@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
+	namespace 'com.amanoteam.unalix'
+	
 	compileSdkVersion 31
 
 	defaultConfig {
@@ -16,11 +18,11 @@ android {
 		}
 	}
 	
-    externalNativeBuild {
-        cmake {
-            path "CMakeLists.txt"
-        }
-    }
+	externalNativeBuild {
+		cmake {
+			path "CMakeLists.txt"
+		}
+	}
 	
 	ndkVersion "24.0.8215888"
 	
