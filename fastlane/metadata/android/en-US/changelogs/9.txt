@@ -1,7 +1,7 @@
 * Add support to SOCKS5 proxy
 * Add support to custom DNS addresses
 * Switch from LibreSSL to BearSSL
-* Allow changing default User-Agent header value
+* Allow changing default User-Agent string
 * ​Set max number of allowed redirects to "8" by default
 * ​Fix intent intercept not working properly on Android 7 and below
 
