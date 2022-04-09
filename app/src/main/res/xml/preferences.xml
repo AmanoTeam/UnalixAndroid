@@ -38,14 +38,14 @@
 			android:entries="@array/timeout_entries"
 			android:entryValues="@array/timeout_values"
 			android:key="timeout"
-			android:summary="Max number of seconds to wait for a response before  closing the connection"
+			android:summary="Max number of seconds to wait for a response before closing the connection"
 			android:title="Timeout" />
 		<ListPreference
-			android:defaultValue="13"
+			android:defaultValue="8"
 			android:entries="@array/max_redirects_entries"
 			android:entryValues="@array/max_redirects_values"
 			android:key="maxRedirects"
-			android:summary="Max number o HTTP redirects to follow"
+			android:summary="Max number of HTTP redirects to follow"
 			android:title="Redirects" />
 		<ListPreference
 			android:title="User agent"
@@ -82,7 +82,7 @@
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="socks5Proxy"
-			android:summary="Protect your privacy by routing all DNS and HTTP traffic to a SOCKS5 server"
+			android:summary="Protect your privacy by routing all DNS and HTTP traffic through a SOCKS5 server"
 			android:title="SOCKS5 proxy" />
 		<EditTextPreference
 			android:enabled="false"
