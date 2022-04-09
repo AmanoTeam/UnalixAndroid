@@ -1,0 +1,8 @@
+* Add support to SOCKS5 proxy
+* Add support to custom DNS addresses
+* Switch from LibreSSL to BearSSL
+* Allow changing default User-Agent header value
+* ​Set max number of allowed redirects to "8" by default
+* ​Fix intent intercept not working properly on Android 7 and below
+
+There are a lot of internal breaking changes in this release. We recommend you to uninstall any previous versions before installing this one.
