@@ -89,7 +89,7 @@ const std::string send_proxied_tcp_data(
 	if (addr_family == AF_INET) {
 		struct sockaddr_in addr_in;
 		addr_in.sin_family = addr_family;
-		addr_in.sin_port = htons(port);
+		addr_in.sin_port = htons(socks_port);
 		inet_pton(addr_family, addr.c_str(), &addr_in.sin_addr);
 		
 		s_addr = (struct sockaddr*) &addr_in;
@@ -97,7 +97,7 @@ const std::string send_proxied_tcp_data(
 	} else {
 		struct sockaddr_in6 addr_in;
 		addr_in.sin6_family = addr_family;
-		addr_in.sin6_port = htons(port);
+		addr_in.sin6_port = htons(socks_port);
 		inet_pton(addr_family, addr.c_str(), &addr_in.sin6_addr);
 		
 		s_addr = (struct sockaddr*) &addr_in;
@@ -144,6 +144,13 @@ const std::string send_proxied_tcp_data(
 		send_tcp_data(fd, authentication.data(), authentication.size(), auth, sizeof(auth));
 		
 		reply_status = auth[1];
+	} else if (reply_status != 0x00) {
+		close(fd);
+		
+		Socks5Error e;
+		e.set_message("Unsupported authentication method");
+		
+		throw(e);
 	}
 	
 	if (reply_status != 0x00) {
