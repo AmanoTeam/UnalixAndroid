@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
 				return true;
 			}
 
-			PackageUtils.showSnackbar(view, "Resolving URL");
+			PackageUtils.showProgressSnackbar(getApplicationContext(), view, "Resolving URL");
 
 			new Thread(new Runnable() {
 				@Override

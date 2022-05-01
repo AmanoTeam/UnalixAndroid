@@ -9,9 +9,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Parcelable;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import android.widget.Toast;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.R;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
@@ -114,6 +117,14 @@ public class PackageUtils {
 
 	public static void showSnackbar(final View view, final String text) {
 		final Snackbar snackbar = Snackbar.make(view, text, Snackbar.LENGTH_SHORT);
+		snackbar.show();
+	}
+
+	public static void showProgressSnackbar(final Context context, final View view, final String text) {
+		final Snackbar snackbar = Snackbar.make(view, text, Snackbar.LENGTH_INDEFINITE);
+		final ProgressBar progressBar = new ProgressBar(context);
+		final ViewGroup layout = (ViewGroup) snackbar.getView().findViewById(com.google.android.material.R.id.snackbar_text).getParent();
+		layout.addView(progressBar);
 		snackbar.show();
 	}
 
