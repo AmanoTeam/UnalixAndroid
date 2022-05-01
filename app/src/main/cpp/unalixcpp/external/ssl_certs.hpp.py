@@ -5,8 +5,8 @@ import http.client
 import urllib.parse
 import hashlib
 
-CA_CERT_URL = "https://curl.se/ca/cacert-2022-03-18.pem"
-CA_CERT_SHA256 = "2d0575e481482551a6a4f9152e7d2ab4bafaeaee5f2606edb829c2fdb3713336"
+CA_CERT_URL = "https://curl.se/ca/cacert-2022-04-26.pem"
+CA_CERT_SHA256 = "08df40e8f528ed283b0e480ba4bcdbfdd2fdcf695a7ada1668243072d80f8b6f"
 
 source = """\
 #include <bearssl.h>
