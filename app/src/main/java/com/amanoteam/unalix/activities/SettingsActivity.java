@@ -89,7 +89,6 @@ public class SettingsActivity extends AppCompatActivity {
 						obj.put("appTheme", preferences.getString("appTheme", "follow_system"));
 						obj.put("disableClearURLActivity", preferences.getBoolean("disableClearURLActivity", false));
 						obj.put("disableUnshortURLActivity", preferences.getBoolean("disableUnshortURLActivity", false));
-						obj.put("disableCopyToClipboardActivity", preferences.getBoolean("disableCopyToClipboardActivity", false));
 
 						final OutputStream outputStream = contentResolver.openOutputStream(fileUri);
 
@@ -160,7 +159,6 @@ public class SettingsActivity extends AppCompatActivity {
 						editor.putString("appTheme", obj.getString("appTheme"));
 						editor.putBoolean("disableClearURLActivity", obj.getBoolean("disableClearURLActivity"));
 						editor.putBoolean("disableUnshortURLActivity", obj.getBoolean("disableUnshortURLActivity"));
-						editor.putBoolean("disableCopyToClipboardActivity", obj.getBoolean("disableCopyToClipboardActivity"));
 
 						editor.commit();
 					} catch (final IOException | JSONException e) {
@@ -189,13 +187,6 @@ public class SettingsActivity extends AppCompatActivity {
 						PackageUtils.disableComponent(getApplicationContext(), PackageUtils.UNSHORT_URL_COMPONENT);
 					} else {
 						PackageUtils.enableComponent(getApplicationContext(), PackageUtils.UNSHORT_URL_COMPONENT);
-					}
-					break;
-				case "disableCopyToClipboardActivity":
-					if (preferences.getBoolean(key, false)) {
-						PackageUtils.disableComponent(getApplicationContext(), PackageUtils.COPY_TO_CLIPBOARD_COMPONENT);
-					} else {
-						PackageUtils.enableComponent(getApplicationContext(), PackageUtils.COPY_TO_CLIPBOARD_COMPONENT);
 					}
 					break;
 				case "dns":

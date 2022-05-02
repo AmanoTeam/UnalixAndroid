@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import android.widget.Toast;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.R;
 
@@ -27,11 +26,9 @@ public class PackageUtils {
 
 	private static final String CLEAR_URL_ACTIVITY = String.format("%s.%s", PACKAGE_NAME, "activities.ClearURLActivity");
 	private static final String UNSHORT_URL_ACTIVITY = String.format("%s.%s", PACKAGE_NAME, "activities.UnshortURLActivity");
-	private static final String COPY_TO_CLIPBOARD_ACTIVITY = String.format("%s.%s", PACKAGE_NAME, "activities.CopyToClipboardActivity");
 
 	public static final ComponentName CLEAR_URL_COMPONENT = new ComponentName(PACKAGE_NAME, CLEAR_URL_ACTIVITY);
 	public static final ComponentName UNSHORT_URL_COMPONENT = new ComponentName(PACKAGE_NAME, UNSHORT_URL_ACTIVITY);
-	public static final ComponentName COPY_TO_CLIPBOARD_COMPONENT = new ComponentName(PACKAGE_NAME, COPY_TO_CLIPBOARD_ACTIVITY);
 
 	private static final ComponentName[] CHOOSER_EXCLUDE_COMPONENTS = {
 		CLEAR_URL_COMPONENT,
@@ -123,14 +120,9 @@ public class PackageUtils {
 	public static void showProgressSnackbar(final Context context, final View view, final String text) {
 		final Snackbar snackbar = Snackbar.make(view, text, Snackbar.LENGTH_INDEFINITE);
 		final ProgressBar progressBar = new ProgressBar(context);
-		final ViewGroup layout = (ViewGroup) snackbar.getView().findViewById(com.google.android.material.R.id.snackbar_text).getParent();
+		final ViewGroup layout = (ViewGroup) snackbar.getView().findViewById(R.id.snackbar_text).getParent();
 		layout.addView(progressBar);
 		snackbar.show();
-	}
-
-	public static void showToast(final Context context, final String text) {
-		final Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
-		toast.show();
 	}
 
 }
