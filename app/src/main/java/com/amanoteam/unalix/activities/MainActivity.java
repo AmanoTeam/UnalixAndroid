@@ -3,6 +3,8 @@ package com.amanoteam.unalix.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -135,7 +137,25 @@ public class MainActivity extends AppCompatActivity {
 			startActivity(chooser);
 		});
 
-		// "Clean URL input" button listener
+		// "Copy to clipboard" button listener
+		shareUrlButton.setOnLongClickListener((final View view) -> {
+
+			final String text = urlInput.getText().toString();
+
+			if (TextUtils.isEmpty(text)) {
+				PackageUtils.showSnackbar(view, "There is no URL to copy");
+				return true;
+			}
+
+			final ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+			clipboard.setPrimaryClip(ClipData.newPlainText("Clean URL", text));
+			
+			PackageUtils.showSnackbar(view, "Copied to clipboard");
+			
+			return true;
+		});
+
+		// "Clear URL input" button listener
 		clearInputButton.setOnClickListener((final View view) -> {
 			final String url = urlInput.getText().toString();
 
