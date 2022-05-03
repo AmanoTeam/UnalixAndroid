@@ -11,6 +11,7 @@ import android.os.Parcelable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.R;
@@ -124,5 +125,11 @@ public class PackageUtils {
 		layout.addView(progressBar);
 		snackbar.show();
 	}
+
+	public static void showToast(final Context context, final String text) {
+		final Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
+		toast.show();
+	}
+
 
 }

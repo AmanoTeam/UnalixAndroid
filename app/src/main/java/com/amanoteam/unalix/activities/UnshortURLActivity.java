@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.amanoteam.unalix.services.UnalixService;
+import com.amanoteam.unalix.utilities.PackageUtils;
 
 public class UnshortURLActivity extends AppCompatActivity {
 
@@ -17,6 +18,13 @@ public class UnshortURLActivity extends AppCompatActivity {
 		final String action = intent.getAction();
 
 		final String uglyUrl = (action.equals(Intent.ACTION_SEND) ? intent.getStringExtra(Intent.EXTRA_TEXT) : intent.getData().toString());
+
+		if (!(uglyUrl.startsWith("http://") || uglyUrl.startsWith("https://"))) {
+			PackageUtils.showToast(this, "Unsupported URL");
+			
+			finishAndRemoveTask();
+			return;
+		}
 
 		final Intent service = new Intent(this, UnalixService.class);
 
