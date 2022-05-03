@@ -7,7 +7,7 @@
 		android:label="Unalix"
 		android:theme="@style/AppTheme">
 		<activity
-			android:name=".activities.ClearURLActivity"
+			android:name=".activities.CleanURLActivity"
 			android:exported="true"
 			android:label="Clean URL">
 			<intent-filter>

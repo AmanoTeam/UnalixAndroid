@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.amanoteam.unalix.services.UnalixService;
 
-public class ClearURLActivity extends AppCompatActivity {
+public class CleanURLActivity extends AppCompatActivity {
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {

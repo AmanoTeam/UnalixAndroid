@@ -24,14 +24,14 @@ public class PackageUtils {
 
 	private static final String PACKAGE_NAME = "com.amanoteam.unalix";
 
-	private static final String CLEAR_URL_ACTIVITY = String.format("%s.%s", PACKAGE_NAME, "activities.ClearURLActivity");
+	private static final String CLEAN_URL_ACTIVITY = String.format("%s.%s", PACKAGE_NAME, "activities.CleanURLActivity");
 	private static final String UNSHORT_URL_ACTIVITY = String.format("%s.%s", PACKAGE_NAME, "activities.UnshortURLActivity");
 
-	public static final ComponentName CLEAR_URL_COMPONENT = new ComponentName(PACKAGE_NAME, CLEAR_URL_ACTIVITY);
+	public static final ComponentName CLEAN_URL_COMPONENT = new ComponentName(PACKAGE_NAME, CLEAN_URL_ACTIVITY);
 	public static final ComponentName UNSHORT_URL_COMPONENT = new ComponentName(PACKAGE_NAME, UNSHORT_URL_ACTIVITY);
 
 	private static final ComponentName[] CHOOSER_EXCLUDE_COMPONENTS = {
-		CLEAR_URL_COMPONENT,
+		CLEAN_URL_COMPONENT,
 		UNSHORT_URL_COMPONENT
 	};
 
@@ -71,7 +71,7 @@ public class PackageUtils {
 			final String packageName = target.activityInfo.packageName;
 			final String activityName = target.activityInfo.name;
 
-			if (activityName.equals(CLEAR_URL_ACTIVITY) || activityName.equals(UNSHORT_URL_ACTIVITY)) {
+			if (activityName.equals(CLEAN_URL_ACTIVITY) || activityName.equals(UNSHORT_URL_ACTIVITY)) {
 				continue;
 			}
 

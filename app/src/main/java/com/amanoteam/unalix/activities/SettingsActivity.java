@@ -177,9 +177,9 @@ public class SettingsActivity extends AppCompatActivity {
 			switch (key) {
 				case "disableClearURLActivity":
 					if (preferences.getBoolean(key, false)) {
-						PackageUtils.disableComponent(getApplicationContext(), PackageUtils.CLEAR_URL_COMPONENT);
+						PackageUtils.disableComponent(getApplicationContext(), PackageUtils.CLEAN_URL_COMPONENT);
 					} else {
-						PackageUtils.enableComponent(getApplicationContext(), PackageUtils.CLEAR_URL_COMPONENT);
+						PackageUtils.enableComponent(getApplicationContext(), PackageUtils.CLEAN_URL_COMPONENT);
 					}
 					break;
 				case "disableUnshortURLActivity":
