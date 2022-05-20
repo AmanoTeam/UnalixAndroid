@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item
+		android:id="@+id/bottom_navigation_home"
+		android:enabled="true"
+		android:icon="@drawable/home_icon"
+		android:title="Home" />
+	<item
+		android:id="@+id/bottom_navigation_settings"
+		android:enabled="true"
+		android:icon="@drawable/settings_icon"
+		android:title="Settings" />
+</menu>

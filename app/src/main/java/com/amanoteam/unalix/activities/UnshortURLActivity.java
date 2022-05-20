@@ -21,7 +21,6 @@ public class UnshortURLActivity extends AppCompatActivity {
 
 		if (!(uglyUrl.startsWith("http://") || uglyUrl.startsWith("https://"))) {
 			PackageUtils.showToast(this, "Unsupported URL");
-			
 			finishAndRemoveTask();
 			return;
 		}

@@ -1,210 +1,135 @@
 package com.amanoteam.unalix.activities;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.ClipData;
-import android.content.ClipboardManager;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener;
+import com.google.android.material.navigation.NavigationBarView;
 
 import com.amanoteam.unalix.R;
+import com.amanoteam.unalix.fragments.CleanURLFragment;
+import com.amanoteam.unalix.fragments.SettingsFragment;
 import com.amanoteam.unalix.utilities.PackageUtils;
 import com.amanoteam.unalix.wrappers.Unalix;
-import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.textfield.TextInputEditText;
-
 
 public class MainActivity extends AppCompatActivity {
-
-	private Unalix unalix;
+	
+	private static final String CLEAN_URL_FRAGMENT_TAG = "CleanURLFragment";
+	private static final String SETTINGS_FRAGMENT_TAG = "SettingsFragment";
+	
 	private final OnSharedPreferenceChangeListener onSharedPreferenceChangeListener = (settings, key) -> {
-		// Update library preferences
-		unalix.setFromPreferences(this);
-
 		if (key.equals("appTheme")) {
-			// Dark mode stuff
 			final String appTheme = settings.getString("appTheme", "follow_system");
-
 			PackageUtils.setAppTheme(appTheme);
 		}
 	};
-
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		// Preferences stuff
-		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		settings.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
-
-		super.onCreate(savedInstanceState);
-
-		setContentView(R.layout.activity_main);
-
-		// ImageButton and EditText stuff
-		final FloatingActionButton openUrlButton = findViewById(R.id.open_url_button);
-		final FloatingActionButton cleanUrlButton = findViewById(R.id.clean_url_button);
-		final FloatingActionButton shareUrlButton = findViewById(R.id.share_url_button);
-		final FloatingActionButton clearInputButton = findViewById(R.id.clear_input_button);
-
-		final TextInputEditText urlInput = findViewById(R.id.url_input);
-
-		// "Clean URL" button listener
-		cleanUrlButton.setOnClickListener((final View view) -> {
-
-			final String text = urlInput.getText().toString();
-
-			if (TextUtils.isEmpty(text)) {
-				PackageUtils.showSnackbar(view, "There is no URL to clean");
-				return;
-			}
-
-			final String cleanedUrl = unalix.clearUrl(text);
-
-			urlInput.setText(cleanedUrl);
-		});
-
-		// "Unshort URL" button listener
-		cleanUrlButton.setOnLongClickListener((final View view) -> {
-
-			final String text = urlInput.getText().toString();
-
-			if (TextUtils.isEmpty(text)) {
-				PackageUtils.showSnackbar(view, "There is no URL to unshort");
-				return true;
-			}
-
-			PackageUtils.showProgressSnackbar(getApplicationContext(), view, "Resolving URL");
-
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					final String cleanedUrl = unalix.unshortUrl(text);
-
-					new Handler(Looper.getMainLooper()).post(new Runnable() {
-						@Override
-						public void run() {
-							urlInput.setText(cleanedUrl);
-							PackageUtils.showSnackbar(view, "Done");
-						}
-					});
-				}
-			}).start();
-			
-			return true;
-		});
-
-		// "Open URL" button listener
-		openUrlButton.setOnClickListener((final View view) -> {
-
-			final String url = urlInput.getText().toString();
-
-			if (TextUtils.isEmpty(url)) {
-				PackageUtils.showSnackbar(view, "There is no URL to launch");
-				return;
-			}
-
-			final Intent chooser = PackageUtils.createChooser(getApplicationContext(), url, Intent.ACTION_VIEW);
-			startActivity(chooser);
-		});
-
-		// "Share URL" button listener
-		shareUrlButton.setOnClickListener((final View view) -> {
-
-			final String url = urlInput.getText().toString();
-
-			if (TextUtils.isEmpty(url)) {
-				PackageUtils.showSnackbar(view, "There is no URL to share");
-				return;
-			}
-
-			final Intent chooser = PackageUtils.createChooser(getApplicationContext(), url, Intent.ACTION_SEND);
-			startActivity(chooser);
-		});
-
-		// "Copy to clipboard" button listener
-		shareUrlButton.setOnLongClickListener((final View view) -> {
-
-			final String text = urlInput.getText().toString();
-
-			if (TextUtils.isEmpty(text)) {
-				PackageUtils.showSnackbar(view, "There is no URL to copy");
-				return true;
-			}
-
-			final ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-			clipboard.setPrimaryClip(ClipData.newPlainText("Clean URL", text));
-			
-			PackageUtils.showSnackbar(view, "Copied to clipboard");
-			
-			return true;
-		});
-
-		// "Clear URL input" button listener
-		clearInputButton.setOnClickListener((final View view) -> {
-			final String url = urlInput.getText().toString();
-
-			if (TextUtils.isEmpty(url)) {
-				PackageUtils.showSnackbar(view, "URL input is already empty");
-				return;
-			}
-
-			urlInput.getText().clear();
-		});
-
-		// Action bar stuff
+	
+	private final OnItemSelectedListener onNavigationItemSelected = (item) -> {
+		final FragmentManager fragmentManager = getSupportFragmentManager();
+		final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+		
+		final Fragment cleanURLFragment = fragmentManager.findFragmentByTag(CLEAN_URL_FRAGMENT_TAG);
+		final Fragment settingsFragment = fragmentManager.findFragmentByTag(SETTINGS_FRAGMENT_TAG);
+		
 		final MaterialToolbar toolbar = findViewById(R.id.main_toolbar);
-		setSupportActionBar(toolbar);
-
-		// libunalix stuff
-		unalix = new Unalix();
-		unalix.setFromPreferences(this);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(final Menu menu) {
-		final MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.main_menu, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
+		
 		switch (item.getItemId()) {
-			case R.id.main_quit:
-				finishAndRemoveTask();
+			case R.id.bottom_navigation_home:
+				fragmentTransaction.hide(settingsFragment);
+				fragmentTransaction.show(cleanURLFragment);
+				fragmentTransaction.commit();
+				
+				toolbar.setTitle("Unalix");
+				
 				return true;
-			case R.id.settings_activity:
-				final Intent activity = new Intent(this, SettingsActivity.class);
-				activity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				startActivity(activity);
-
+			case R.id.bottom_navigation_settings:
+				fragmentTransaction.hide(cleanURLFragment);
+				fragmentTransaction.show(settingsFragment);
+				fragmentTransaction.commit();
+				
+				toolbar.setTitle("Settings");
+				
 				return true;
 			default:
-				return super.onOptionsItemSelected(item);
+				return false;
 		}
-	}
-
+	};
+	
 	@Override
-	public void onBackPressed() {
-		moveTaskToBack(true);
+	protected void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		
+		setContentView(R.layout.activity_main);
+		
+		if (savedInstanceState == null) {
+			final CleanURLFragment cleanURLFragment = new CleanURLFragment();
+			final SettingsFragment settingsFragment = new SettingsFragment();
+			
+			final FragmentManager fragmentManager = getSupportFragmentManager();
+			final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+			
+			fragmentTransaction.add(R.id.fragment_container_view, settingsFragment, SETTINGS_FRAGMENT_TAG);
+			fragmentTransaction.hide(settingsFragment);
+			
+			fragmentTransaction.add(R.id.fragment_container_view, cleanURLFragment, CLEAN_URL_FRAGMENT_TAG);
+			fragmentTransaction.commit();
+		}
+		
+		final MaterialToolbar toolbar = findViewById(R.id.main_toolbar);
+		setSupportActionBar(toolbar);
+		
+		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		preferences.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
+		
+		final NavigationBarView navigationBarView = findViewById(R.id.bottom_navigation);
+		navigationBarView.setOnItemSelectedListener(onNavigationItemSelected);
+		
+		final Window window = getWindow();
+		window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 	}
-
+	
 	@Override
 	protected void onDestroy() {
 		// Unregister preferences callback
-		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		settings.unregisterOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
-
+		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		preferences.unregisterOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
+		
+		final NavigationBarView navigationBarView = findViewById(R.id.bottom_navigation);
+		navigationBarView.setOnItemSelectedListener(null);
+		
 		super.onDestroy();
 	}
+	
+	@Override
+	public void onBackPressed() {
+		final FragmentManager fragmentManager = getSupportFragmentManager();
+		
+		final Fragment settingsFragment = fragmentManager.findFragmentByTag(SETTINGS_FRAGMENT_TAG);
+		final Fragment cleanURLFragment = fragmentManager.findFragmentByTag(CLEAN_URL_FRAGMENT_TAG);
+		
+		if (settingsFragment.isVisible()) {
+			final NavigationBarView navigationBarView = findViewById(R.id.bottom_navigation);
+			navigationBarView.setSelectedItemId(R.id.bottom_navigation_home);
+			
+			final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+			fragmentTransaction.hide(settingsFragment);
+			fragmentTransaction.show(cleanURLFragment);
+			fragmentTransaction.commit();
+			
+			final MaterialToolbar toolbar = findViewById(R.id.main_toolbar);
+			toolbar.setTitle("Unalix");
+		} else {
+			finishAndRemoveTask();
+		}
+	}
+	
 }

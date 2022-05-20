@@ -125,18 +125,23 @@
 			android:title="Theme" />
 		<CheckBoxPreference
 			android:defaultValue="false"
-			android:key="disableClearURLActivity"
+			android:key="disableCleanURLActivity"
 			android:summary="Don't show 'Clean URL' in the disambiguation dialog"
-			android:title="Disable ClearURL activity" />
+			android:title="Disable CleanURL activity" />
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="disableUnshortURLActivity"
 			android:summary="Don't show 'Unshort URL' in the disambiguation dialog"
 			android:title="Disable UnshortURL activity" />
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="disableCopyToClipboardActivity"
-			android:summary="Don't show 'Copy to clipboard' in the disambiguation dialog"
-			android:title="Disable CopyToClipboard activity" />
+	</PreferenceCategory>
+	<PreferenceCategory android:title="Backup and restore">
+		<Preference
+			android:key="backup"
+			android:summary="Export app settings and preferences"
+			android:title="Create backup" />
+		<Preference
+			android:key="restore"
+			android:summary="Restore a previously exported backup file"
+			android:title="Restore backup" />
 	</PreferenceCategory>
 </PreferenceScreen>

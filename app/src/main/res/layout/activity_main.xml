@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:id="@+id/content_main"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
@@ -12,99 +14,29 @@
 		<com.google.android.material.appbar.MaterialToolbar
 			android:id="@+id/main_toolbar"
 			android:layout_width="match_parent"
-			android:layout_height="?attr/actionBarSize" />
+			android:layout_height="?attr/actionBarSize"
+			app:layout_scrollFlags="scroll|enterAlways|snap"
+			app:titleCentered="true" />
 	</com.google.android.material.appbar.AppBarLayout>
 
 	<androidx.core.widget.NestedScrollView
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_vertical"
-		app:layout_behavior="@string/appbar_scrolling_view_behavior"
-		android:paddingBottom="?attr/actionBarSize"
-		android:clipChildren="false"
-		android:clipToPadding="false">
-
-		<androidx.constraintlayout.widget.ConstraintLayout
-			android:id="@+id/constraint_main"
+		app:layout_behavior="@string/appbar_scrolling_view_behavior">
+		
+		<androidx.fragment.app.FragmentContainerView
+			android:id="@+id/fragment_container_view"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="vertical">
-
-			<com.google.android.material.textfield.TextInputLayout
-				android:id="@+id/url_layout"
-				android:layout_width="0dp"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="15dp"
-				android:hint="Type or paste some URL"
-				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toBottomOf="@id/constraint_main"
-				app:layout_constraintTop_toTopOf="parent"
-				app:layout_constraintWidth_percent=".8">
-
-				<com.google.android.material.textfield.TextInputEditText
-					android:id="@+id/url_input"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:allowUndo="true"
-					android:ellipsize="end"
-					android:gravity="left"
-					android:inputType="textMultiLine|textNoSuggestions"
-					android:maxLines="15" />
-			</com.google.android.material.textfield.TextInputLayout>
-
-			<com.google.android.material.floatingactionbutton.FloatingActionButton
-				android:id="@+id/open_url_button"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_centerHorizontal="true"
-				android:layout_marginStart="40dp"
-				android:layout_marginTop="32dp"
-				android:contentDescription="Open URL"
-				app:layout_constraintRight_toLeftOf="@id/clean_url_button"
-				app:layout_constraintStart_toStartOf="@id/url_layout"
-				app:layout_constraintTop_toBottomOf="@id/url_layout"
-				app:layout_constraintTop_toTopOf="@id/clean_url_button"
-				app:srcCompat="@drawable/outline_open_in_browser_24" />
-
-			<com.google.android.material.floatingactionbutton.FloatingActionButton
-				android:id="@+id/clean_url_button"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_below="@id/url_layout"
-				android:layout_centerHorizontal="true"
-				android:layout_marginTop="32dp"
-				android:contentDescription="Clean URL"
-				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toBottomOf="@id/url_layout"
-				app:srcCompat="@drawable/baseline_cleaning_services_24" />
-
-			<com.google.android.material.floatingactionbutton.FloatingActionButton
-				android:id="@+id/share_url_button"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_centerHorizontal="true"
-				android:layout_marginTop="32dp"
-				android:layout_marginEnd="40dp"
-				android:contentDescription="Share URL"
-				app:layout_constraintEnd_toEndOf="@id/url_layout"
-				app:layout_constraintLeft_toRightOf="@id/clean_url_button"
-				app:layout_constraintTop_toBottomOf="@id/url_layout"
-				app:layout_constraintTop_toTopOf="@id/clean_url_button"
-				app:srcCompat="@drawable/outline_share_24" />
-
-			<com.google.android.material.floatingactionbutton.FloatingActionButton
-				android:id="@+id/clear_input_button"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_centerHorizontal="true"
-				android:layout_marginTop="32dp"
-				android:contentDescription="Clear URL input"
-				app:layout_constraintEnd_toEndOf="@id/clean_url_button"
-				app:layout_constraintLeft_toRightOf="@id/open_url_button"
-				app:layout_constraintTop_toBottomOf="@id/clean_url_button"
-				app:srcCompat="@drawable/outline_clear_24" />
-		</androidx.constraintlayout.widget.ConstraintLayout>
+			android:layout_height="match_parent" />
 	</androidx.core.widget.NestedScrollView>
+	
+	 <com.google.android.material.bottomnavigation.BottomNavigationView
+		android:id="@+id/bottom_navigation"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="bottom"
+		app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
+		app:layout_insetEdge="bottom"
+		app:menu="@menu/bottom_navigation_menu" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

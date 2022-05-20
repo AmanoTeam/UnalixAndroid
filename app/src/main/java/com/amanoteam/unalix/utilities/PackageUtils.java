@@ -1,5 +1,10 @@
 package com.amanoteam.unalix.utilities;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -8,18 +13,19 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Parcelable;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.R;
-
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import com.google.android.material.snackbar.Snackbar;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.amanoteam.unalix.R;
 
 public class PackageUtils {
 
@@ -35,7 +41,11 @@ public class PackageUtils {
 		CLEAN_URL_COMPONENT,
 		UNSHORT_URL_COMPONENT
 	};
-
+	
+	private static final int DEFAULT_NOTIFICATION_ID = 1;
+	private static final String DEFAULT_NOTIFICATION_CHANNEL = "unalix_notification_channel";
+	private static final String DEFAULT_NOTIFICATION_CHANNEL_DESCRIPTION = "Default notification channel for Unalix";
+	
 	public static Intent createChooser(final Context context, final String url, final String action) {
 
 		final Intent intent = new Intent();
@@ -112,24 +122,66 @@ public class PackageUtils {
 				break;
 		}
 	}
-
-	public static void showSnackbar(final View view, final String text) {
+	
+	public static Snackbar createSnackbar(final View view, final String text) {
 		final Snackbar snackbar = Snackbar.make(view, text, Snackbar.LENGTH_SHORT);
+		final View snackbarView = snackbar.getView();
+		
+		final LayoutParams params = (LayoutParams) snackbarView.getLayoutParams();
+		params.setAnchorId(R.id.bottom_navigation);
+		params.gravity = Gravity.TOP;
+		params.anchorGravity = Gravity.TOP;
+		
+		snackbarView.setLayoutParams(params);
+		
+		return snackbar;
+	}
+	
+	public static void showSnackbar(final View view, final String text) {
+		final Snackbar snackbar = createSnackbar(view, text);
 		snackbar.show();
 	}
-
+	
 	public static void showProgressSnackbar(final Context context, final View view, final String text) {
-		final Snackbar snackbar = Snackbar.make(view, text, Snackbar.LENGTH_INDEFINITE);
+		final Snackbar snackbar = createSnackbar(view, text);
+		
 		final ProgressBar progressBar = new ProgressBar(context);
-		final ViewGroup layout = (ViewGroup) snackbar.getView().findViewById(R.id.snackbar_text).getParent();
+		final ViewGroup layout = (ViewGroup) snackbar.getView().findViewById(com.google.android.material.R.id.snackbar_text).getParent();
 		layout.addView(progressBar);
+		
 		snackbar.show();
 	}
-
+	
 	public static void showToast(final Context context, final String text) {
 		final Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
 		toast.show();
 	}
+	
+	public static int showNotification(final Context context, final String title, final String description) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			final NotificationChannel channel = new NotificationChannel(DEFAULT_NOTIFICATION_CHANNEL, "Unalix", NotificationManager.IMPORTANCE_DEFAULT);
+			channel.setDescription(DEFAULT_NOTIFICATION_CHANNEL_DESCRIPTION);
+			
+			final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+			notificationManager.createNotificationChannel(channel);
+		}
 
-
+		final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, DEFAULT_NOTIFICATION_CHANNEL)
+			.setSmallIcon(R.drawable.cleaning_icon)
+			.setContentTitle(title)
+			.setContentText(description)
+			.setPriority(NotificationCompat.PRIORITY_LOW);
+		
+		final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+		
+		notificationManager.notify(DEFAULT_NOTIFICATION_ID, builder.build());
+		
+		return DEFAULT_NOTIFICATION_ID;
+	}
+	
+	public static void cancelNotification(final Context context, final int id) {
+		final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+		notificationManager.cancel(id);
+	}
+	
 }

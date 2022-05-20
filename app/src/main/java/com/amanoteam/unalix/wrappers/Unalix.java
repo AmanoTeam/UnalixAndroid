@@ -46,23 +46,8 @@ public class Unalix {
 	private String proxyUsername;
 	private String proxyPassword;
 	
-	public Unalix() {
-		setIgnoreReferralMarketing(DEFAULT_IGNORE_REFERRAL_MARKETING);
-		setIgnoreRules(DEFAULT_IGNORE_RULES);
-		setIgnoreExceptions(DEFAULT_IGNORE_EXCEPTIONS);
-		setIgnoreRawRules(DEFAULT_IGNORE_RAWRULES);
-		setIgnoreRedirections(DEFAULT_IGNORE_REDIRECTIONS);
-		setSkipBlocked(DEFAULT_SKIP_BLOCKED);
-		
-		setTimeout(DEFAULT_TIMEOUT);
-		setMaxRedirects(DEFAULT_MAX_REDIRECTS);
-		setUserAgent(DEFAULT_USER_AGENT);
-		
-		setDns(DEFAULT_DNS);
-		
-		setProxy(DEFAULT_PROXY);
-		setProxyUsername(DEFAULT_PROXY_USERNAME);
-		setProxyPassword(DEFAULT_PROXY_PASSWORD);
+	public Unalix(final Context context) {
+		setFromPreferences(context);
 	}
 
 	private native String clearUrl(

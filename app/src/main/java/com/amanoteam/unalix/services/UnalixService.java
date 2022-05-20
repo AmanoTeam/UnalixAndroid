@@ -9,16 +9,9 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import android.os.Build;
 
-import com.amanoteam.unalix.R;
 import com.amanoteam.unalix.utilities.PackageUtils;
 import com.amanoteam.unalix.wrappers.Unalix;
-
 
 public class UnalixService extends Service {
 
@@ -69,40 +62,19 @@ public class UnalixService extends Service {
 			final String whatToDo = intent.getStringExtra("whatToDo");
 
 			final Context context = getApplicationContext();
-
-			// libunalix stuff
-			final Unalix unalix = new Unalix();
-			unalix.setFromPreferences(context);
-
+			
+			final Unalix unalix = new Unalix(context);
+			
 			String cleanUrl = null;
 			
 			if (whatToDo.equals("clearUrl")) {
 				cleanUrl = unalix.clearUrl(uglyUrl);
 			} else {
-				final String notification_channel = "unalix_notification_channel";
+				final int notificationId = PackageUtils.showNotification(context, "Unalix is running in background", "Resolving URL... please be patient");
 				
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-					final NotificationChannel channel = new NotificationChannel(notification_channel, "Unalix", NotificationManager.IMPORTANCE_DEFAULT);
-					channel.setDescription("Default notification channel for Unalix");
-					
-					final NotificationManager notificationManager = getSystemService(NotificationManager.class);
-					notificationManager.createNotificationChannel(channel);
-				}
-
-				final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, notification_channel)
-					.setSmallIcon(R.drawable.baseline_cleaning_services_24)
-					.setContentTitle("Unalix is running in background")
-					.setContentText("Resolving URL... please be patient")
-					.setPriority(NotificationCompat.PRIORITY_LOW);
-				
-				final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-				
-				final int notificationId = 1;
-				notificationManager.notify(notificationId, builder.build());
-
 				cleanUrl = unalix.unshortUrl(uglyUrl);
 				
-				notificationManager.cancel(notificationId);
+				PackageUtils.cancelNotification(context, notificationId);
 			}
 
 			final Intent chooser = PackageUtils.createChooser(context, cleanUrl, action);

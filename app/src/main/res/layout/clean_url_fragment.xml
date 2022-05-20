@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/constraint_main"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
+	android:paddingBottom="?attr/actionBarSize"
+	android:clipChildren="false"
+	android:clipToPadding="false">
+
+	<com.google.android.material.textfield.TextInputLayout
+		android:id="@+id/url_layout"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="5dp"
+		android:hint="Type or paste some URL"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/constraint_main"
+		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintWidth_percent=".8">
+
+		<com.google.android.material.textfield.TextInputEditText
+			android:id="@+id/url_input"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:allowUndo="true"
+			android:ellipsize="end"
+			android:gravity="left"
+			android:inputType="textMultiLine|textNoSuggestions"
+			android:maxLines="15" />
+	</com.google.android.material.textfield.TextInputLayout>
+
+	<com.google.android.material.floatingactionbutton.FloatingActionButton
+		android:id="@+id/open_url_button"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerHorizontal="true"
+		android:layout_marginStart="40dp"
+		android:layout_marginTop="32dp"
+		android:contentDescription="Open URL"
+		app:layout_constraintRight_toLeftOf="@id/clean_url_button"
+		app:layout_constraintStart_toStartOf="@id/url_layout"
+		app:layout_constraintTop_toBottomOf="@id/url_layout"
+		app:layout_constraintTop_toTopOf="@id/clean_url_button"
+		app:srcCompat="@drawable/open_in_browser_icon" />
+
+	<com.google.android.material.floatingactionbutton.FloatingActionButton
+		android:id="@+id/clean_url_button"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/url_layout"
+		android:layout_centerHorizontal="true"
+		android:layout_marginTop="32dp"
+		android:contentDescription="Clean URL"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/url_layout"
+		app:srcCompat="@drawable/cleaning_icon" />
+
+	<com.google.android.material.floatingactionbutton.FloatingActionButton
+		android:id="@+id/share_url_button"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerHorizontal="true"
+		android:layout_marginTop="32dp"
+		android:layout_marginEnd="40dp"
+		android:contentDescription="Share URL"
+		app:layout_constraintEnd_toEndOf="@id/url_layout"
+		app:layout_constraintLeft_toRightOf="@id/clean_url_button"
+		app:layout_constraintTop_toBottomOf="@id/url_layout"
+		app:layout_constraintTop_toTopOf="@id/clean_url_button"
+		app:srcCompat="@drawable/share_icon" />
+
+	<com.google.android.material.floatingactionbutton.FloatingActionButton
+		android:id="@+id/clear_input_button"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerHorizontal="true"
+		android:layout_marginTop="32dp"
+		android:contentDescription="Clear URL input"
+		app:layout_constraintEnd_toEndOf="@id/clean_url_button"
+		app:layout_constraintLeft_toRightOf="@id/open_url_button"
+		app:layout_constraintTop_toBottomOf="@id/clean_url_button"
+		app:srcCompat="@drawable/clear_icon" />
+</androidx.constraintlayout.widget.ConstraintLayout>>
