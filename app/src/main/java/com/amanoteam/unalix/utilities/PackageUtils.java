@@ -123,8 +123,8 @@ public class PackageUtils {
 		}
 	}
 	
-	public static Snackbar createSnackbar(final View view, final String text) {
-		final Snackbar snackbar = Snackbar.make(view, text, Snackbar.LENGTH_SHORT);
+	public static Snackbar createSnackbar(final View view, final String text, final int duration) {
+		final Snackbar snackbar = Snackbar.make(view, text, duration);
 		final View snackbarView = snackbar.getView();
 		
 		final LayoutParams params = (LayoutParams) snackbarView.getLayoutParams();
@@ -138,12 +138,12 @@ public class PackageUtils {
 	}
 	
 	public static void showSnackbar(final View view, final String text) {
-		final Snackbar snackbar = createSnackbar(view, text);
+		final Snackbar snackbar = createSnackbar(view, text, Snackbar.LENGTH_SHORT);
 		snackbar.show();
 	}
 	
 	public static void showProgressSnackbar(final Context context, final View view, final String text) {
-		final Snackbar snackbar = createSnackbar(view, text);
+		final Snackbar snackbar = createSnackbar(view, text, Snackbar.LENGTH_INDEFINITE);
 		
 		final ProgressBar progressBar = new ProgressBar(context);
 		final ViewGroup layout = (ViewGroup) snackbar.getView().findViewById(com.google.android.material.R.id.snackbar_text).getParent();
