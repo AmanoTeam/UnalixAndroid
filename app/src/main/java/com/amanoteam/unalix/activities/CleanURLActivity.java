@@ -30,7 +30,7 @@ public class CleanURLActivity extends AppCompatActivity {
 
 		service.putExtra("originalAction", action);
 		service.putExtra("uglyUrl", uglyUrl);
-		service.putExtra("whatToDo", "clearUrl");
+		service.putExtra("whatToDo", "cleanUrl");
 
 		startService(service);
 

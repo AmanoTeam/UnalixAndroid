@@ -67,8 +67,8 @@ public class UnalixService extends Service {
 			
 			String cleanUrl = null;
 			
-			if (whatToDo.equals("clearUrl")) {
-				cleanUrl = unalix.clearUrl(uglyUrl);
+			if (whatToDo.equals("cleanUrl")) {
+				cleanUrl = unalix.cleanUrl(uglyUrl);
 			} else {
 				final int notificationId = PackageUtils.showNotification(context, "Unalix is running in background", "Resolving URL... please be patient");
 				

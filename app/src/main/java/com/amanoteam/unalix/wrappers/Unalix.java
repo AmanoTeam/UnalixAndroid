@@ -50,7 +50,7 @@ public class Unalix {
 		setFromPreferences(context);
 	}
 
-	private native String clearUrl(
+	private native String cleanUrl(
 			final String url,
 			final boolean ignoreReferralMarketing,
 			final boolean ignoreRules,
@@ -60,8 +60,8 @@ public class Unalix {
 			final boolean skipBlocked
 	);
 
-	public String clearUrl(final String url) {
-		return this.clearUrl(
+	public String cleanUrl(final String url) {
+		return this.cleanUrl(
 				url,
 				this.ignoreReferralMarketing,
 				this.ignoreRules,

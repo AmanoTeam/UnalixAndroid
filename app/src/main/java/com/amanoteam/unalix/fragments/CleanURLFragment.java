@@ -59,7 +59,7 @@ public class CleanURLFragment extends Fragment {
 				return;
 			}
 
-			final String cleanedUrl = unalix.clearUrl(text);
+			final String cleanedUrl = unalix.cleanUrl(text);
 
 			urlInput.setText(cleanedUrl);
 			urlInput.setSelection(cleanedUrl.length());
