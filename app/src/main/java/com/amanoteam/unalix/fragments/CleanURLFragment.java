@@ -52,14 +52,13 @@ public class CleanURLFragment extends Fragment {
 
 		// "Clean URL" button listener
 		cleanUrlButton.setOnClickListener((final View view) -> {
-			final String text = urlInput.getText().toString();
-
-			if (TextUtils.isEmpty(text)) {
-				urlInput.setError("Please enter a URL");
+			final String url = getURL(urlInput);
+			
+			if (url == null) {
 				return;
 			}
-
-			final String cleanedUrl = unalix.cleanUrl(text);
+			
+			final String cleanedUrl = unalix.cleanUrl(url);
 
 			urlInput.setText(cleanedUrl);
 			urlInput.setSelection(cleanedUrl.length());
@@ -67,19 +66,18 @@ public class CleanURLFragment extends Fragment {
 
 		// "Unshort URL" button listener
 		cleanUrlButton.setOnLongClickListener((final View view) -> {
-			final String text = urlInput.getText().toString();
-
-			if (TextUtils.isEmpty(text)) {
-				urlInput.setError("Please enter a URL");
+			final String url = getURL(urlInput);
+			
+			if (url == null) {
 				return true;
 			}
-
+			
 			PackageUtils.showProgressSnackbar(context, view, "Resolving URL");
 
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					final String cleanedUrl = unalix.unshortUrl(text);
+					final String cleanedUrl = unalix.unshortUrl(url);
 
 					new Handler(Looper.getMainLooper()).post(new Runnable() {
 						@Override
@@ -99,41 +97,39 @@ public class CleanURLFragment extends Fragment {
 
 		// "Open URL" button listener
 		openUrlButton.setOnClickListener((final View view) -> {
-			final String url = urlInput.getText().toString();
-
-			if (TextUtils.isEmpty(url)) {
-				urlInput.setError("Please enter a URL");
+			final String url = getURL(urlInput);
+			
+			if (url == null) {
 				return;
 			}
-
+			
 			final Intent chooser = PackageUtils.createChooser(context, url, Intent.ACTION_VIEW);
 			startActivity(chooser);
 		});
 
 		// "Share URL" button listener
 		shareUrlButton.setOnClickListener((final View view) -> {
-			final String url = urlInput.getText().toString();
-
-			if (TextUtils.isEmpty(url)) {
-				urlInput.setError("Please enter a URL");
+			final String url = getURL(urlInput);
+			
+			if (url == null) {
 				return;
 			}
-
+			
 			final Intent chooser = PackageUtils.createChooser(context, url, Intent.ACTION_SEND);
 			startActivity(chooser);
 		});
 
 		// "Copy to clipboard" button listener
 		shareUrlButton.setOnLongClickListener((final View view) -> {
-			final String text = urlInput.getText().toString();
-
-			if (TextUtils.isEmpty(text)) {
-				urlInput.setError("Please enter a URL");
+			final String url = getURL(urlInput);
+			
+			if (url == null) {
 				return true;
 			}
-
-			final ClipboardManager clipboard = (ClipboardManager) context.getSystemService(context.CLIPBOARD_SERVICE);
-			clipboard.setPrimaryClip(ClipData.newPlainText("Clean URL", text));
+			
+			final ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(context.CLIPBOARD_SERVICE);
+			final ClipData clipData = ClipData.newPlainText("Clean URL", url);
+			clipboardManager.setPrimaryClip(clipData);
 			
 			PackageUtils.showSnackbar(view, "Copied to clipboard");
 			
@@ -142,23 +138,16 @@ public class CleanURLFragment extends Fragment {
 
 		// "Clear URL input" button listener
 		clearInputButton.setOnClickListener((final View view) -> {
-			final String url = urlInput.getText().toString();
-
-			if (TextUtils.isEmpty(url)) {
-				urlInput.setError(null);
-				PackageUtils.showSnackbar(view, "URL input is already empty");
-				return;
-			}
-
+			urlInput.setError(null);
 			urlInput.getText().clear();
 		});
 		
-		unalix = new Unalix(context);
-		
 		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 		preferences.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
+		
+		unalix = new Unalix(context);
 	}
-
+	
 	@Override
 	public void onDestroy() {
 		final Context context = getActivity().getApplicationContext();
@@ -167,6 +156,24 @@ public class CleanURLFragment extends Fragment {
 		preferences.unregisterOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
 		
 		super.onDestroy();
+	}
+	
+	private String getURL(final TextInputEditText input) {
+		final String url = input.getText().toString();
+		
+		input.setError(null);
+		
+		if (TextUtils.isEmpty(url)) {
+			input.setError("Please enter a URL");
+			return null;
+		}
+		
+		if (!(url.startsWith("http://") || url.startsWith("https://"))) {
+			input.setError("Unrecognized URI or unsupported protocol");
+			return null;
+		}
+		
+		return url;
 	}
 	
 }
