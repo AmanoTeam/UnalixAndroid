@@ -3,6 +3,9 @@ package com.amanoteam.unalix.activities;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.view.inputmethod.InputMethodManager;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -52,6 +55,13 @@ public class MainActivity extends AppCompatActivity {
 				
 				return true;
 			case R.id.bottom_navigation_settings:
+				
+				final View view = getCurrentFocus();
+				final IBinder windowToken = view.getWindowToken();
+				
+				final InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+				inputMethodManager.hideSoftInputFromWindow(windowToken, 0);
+				
 				fragmentTransaction.hide(cleanURLFragment);
 				fragmentTransaction.show(settingsFragment);
 				fragmentTransaction.commit();
@@ -94,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 		navigationBarView.setOnItemSelectedListener(onNavigationItemSelected);
 		
 		final Window window = getWindow();
-		window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+		window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 	}
 	
 	@Override
