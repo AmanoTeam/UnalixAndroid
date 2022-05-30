@@ -1,6 +1,9 @@
-[submodule "app/src/main/cpp/libunalix"]
-	path = app/src/main/cpp/libunalix
-	url = https://github.com/AmanoTeam/libunalix
 [submodule "app/src/main/cpp/libbearssl"]
 	path = app/src/main/cpp/libbearssl
 	url = https://www.bearssl.org/git/BearSSL
+[submodule "app/src/main/cpp/libjsoncpp"]
+	path = app/src/main/cpp/libjsoncpp
+	url = https://github.com/open-source-parsers/jsoncpp
+[submodule "app/src/main/cpp/libunalix"]
+	path = app/src/main/cpp/libunalix
+	url = https://github.com/AmanoTeam/libunalix

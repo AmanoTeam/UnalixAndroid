@@ -18,7 +18,9 @@ configure_file(
 include_directories(
 			src/main/cpp/libunalix/src
 			src/main/cpp/libbearssl/src
-			src/main/cpp/libbearssl/inc)
+			src/main/cpp/libbearssl/inc
+			src/main/cpp/libjsoncpp/include
+			src/main/cpp/libjsoncpp/src/lib_json)
 
 add_library(
 			bearssl
@@ -319,6 +321,13 @@ add_library(
 			src/main/cpp/libbearssl/src/x509/x509_minimal_full.c)
 
 add_library(
+			jsoncpp
+			SHARED
+			src/main/cpp/libjsoncpp/src/lib_json/json_reader.cpp
+			src/main/cpp/libjsoncpp/src/lib_json/json_value.cpp
+			src/main/cpp/libjsoncpp/src/lib_json/json_writer.cpp)
+
+add_library(
 			unalix_jni
 			SHARED
 			src/main/cpp/libunalix/src/clean_url.cpp
@@ -329,8 +338,13 @@ add_library(
 			src/main/cpp/libunalix/src/unshort_url.cpp
 			src/main/cpp/libunalix/src/uri.cpp
 			src/main/cpp/libunalix/src/utils.cpp
+			src/main/cpp/libunalix/src/http_request.cpp
+			src/main/cpp/libunalix/src/http_response.cpp
+			src/main/cpp/libunalix/src/http_utils.cpp
+			src/main/cpp/libunalix/src/sha256.cpp
 			src/main/cpp/libunalix/src/unalix_jni.cpp)
 
 target_link_libraries(
 			unalix_jni
-			bearssl)
+			bearssl
+			jsoncpp)

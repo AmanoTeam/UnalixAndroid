@@ -9,11 +9,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.view.Window;
+import android.view.WindowManager;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -52,7 +52,7 @@ public class CleanURLFragment extends Fragment {
 
 		// "Clean URL" button listener
 		cleanUrlButton.setOnClickListener((final View view) -> {
-			final String url = getURL(urlInput);
+			final String url = PackageUtils.getURL(urlInput);
 			
 			if (url == null) {
 				return;
@@ -66,7 +66,7 @@ public class CleanURLFragment extends Fragment {
 
 		// "Unshort URL" button listener
 		cleanUrlButton.setOnLongClickListener((final View view) -> {
-			final String url = getURL(urlInput);
+			final String url = PackageUtils.getURL(urlInput);
 			
 			if (url == null) {
 				return true;
@@ -97,7 +97,7 @@ public class CleanURLFragment extends Fragment {
 
 		// "Open URL" button listener
 		openUrlButton.setOnClickListener((final View view) -> {
-			final String url = getURL(urlInput);
+			final String url = PackageUtils.getURL(urlInput);
 			
 			if (url == null) {
 				return;
@@ -109,7 +109,7 @@ public class CleanURLFragment extends Fragment {
 
 		// "Share URL" button listener
 		shareUrlButton.setOnClickListener((final View view) -> {
-			final String url = getURL(urlInput);
+			final String url = PackageUtils.getURL(urlInput);
 			
 			if (url == null) {
 				return;
@@ -121,7 +121,7 @@ public class CleanURLFragment extends Fragment {
 
 		// "Copy to clipboard" button listener
 		shareUrlButton.setOnLongClickListener((final View view) -> {
-			final String url = getURL(urlInput);
+			final String url = PackageUtils.getURL(urlInput);
 			
 			if (url == null) {
 				return true;
@@ -156,24 +156,6 @@ public class CleanURLFragment extends Fragment {
 		preferences.unregisterOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
 		
 		super.onDestroy();
-	}
-	
-	private String getURL(final TextInputEditText input) {
-		final String url = input.getText().toString();
-		
-		input.setError(null);
-		
-		if (TextUtils.isEmpty(url)) {
-			input.setError("Please enter a URL");
-			return null;
-		}
-		
-		if (!(url.startsWith("http://") || url.startsWith("https://"))) {
-			input.setError("Unrecognized URI or unsupported protocol");
-			return null;
-		}
-		
-		return url;
 	}
 	
 }

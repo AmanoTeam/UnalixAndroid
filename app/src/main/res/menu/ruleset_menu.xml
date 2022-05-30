@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item
+		android:id="@+id/ruleset_edit"
+		android:enabled="true"
+		android:icon="@drawable/edit_icon"
+		android:title="Edit" />
+	<item
+		android:id="@+id/ruleset_delete"
+		android:enabled="true"
+		android:icon="@drawable/delete_icon"
+		android:title="Delete" />
+</menu>

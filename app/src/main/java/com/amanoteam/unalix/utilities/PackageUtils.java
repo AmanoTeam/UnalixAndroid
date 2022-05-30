@@ -2,6 +2,11 @@ package com.amanoteam.unalix.utilities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.security.MessageDigest;
+import java.lang.StringBuilder;
+import java.util.Random;
+import java.io.File;
+import java.security.GeneralSecurityException;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -12,17 +17,24 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.os.IBinder;
 import android.os.Parcelable;
 import android.view.Gravity;
+import android.view.inputmethod.InputMethodManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.fragment.app.FragmentActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import com.google.android.material.textfield.TextInputEditText;
+import android.text.TextUtils;
 import com.google.android.material.snackbar.Snackbar;
 
 import com.amanoteam.unalix.R;
@@ -184,4 +196,86 @@ public class PackageUtils {
 		notificationManager.cancel(id);
 	}
 	
+	public static void hideKeyboard(final AppCompatActivity activity) {
+		final View view = activity.getCurrentFocus();
+		
+		if (view == null) {
+			return;
+		}
+		
+		final IBinder windowToken = view.getWindowToken();
+		
+		final InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(activity.INPUT_METHOD_SERVICE);
+		inputMethodManager.hideSoftInputFromWindow(windowToken, 0);
+	}
+	
+	public static String getName(final TextInputEditText input) {
+		final String name = input.getText().toString();
+		
+		input.setError(null);
+		
+		if (TextUtils.isEmpty(name)) {
+			input.requestFocus();
+			input.setError("Please enter a name");
+			return null;
+		}
+		
+		return name;
+	}
+	
+	public static String getURL(final TextInputEditText input) {
+		final String url = input.getText().toString();
+		
+		input.setError(null);
+		
+		if (TextUtils.isEmpty(url)) {
+			input.requestFocus();
+			input.setError("Please enter a URL");
+			return null;
+		}
+		
+		if (!(url.startsWith("http://") || url.startsWith("https://"))) {
+			input.requestFocus();
+			input.setError("Unrecognized URI or unsupported protocol");
+			return null;
+		}
+		
+		return url;
+	}
+	
+	public static String sha256Digest(final byte[] data) {
+		
+		MessageDigest messageDigest = null;
+		
+		try {
+			messageDigest = MessageDigest.getInstance("SHA-256");
+		} catch (final GeneralSecurityException e) {}
+		
+		final byte[] digest = messageDigest.digest(data);
+		
+		final StringBuilder hexString = new StringBuilder(2 * digest.length);
+		
+		for (int index = 0; index < digest.length; index++) {
+			final String hex = Integer.toHexString(0xff & digest[index]);
+			
+			if (hex.length() == 1) {
+				hexString.append('0');
+			}
+			
+			hexString.append(hex);
+		}
+		
+		return hexString.toString();
+	}
+	
+	public static String generateFilename(final Context context) {
+		final byte[] buffer = new byte[16];
+		final Random random = new Random();
+		random.nextBytes(buffer);
+		
+		final File file = new File(context.getFilesDir(), sha256Digest(buffer));
+		final String absolutePath = file.getAbsolutePath();
+		
+		return absolutePath;
+	}
 }
