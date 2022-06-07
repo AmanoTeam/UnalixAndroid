@@ -83,4 +83,4 @@
 		app:layout_constraintLeft_toRightOf="@id/open_url_button"
 		app:layout_constraintTop_toBottomOf="@id/clean_url_button"
 		app:srcCompat="@drawable/clear_icon" />
-</androidx.constraintlayout.widget.ConstraintLayout>>
+</androidx.constraintlayout.widget.ConstraintLayout>

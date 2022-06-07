@@ -3,7 +3,9 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:id="@+id/constraint_add_ruleset"
-	android:paddingBottom="5dp" >
+	android:paddingBottom="5dp"
+	android:layout_height="wrap_content"
+	android:layout_width="wrap_content">
 
 	<com.google.android.material.textfield.TextInputLayout
 		android:id="@+id/ruleset_name_layout"
@@ -28,7 +30,7 @@
 			app:counterEnabled="true"
 			app:counterMaxLength="23" />
 	</com.google.android.material.textfield.TextInputLayout>
-	
+
 	<com.google.android.material.textfield.TextInputLayout
 		android:id="@+id/ruleset_url_layout"
 		android:layout_width="0dp"
@@ -48,7 +50,7 @@
 			android:inputType="textMultiLine|textNoSuggestions"
 			android:maxLines="15" />
 	</com.google.android.material.textfield.TextInputLayout>
-	
+
 	<com.google.android.material.textfield.TextInputLayout
 		android:id="@+id/hash_url_layout"
 		android:layout_width="0dp"
@@ -69,7 +71,7 @@
 			android:inputType="textMultiLine|textNoSuggestions"
 			android:maxLines="15" />
 	</com.google.android.material.textfield.TextInputLayout>
-	
+
 	<CheckBox
 		android:id="@+id/ruleset_integrity_checkbox"
 		android:layout_width="0dp"
@@ -81,7 +83,7 @@
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/hash_url_layout"
 		app:layout_constraintWidth_percent=".8" />
-	
+
 	<com.google.android.material.button.MaterialButton
 		android:id="@+id/save_ruleset_button"
 		android:layout_width="0dp"
@@ -92,5 +94,5 @@
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/ruleset_integrity_checkbox"
 		app:layout_constraintWidth_percent=".8" />
-	
+
 </androidx.constraintlayout.widget.ConstraintLayout>
