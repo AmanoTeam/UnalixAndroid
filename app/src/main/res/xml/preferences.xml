@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 	<PreferenceCategory android:title="URL filtering">
-		<CheckBoxPreference
+		<SwitchPreference
 			android:defaultValue="false"
 			android:key="ignoreReferralMarketing"
 			android:summary="Don't strip referral marketing fields"
 			android:title="ignoreReferralMarketing" />
-		<CheckBoxPreference
+		<SwitchPreference
 			android:defaultValue="false"
 			android:key="ignoreRules"
 			android:summary="Don't strip generic tracking fields"
 			android:title="ignoreRules" />
-		<CheckBoxPreference
+		<SwitchPreference
 			android:defaultValue="false"
 			android:key="ignoreExceptions"
 			android:summary="Ignore rule exceptions"
 			android:title="ignoreExceptions" />
-		<CheckBoxPreference
+		<SwitchPreference
 			android:defaultValue="false"
 			android:key="ignoreRawRules"
 			android:summary="Don't strip raw tracking elements"
 			android:title="ignoreRawRules" />
-		<CheckBoxPreference
+		<SwitchPreference
 			android:defaultValue="false"
 			android:key="ignoreRedirections"
 			android:summary="Ignore redirection rules"
 			android:title="ignoreRedirections" />
-		<CheckBoxPreference
+		<SwitchPreference
 			android:defaultValue="false"
 			android:key="skipBlocked"
 			android:summary="Ignore rules for blocked domains"
@@ -79,7 +79,7 @@
 		</EditTextPreference>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="Proxy settings">
-		<CheckBoxPreference
+		<SwitchPreference
 			android:defaultValue="false"
 			android:key="socks5Proxy"
 			android:summary="Protect your privacy by routing all DNS and HTTP traffic through a SOCKS5 server"
@@ -97,7 +97,7 @@
 			android:summary="Proxy port"
 			android:key="proxyPort" >
 		</EditTextPreference>
-		<CheckBoxPreference
+		<SwitchPreference
 			android:defaultValue="false"
 			android:key="proxyAuthentication"
 			android:summary="A SOCKS5 server may require you to provide some credentials before connecting to it"
@@ -123,12 +123,12 @@
 			android:key="appTheme"
 			android:summary="Switch between dark and light themes"
 			android:title="Theme" />
-		<CheckBoxPreference
+		<SwitchPreference
 			android:defaultValue="false"
 			android:key="disableCleanURLActivity"
 			android:summary="Don't show 'Clean URL' in the disambiguation dialog"
 			android:title="Disable CleanURL activity" />
-		<CheckBoxPreference
+		<SwitchPreference
 			android:defaultValue="false"
 			android:key="disableUnshortURLActivity"
 			android:summary="Don't show 'Unshort URL' in the disambiguation dialog"
