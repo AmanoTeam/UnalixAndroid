@@ -3,6 +3,12 @@
 	<style name="AppBaseTheme" parent="@style/Theme.Material3.DayNight.NoActionBar">
 		<item name="android:windowAnimationStyle">@android:style/Animation</item>
 		<item name="android:windowDisablePreview">true</item>
+
+		<item name="alertDialogTheme">@style/AppTheme.MaterialAlertDialog</item>
+	</style>
+
+	<style name="AppTheme.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+		<item name="android:windowBackground">@drawable/alert_dialog_bg</item>
 	</style>
 
 	<style name="AppTheme" parent="AppBaseTheme" />
