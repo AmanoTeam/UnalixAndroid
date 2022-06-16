@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
 import com.amanoteam.unalix.R;
+import com.amanoteam.unalix.databinding.CleanUrlFragmentBinding;
 import com.amanoteam.unalix.utilities.PackageUtils;
 import com.amanoteam.unalix.wrappers.Unalix;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -35,7 +36,8 @@ public class CleanURLFragment extends Fragment {
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.clean_url_fragment, container, false);
+		CleanUrlFragmentBinding binding = CleanUrlFragmentBinding.inflate(inflater, container, false);
+		return binding.getRoot();
 	}
 
 	@Override

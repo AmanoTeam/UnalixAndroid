@@ -51,6 +51,10 @@ android {
 		}
 	}
 
+	buildFeatures {
+		viewBinding true
+	}
+
 	splits {
 		abi {
 			enable true
@@ -67,6 +71,8 @@ dependencies {
 	implementation 'androidx.preference:preference:1.2.0'
 	implementation 'androidx.activity:activity:1.4.0'
 	implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+	implementation 'androidx.navigation:navigation-fragment:2.4.2'
+	implementation 'androidx.navigation:navigation-ui:2.4.2'
 	implementation 'com.google.android.material:material:1.6.1'
 
 	implementation 'com.willowtreeapps.hyperion:hyperion-core:0.9.34'

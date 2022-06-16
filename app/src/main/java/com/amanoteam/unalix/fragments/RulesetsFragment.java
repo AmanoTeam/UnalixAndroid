@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import com.amanoteam.unalix.R;
 import com.amanoteam.unalix.databases.RulesetContract.RulesetEntry;
 import com.amanoteam.unalix.databases.RulesetsDatabaseHelper;
+import com.amanoteam.unalix.databinding.RulesetsFragmentBinding;
 import com.amanoteam.unalix.utilities.PackageUtils;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -448,7 +449,8 @@ public class RulesetsFragment extends Fragment {
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.rulesets_fragment, container, false);
+		RulesetsFragmentBinding binding = RulesetsFragmentBinding.inflate(inflater, container, false);
+		return binding.getRoot();
 	}
 
 	@Override
