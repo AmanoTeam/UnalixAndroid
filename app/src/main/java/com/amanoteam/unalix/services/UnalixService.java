@@ -15,7 +15,6 @@ import com.amanoteam.unalix.wrappers.Unalix;
 
 public class UnalixService extends Service {
 
-	private Looper serviceLooper;
 	private ServiceHandler serviceHandler;
 
 	@Override
@@ -24,7 +23,7 @@ public class UnalixService extends Service {
 				Process.THREAD_PRIORITY_BACKGROUND);
 		thread.start();
 
-		serviceLooper = thread.getLooper();
+		Looper serviceLooper = thread.getLooper();
 		serviceHandler = new ServiceHandler(serviceLooper);
 	}
 
@@ -32,7 +31,7 @@ public class UnalixService extends Service {
 	public int onStartCommand(final Intent intent, final int flags, final int startId) {
 		Message msg = serviceHandler.obtainMessage();
 		msg.arg1 = startId;
-		msg.obj = (Intent) intent;
+		msg.obj = intent;
 		serviceHandler.sendMessage(msg);
 
 		return START_NOT_STICKY;
@@ -62,18 +61,18 @@ public class UnalixService extends Service {
 			final String whatToDo = intent.getStringExtra("whatToDo");
 
 			final Context context = getApplicationContext();
-			
+
 			final Unalix unalix = new Unalix(context);
-			
-			String cleanUrl = null;
-			
+
+			String cleanUrl;
+
 			if (whatToDo.equals("cleanUrl")) {
 				cleanUrl = unalix.cleanUrl(uglyUrl);
 			} else {
 				final int notificationId = PackageUtils.showNotification(context, "Unalix is running in background", "Resolving URL... please be patient");
-				
+
 				cleanUrl = unalix.unshortUrl(uglyUrl);
-				
+
 				PackageUtils.cancelNotification(context, notificationId);
 			}
 

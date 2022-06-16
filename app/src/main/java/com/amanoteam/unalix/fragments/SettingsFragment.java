@@ -1,5 +1,35 @@
 package com.amanoteam.unalix.fragments;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.View;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
+import androidx.preference.EditTextPreference;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.Preference.OnPreferenceClickListener;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
+import androidx.preference.PreferenceScreen;
+import androidx.preference.SwitchPreference;
+
+import com.amanoteam.unalix.R;
+import com.amanoteam.unalix.utilities.PackageUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,37 +40,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
-import android.content.ContentResolver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences.Editor;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Bundle;
-import android.view.View;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
-import androidx.preference.EditTextPreference;
-import androidx.preference.ListPreference;
-import androidx.preference.Preference.OnPreferenceClickListener;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceManager;
-import androidx.preference.PreferenceScreen;
-import androidx.preference.SwitchPreference;
-
-import com.amanoteam.unalix.R;
-import com.amanoteam.unalix.fragments.SettingsFragment;
-import com.amanoteam.unalix.utilities.PackageUtils;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
@@ -211,11 +210,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 			case PREF_DNS:
 				final EditTextPreference customDns = preferenceScreen.findPreference("customDns");
 
-				if (preferences.getString(key, "").equals("custom")) {
-					customDns.setEnabled(true);
-				} else {
-					customDns.setEnabled(false);
-				}
+				customDns.setEnabled(preferences.getString(key, "").equals("custom"));
 
 				break;
 			case PREF_SOCKS5_PROXY:
@@ -225,11 +220,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 			case PREF_USER_AGENT:
 				final EditTextPreference customUserAgent = preferenceScreen.findPreference(PREF_CUSTOM_USER_AGENT);
 
-				if (preferences.getString(key, "").equals("custom")) {
-					customUserAgent.setEnabled(true);
-				} else {
-					customUserAgent.setEnabled(false);
-				}
+				customUserAgent.setEnabled(preferences.getString(key, "").equals("custom"));
 		}
 
 	};
@@ -248,46 +239,40 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 		final PreferenceScreen preferenceScreen = getPreferenceScreen();
 
 		final Preference backupPreference = findPreference("backup");
-		backupPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-			@Override
-			public boolean onPreferenceClick(final Preference preference) {
-				final Calendar calendar = Calendar.getInstance();
-				final Date date = calendar.getTime();
-				final DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyy_HH-mm-ss");
+		backupPreference.setOnPreferenceClickListener(preference -> {
+			final Calendar calendar = Calendar.getInstance();
+			final Date date = calendar.getTime();
+			final DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyy_HH-mm-ss");
 
-				final Intent intent = new Intent();
-				intent.setAction(Intent.ACTION_CREATE_DOCUMENT);
-				intent.addCategory(Intent.CATEGORY_OPENABLE);
-				intent.setType("application/json");
-				intent.putExtra(Intent.EXTRA_TITLE, String.format("unalix_settings_%s.json", dateFormat.format(date)));
+			final Intent intent = new Intent();
+			intent.setAction(Intent.ACTION_CREATE_DOCUMENT);
+			intent.addCategory(Intent.CATEGORY_OPENABLE);
+			intent.setType("application/json");
+			intent.putExtra(Intent.EXTRA_TITLE, String.format("unalix_settings_%s.json", dateFormat.format(date)));
 
-				try {
-					exportPreferences.launch(intent);
-				} catch (final ActivityNotFoundException e) {
-					PackageUtils.showSnackbar(view, "There are no document providers available to handle this action");
-				}
-
-				return true;
+			try {
+				exportPreferences.launch(intent);
+			} catch (final ActivityNotFoundException e) {
+				PackageUtils.showSnackbar(view, "There are no document providers available to handle this action");
 			}
+
+			return true;
 		});
 
 		final Preference restorePreference = findPreference("restore");
-		restorePreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-			@Override
-			public boolean onPreferenceClick(final Preference preference) {
-				final Intent intent = new Intent();
-				intent.setAction(Intent.ACTION_GET_CONTENT);
-				intent.addCategory(Intent.CATEGORY_OPENABLE);
-				intent.setType("*/*");
+		restorePreference.setOnPreferenceClickListener(preference -> {
+			final Intent intent = new Intent();
+			intent.setAction(Intent.ACTION_GET_CONTENT);
+			intent.addCategory(Intent.CATEGORY_OPENABLE);
+			intent.setType("*/*");
 
-				try {
-					importPreferences.launch(intent);
-				} catch (final ActivityNotFoundException e) {
-					PackageUtils.showSnackbar(view, "There are no document providers available to handle this action");
-				}
-
-				return true;
+			try {
+				importPreferences.launch(intent);
+			} catch (final ActivityNotFoundException e) {
+				PackageUtils.showSnackbar(view, "There are no document providers available to handle this action");
 			}
+
+			return true;
 		});
 
 		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);

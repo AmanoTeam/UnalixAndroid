@@ -20,32 +20,32 @@ public class Unalix {
 	final private static String DEFAULT_USER_AGENT = "UnalixAndroid (+https://github.com/AmanoTeam/UnalixAndroid)";
 
 	final private static String DEFAULT_DNS = "";
-	
+
 	final private static String DEFAULT_PROXY = "";
 	final private static String DEFAULT_PROXY_USERNAME = "";
 	final private static String DEFAULT_PROXY_PASSWORD = "";
-	
+
 	static {
 		System.loadLibrary("unalix_jni");
 	}
-	
+
 	private boolean ignoreReferralMarketing;
 	private boolean ignoreRules;
 	private boolean ignoreExceptions;
 	private boolean ignoreRawRules;
 	private boolean ignoreRedirections;
 	private boolean skipBlocked;
-	
+
 	private int timeout;
 	private int maxRedirects;
 	private String userAgent;
-	
+
 	private String dns;
-	
+
 	private String proxy;
 	private String proxyUsername;
 	private String proxyPassword;
-	
+
 	public Unalix(final Context context) {
 		setFromPreferences(context);
 	}
@@ -135,11 +135,11 @@ public class Unalix {
 	private void setTimeout(final int value) {
 		this.timeout = value;
 	}
-	
+
 	private void setMaxRedirects(final int value) {
 		this.maxRedirects = value;
 	}
-	
+
 	private void setUserAgent(final String value) {
 		this.userAgent = value;
 	}
@@ -147,15 +147,15 @@ public class Unalix {
 	private void setDns(final String value) {
 		this.dns = value;
 	}
-	
+
 	private void setProxy(final String value) {
 		this.proxy = value;
 	}
-	
+
 	private void setProxyUsername(final String value) {
 		this.proxyUsername = value;
 	}
-	
+
 	private void setProxyPassword(final String value) {
 		this.proxyPassword = value;
 	}
@@ -187,43 +187,43 @@ public class Unalix {
 
 		final int maxRedirects = Integer.parseInt(preferences.getString("maxRedirects", "13"));
 		setMaxRedirects(maxRedirects);
-		
+
 		final String userAgent = preferences.getString("userAgent", "");
 		final String customUserAgent = preferences.getString("customUserAgent", "");
-		
+
 		if (userAgent.equals("default")) {
 			setUserAgent(DEFAULT_USER_AGENT);
 		} else {
 			setUserAgent((userAgent.equals("custom")) ? customUserAgent : userAgent);
 		}
-		
+
 		final String dns = preferences.getString("dns", "");
 		final String customDns = preferences.getString("customDns", "");
-		
+
 		if (dns.equals("follow_system")) {
 			setDns(DEFAULT_DNS);
 		} else {
 			setDns((dns.equals("custom")) ? customDns : dns);
 		}
-		
+
 		final boolean socks5Proxy = preferences.getBoolean("socks5Proxy", false);
-		
+
 		if (socks5Proxy) {
 			final String proxyAddress = preferences.getString("proxyAddress", "");
 			final int proxyPort = Integer.parseInt(preferences.getString("proxyPort", "8081"));
-			
+
 			if (TextUtils.isEmpty(proxyAddress)) {
 				setProxy(DEFAULT_PROXY);
 			} else {
-				final String proxy = String.format("socks5://%s:%d", proxyAddress, proxyPort);
+				final String proxy = String.format("socks5://%s:%s", proxyAddress, proxyPort);
 				setProxy(proxy);
-				
+
 				final boolean proxyAuthentication = preferences.getBoolean("proxyAuthentication", false);
-				
+
 				if (proxyAuthentication) {
 					final String proxyUsername = preferences.getString("proxyUsername", "");
 					setProxyUsername(proxyUsername);
-					
+
 					final String proxyPassword = preferences.getString("proxyPassword", "");
 					setProxyPassword(proxyPassword);
 				}
@@ -233,6 +233,6 @@ public class Unalix {
 			setProxyUsername(DEFAULT_PROXY_USERNAME);
 			setProxyPassword(DEFAULT_PROXY_PASSWORD);
 		}
-		
+
 	}
 }

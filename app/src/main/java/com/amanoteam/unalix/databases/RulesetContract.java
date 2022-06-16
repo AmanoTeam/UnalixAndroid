@@ -1,14 +1,12 @@
 package com.amanoteam.unalix.databases;
 
-import android.database.sqlite.SQLiteDatabase;
-import android.content.Context;
 import android.provider.BaseColumns;
-import android.database.sqlite.SQLiteOpenHelper;
 
 public final class RulesetContract {
 	// To prevent someone from accidentally instantiating the contract class,
 	// make the constructor private.
-	private RulesetContract() {}
+	private RulesetContract() {
+	}
 
 	/* Inner class that defines the table contents */
 	public static class RulesetEntry implements BaseColumns {
