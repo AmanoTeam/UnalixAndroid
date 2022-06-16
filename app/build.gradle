@@ -1,16 +1,18 @@
-apply plugin: 'com.android.application'
+plugins {
+	id 'com.android.application'
+}
 
 android {
 	namespace 'com.amanoteam.unalix'
 
-	compileSdkVersion 32
+	compileSdk 32
 
 	defaultConfig {
-		minSdkVersion 21
-		targetSdkVersion 32
+		minSdk 21
+		targetSdk 32
 		versionCode 9
 		versionName "0.8"
-		
+
 		externalNativeBuild {
 			cmake {
 				arguments (
@@ -23,15 +25,15 @@ android {
 			}
 		}
 	}
-	
+
 	externalNativeBuild {
 		cmake {
 			path "CMakeLists.txt"
 		}
 	}
-	
+
 	ndkVersion "24.0.8215888"
-	
+
 	buildTypes {
 		debug {
 			debuggable true
@@ -48,7 +50,7 @@ android {
 			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 		}
 	}
-	
+
 	splits {
 		abi {
 			enable true
@@ -60,17 +62,13 @@ android {
 
 }
 
-repositories {
-	mavenCentral()
-}
-
 dependencies {
 	implementation 'androidx.appcompat:appcompat:1.4.2'
 	implementation 'androidx.preference:preference:1.2.0'
 	implementation 'androidx.activity:activity:1.4.0'
 	implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 	implementation 'com.google.android.material:material:1.6.1'
-	
+
 	implementation 'com.willowtreeapps.hyperion:hyperion-core:0.9.34'
 	implementation 'com.willowtreeapps.hyperion:hyperion-attr:0.9.34'
 	implementation 'com.willowtreeapps.hyperion:hyperion-build-config:0.9.34'
