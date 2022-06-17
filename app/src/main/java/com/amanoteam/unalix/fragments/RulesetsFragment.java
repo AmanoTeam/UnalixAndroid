@@ -500,15 +500,18 @@ public class RulesetsFragment extends Fragment {
 		}
 
 		final FloatingActionButton addRulesetButton = activity.findViewById(R.id.add_ruleset_button);
-		/*
-		recyclerView.addOnScrollListener((final RecyclerView recyclerView, int dx, int dy) -> {
-			if (dy > 0) {
-				addRulesetButton.hide();
-			} else if (dy < 0) {
-				addRulesetButton.show();
+
+		recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+			@Override
+			public void onScrolled(final RecyclerView recyclerView, final int dx, final int dy) {
+				if (dy > 0) {
+					addRulesetButton.hide();
+				} else if (dy < 0) {
+					addRulesetButton.show();
+				}
 			}
 		});
-		*/
+
 		// "Add ruleset" button listener
 		addRulesetButton.setOnClickListener((final View view) -> {
 			final LayoutInflater layoutInflater = activity.getLayoutInflater();
