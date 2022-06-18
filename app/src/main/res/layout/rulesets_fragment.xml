@@ -24,6 +24,6 @@
 		android:layout_marginBottom="?attr/actionBarSize"
 		app:useCompatPadding="true"
 		android:contentDescription="Add new ruleset"
-		app:srcCompat="@drawable/add_icon" />
+		android:src="@drawable/add_icon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
