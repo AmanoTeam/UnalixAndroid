@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
 		NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 		NavigationUI.setupWithNavController(binding.bottomNavigation, navController);
 
+		navController.addOnDestinationChangedListener((navController1, navDestination, bundle) -> PackageUtils.hideKeyboard(MainActivity.this));
+
 		final Window window = getWindow();
 		window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 	}
