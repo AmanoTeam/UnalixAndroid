@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 
 import androidx.appcompat.app.AlertDialog;
@@ -26,7 +27,6 @@ import com.amanoteam.unalix.databases.RulesetContract.RulesetEntry;
 import com.amanoteam.unalix.databases.RulesetsDatabaseHelper;
 import com.amanoteam.unalix.databinding.RulesetsFragmentBinding;
 import com.amanoteam.unalix.utilities.PackageUtils;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -283,30 +283,36 @@ class RulesetAdapter extends Adapter<RulesetViewHolder> {
 						final AlertDialog alertDialog = new MaterialAlertDialogBuilder(activity)
 								.setView(addRulesetDialog)
 								.setTitle("Edit ruleset")
-								.show();
+								.setNegativeButton("Cancel", null)
+								.setPositiveButton("Save", null)
+								.create();
 
-						final MaterialButton saveRulesetButton = addRulesetDialog.findViewById(R.id.save_ruleset_button);
+						alertDialog.setOnShowListener(dialogInterface -> {
 
-						saveRulesetButton.setOnClickListener((final View buttonView) -> {
-							final Ruleset ruleset = InputUtils.getRulesetFromInputs(nameInput, urlInput, hashUrlInput, checkbox);
+							Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+							button.setOnClickListener(buttonView -> {
+								final Ruleset ruleset = InputUtils.getRulesetFromInputs(nameInput, urlInput, hashUrlInput, checkbox);
 
-							if (ruleset == null) {
-								return;
-							}
+								if (ruleset == null) {
+									return;
+								}
 
-							if (item.equals(ruleset)) {
-								nameInput.requestFocus();
+								if (item.equals(ruleset)) {
+									nameInput.requestFocus();
 
-								nameInput.setError(null);
-								nameInput.setError("No changes have been made");
+									nameInput.setError(null);
+									nameInput.setError("No changes have been made");
 
-								return;
-							}
+									return;
+								}
 
-							updateRuleset(position, ruleset);
+								updateRuleset(position, ruleset);
 
-							alertDialog.dismiss();
+								alertDialog.dismiss();
+							});
 						});
+
+						alertDialog.show();
 
 						return true;
 					case R.id.ruleset_delete:
@@ -531,30 +537,36 @@ public class RulesetsFragment extends Fragment {
 			final AlertDialog alertDialog = new MaterialAlertDialogBuilder(activity)
 					.setView(addRulesetDialog)
 					.setTitle("New ruleset")
-					.show();
+					.setNegativeButton("Cancel", null)
+					.setPositiveButton("Save", null)
+					.create();
 
-			final MaterialButton saveRulesetButton = addRulesetDialog.findViewById(R.id.save_ruleset_button);
+			alertDialog.setOnShowListener(dialogInterface -> {
 
-			saveRulesetButton.setOnClickListener((final View buttonView) -> {
-				final Ruleset ruleset = InputUtils.getRulesetFromInputs(nameInput, urlInput, hashUrlInput, checkbox);
+				Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+				button.setOnClickListener(buttonView -> {
+					final Ruleset ruleset = InputUtils.getRulesetFromInputs(nameInput, urlInput, hashUrlInput, checkbox);
 
-				if (ruleset == null) {
-					return;
-				}
+					if (ruleset == null) {
+						return;
+					}
 
-				if (isAlreadyInDatabase(ruleset)) {
-					urlInput.requestFocus();
+					if (isAlreadyInDatabase(ruleset)) {
+						urlInput.requestFocus();
 
-					urlInput.setError(null);
-					urlInput.setError("This entry already exists in database");
+						urlInput.setError(null);
+						urlInput.setError("This entry already exists in database");
 
-					return;
-				}
+						return;
+					}
 
-				alertDialog.dismiss();
+					alertDialog.dismiss();
 
-				rulesetAdapter.addRuleset(ruleset, true);
+					rulesetAdapter.addRuleset(ruleset, true);
+				});
 			});
+
+			alertDialog.show();
 		});
 	}
 
