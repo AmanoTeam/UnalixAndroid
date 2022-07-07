@@ -505,7 +505,7 @@ public class RulesetsFragment extends Fragment {
 			}
 		}
 
-		final FloatingActionButton addRulesetButton = activity.findViewById(R.id.add_ruleset_button);
+		final FloatingActionButton addRulesetButton = root.findViewById(R.id.add_ruleset_button);
 
 		recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 			@Override
