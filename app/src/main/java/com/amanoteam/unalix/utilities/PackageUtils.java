@@ -28,6 +28,7 @@ import androidx.core.app.NotificationManagerCompat;
 import com.amanoteam.unalix.R;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 import java.io.File;
 import java.security.GeneralSecurityException;
@@ -153,7 +154,8 @@ public class PackageUtils {
 	public static void showProgressSnackbar(final Context context, final View view, final String text) {
 		final Snackbar snackbar = createSnackbar(view, text, Snackbar.LENGTH_INDEFINITE);
 
-		final ProgressBar progressBar = new ProgressBar(context);
+		final CircularProgressIndicator progressBar = new CircularProgressIndicator(context);
+		progressBar.setIndeterminate(true);
 		final ViewGroup layout = (ViewGroup) snackbar.getView().findViewById(com.google.android.material.R.id.snackbar_text).getParent();
 		layout.addView(progressBar);
 
