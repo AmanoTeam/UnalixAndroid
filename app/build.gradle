@@ -32,7 +32,7 @@ android {
 		}
 	}
 
-	ndkVersion "24.0.8215888"
+	ndkVersion "25.1.8937393"
 
 	buildTypes {
 		debug {
@@ -67,11 +67,11 @@ android {
 }
 
 dependencies {
-	implementation 'androidx.appcompat:appcompat:1.4.2'
+	implementation 'androidx.appcompat:appcompat:1.5.1'
 	implementation 'androidx.preference:preference:1.2.0'
-	implementation 'androidx.activity:activity:1.5.0'
+	implementation 'androidx.activity:activity:1.5.1'
 	implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-	implementation 'androidx.navigation:navigation-fragment:2.5.0'
-	implementation 'androidx.navigation:navigation-ui:2.5.0'
+	implementation 'androidx.navigation:navigation-fragment:2.5.2'
+	implementation 'androidx.navigation:navigation-ui:2.5.2'
 	implementation 'com.google.android.material:material:1.6.1'
 }
