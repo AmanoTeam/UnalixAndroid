@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import com.amanoteam.unalix.R;
 import com.google.android.material.snackbar.Snackbar;
@@ -151,10 +152,10 @@ public class PackageUtils {
 		snackbar.show();
 	}
 
-	public static void showProgressSnackbar(final Context context, final View view, final String text) {
+	public static void showProgressSnackbar(final FragmentActivity activity, final View view, final String text) {
 		final Snackbar snackbar = createSnackbar(view, text, Snackbar.LENGTH_INDEFINITE);
 
-		final CircularProgressIndicator progressBar = new CircularProgressIndicator(context);
+		final CircularProgressIndicator progressBar = new CircularProgressIndicator(activity);
 		progressBar.setIndeterminate(true);
 		final ViewGroup layout = (ViewGroup) snackbar.getView().findViewById(com.google.android.material.R.id.snackbar_text).getParent();
 		layout.addView(progressBar);
@@ -177,13 +178,12 @@ public class PackageUtils {
 		}
 
 		final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, DEFAULT_NOTIFICATION_CHANNEL)
-				.setSmallIcon(R.drawable.cleaning_icon)
-				.setContentTitle(title)
-				.setContentText(description)
-				.setPriority(NotificationCompat.PRIORITY_LOW);
+			.setSmallIcon(R.drawable.cleaning_icon)
+			.setContentTitle(title)
+			.setContentText(description)
+			.setPriority(NotificationCompat.PRIORITY_LOW);
 
 		final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-
 		notificationManager.notify(DEFAULT_NOTIFICATION_ID, builder.build());
 
 		return DEFAULT_NOTIFICATION_ID;

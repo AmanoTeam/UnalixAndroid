@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
+import androidx.fragment.app.FragmentActivity;
 
 import com.amanoteam.unalix.R;
 import com.amanoteam.unalix.databinding.CleanUrlFragmentBinding;
@@ -42,7 +43,8 @@ public class CleanURLFragment extends Fragment {
 
 	@Override
 	public void onViewCreated(final View root, final Bundle savedInstanceState) {
-		final Context context = getActivity().getApplicationContext();
+		final FragmentActivity activity = getActivity();
+		final Context context = activity.getApplicationContext();
 
 		final FloatingActionButton openUrlButton = root.findViewById(R.id.open_url_button);
 		final FloatingActionButton cleanUrlButton = root.findViewById(R.id.clean_url_button);
@@ -73,7 +75,7 @@ public class CleanURLFragment extends Fragment {
 				return true;
 			}
 
-			PackageUtils.showProgressSnackbar(context, view, "Resolving URL");
+			PackageUtils.showProgressSnackbar(activity, view, "Resolving URL");
 
 			new Thread(() -> {
 				final String cleanedUrl = unalix.unshortUrl(url);
