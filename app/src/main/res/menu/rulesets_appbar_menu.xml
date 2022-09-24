@@ -1,0 +1,14 @@
+<menu
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
+	<item
+		android:id="@+id/rulesets_update_action"
+		android:icon="@drawable/refresh_icon"
+		android:title="Update rulesets"
+		app:showAsAction="never" />
+	<item
+		android:id="@+id/rulesets_add_action"
+		android:icon="@drawable/add_icon"
+		android:title="Add new ruleset"
+		app:showAsAction="ifRoom" />
+</menu>

@@ -133,6 +133,11 @@
 			android:key="disableUnshortURLActivity"
 			android:summary="Don't show 'Unshort URL' in the disambiguation dialog"
 			android:title="Disable UnshortURL activity" />
+		<SwitchPreference
+			android:defaultValue="false"
+			android:key="preferNativeIntentChooser"
+			android:summary="Use Android's native intent chooser instead of our own implementation"
+			android:title="Prefer native intent chooser" />
 	</PreferenceCategory>
 	<PreferenceCategory android:title="Backup and restore">
 		<Preference

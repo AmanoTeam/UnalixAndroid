@@ -5,11 +5,11 @@ plugins {
 android {
 	namespace 'com.amanoteam.unalix'
 
-	compileSdk 32
+	compileSdk 33
 
 	defaultConfig {
 		minSdk 21
-		targetSdk 32
+		targetSdk 33
 		versionCode 9
 		versionName "0.8"
 
@@ -74,4 +74,5 @@ dependencies {
 	implementation 'androidx.navigation:navigation-fragment:2.5.2'
 	implementation 'androidx.navigation:navigation-ui:2.5.2'
 	implementation 'com.google.android.material:material:1.6.1'
+	implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 }

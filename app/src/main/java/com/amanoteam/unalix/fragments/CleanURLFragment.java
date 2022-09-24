@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import androidx.fragment.app.FragmentActivity;
 
+
 import com.amanoteam.unalix.R;
 import com.amanoteam.unalix.databinding.CleanUrlFragmentBinding;
 import com.amanoteam.unalix.utilities.PackageUtils;
@@ -37,21 +38,24 @@ public class CleanURLFragment extends Fragment {
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		CleanUrlFragmentBinding binding = CleanUrlFragmentBinding.inflate(inflater, container, false);
+		final CleanUrlFragmentBinding binding = CleanUrlFragmentBinding.inflate(inflater, container, false);
 		return binding.getRoot();
 	}
 
 	@Override
-	public void onViewCreated(final View root, final Bundle savedInstanceState) {
+	public void onViewCreated(final View fragmentView, final Bundle savedInstanceState) {
 		final FragmentActivity activity = getActivity();
 		final Context context = activity.getApplicationContext();
 
-		final FloatingActionButton openUrlButton = root.findViewById(R.id.open_url_button);
-		final FloatingActionButton cleanUrlButton = root.findViewById(R.id.clean_url_button);
-		final FloatingActionButton shareUrlButton = root.findViewById(R.id.share_url_button);
-		final FloatingActionButton clearInputButton = root.findViewById(R.id.clear_input_button);
+		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		preferences.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
 
-		final TextInputEditText urlInput = root.findViewById(R.id.url_input);
+		final FloatingActionButton openUrlButton = fragmentView.findViewById(R.id.open_url_button);
+		final FloatingActionButton cleanUrlButton = fragmentView.findViewById(R.id.clean_url_button);
+		final FloatingActionButton shareUrlButton = fragmentView.findViewById(R.id.share_url_button);
+		final FloatingActionButton clearInputButton = fragmentView.findViewById(R.id.clear_input_button);
+
+		final TextInputEditText urlInput = fragmentView.findViewById(R.id.url_input);
 
 		// "Clean URL" button listener
 		cleanUrlButton.setOnClickListener((final View view) -> {
@@ -80,13 +84,12 @@ public class CleanURLFragment extends Fragment {
 			new Thread(() -> {
 				final String cleanedUrl = unalix.unshortUrl(url);
 
-				new Handler(Looper.getMainLooper()).post(() -> {
+				view.post(() -> {
 					urlInput.setText(cleanedUrl);
 					urlInput.setSelection(cleanedUrl.length());
 				});
 
 				PackageUtils.showSnackbar(view, "Done");
-
 			}).start();
 
 			return true;
@@ -99,9 +102,14 @@ public class CleanURLFragment extends Fragment {
 			if (url == null) {
 				return;
 			}
-
-			final Intent chooser = PackageUtils.createChooser(context, url, Intent.ACTION_VIEW);
-			startActivity(chooser);
+			
+			final boolean preferNativeIntentChooser = preferences.getBoolean("preferNativeIntentChooser", false);
+			
+			if (preferNativeIntentChooser) {
+				PackageUtils.createChooser(context, url, Intent.ACTION_VIEW);
+			} else {
+				PackageUtils.createChooserNew(activity, url, Intent.ACTION_VIEW);
+			}
 		});
 
 		// "Share URL" button listener
@@ -111,9 +119,14 @@ public class CleanURLFragment extends Fragment {
 			if (url == null) {
 				return;
 			}
-
-			final Intent chooser = PackageUtils.createChooser(context, url, Intent.ACTION_SEND);
-			startActivity(chooser);
+			
+			final boolean preferNativeIntentChooser = preferences.getBoolean("preferNativeIntentChooser", false);
+			
+			if (preferNativeIntentChooser) {
+				PackageUtils.createChooser(context, url, Intent.ACTION_SEND);
+			} else {
+				PackageUtils.createChooserNew(activity, url, Intent.ACTION_SEND);
+			}
 		});
 
 		// "Copy to clipboard" button listener
@@ -123,11 +136,8 @@ public class CleanURLFragment extends Fragment {
 			if (url == null) {
 				return true;
 			}
-
-			final ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-			final ClipData clipData = ClipData.newPlainText("Clean URL", url);
-			clipboardManager.setPrimaryClip(clipData);
-
+			
+			PackageUtils.copyToClipboard(context, url);
 			PackageUtils.showSnackbar(view, "Copied to clipboard");
 
 			return true;
@@ -136,11 +146,8 @@ public class CleanURLFragment extends Fragment {
 		// "Clear URL input" button listener
 		clearInputButton.setOnClickListener((final View view) -> {
 			urlInput.setError(null);
-			urlInput.setText("");
+			urlInput.getText().clear();;
 		});
-
-		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-		preferences.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
 
 		unalix = new Unalix(context);
 	}

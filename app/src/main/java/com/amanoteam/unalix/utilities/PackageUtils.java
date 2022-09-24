@@ -1,5 +1,8 @@
 package com.amanoteam.unalix.utilities;
 
+import android.view.WindowManager;
+import com.amanoteam.unalix.activities.MainActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ComponentName;
@@ -16,16 +19,31 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ProgressBar;
 import android.widget.Toast;
+import android.view.LayoutInflater;
+import android.graphics.drawable.Drawable;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.Adapter;
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
+import com.amanoteam.unalix.utilities.PackageUtils;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textview.MaterialTextView;
 import com.amanoteam.unalix.R;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -48,15 +66,163 @@ public class PackageUtils {
 	public static final ComponentName UNSHORT_URL_COMPONENT = new ComponentName(PACKAGE_NAME, UNSHORT_URL_ACTIVITY);
 
 	private static final ComponentName[] CHOOSER_EXCLUDE_COMPONENTS = {
-			CLEAN_URL_COMPONENT,
-			UNSHORT_URL_COMPONENT
+		CLEAN_URL_COMPONENT,
+		UNSHORT_URL_COMPONENT
 	};
 
 	private static final int DEFAULT_NOTIFICATION_ID = 1;
 	private static final String DEFAULT_NOTIFICATION_CHANNEL = "unalix_notification_channel";
 	private static final String DEFAULT_NOTIFICATION_CHANNEL_DESCRIPTION = "Default notification channel for Unalix";
 
-	public static Intent createChooser(final Context context, final String url, final String action) {
+	public static void createChooserNew(final Context context, final String url, final String action) {
+
+		final Intent intent = new Intent(action)
+			.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+		switch (action) {
+			case Intent.ACTION_VIEW:
+				intent.setData(Uri.parse(url));
+				break;
+			case Intent.ACTION_SEND:
+				intent
+					.putExtra(Intent.EXTRA_TEXT, url)
+					.setType("text/plain");
+				break;
+			default:
+				return;
+		}
+		
+		//final Context context = activity.getApplicationContext();
+		
+		final class Item {
+			private Drawable icon = null;
+			private String label = null;
+			private Intent intent = null;
+			
+			Item(
+				final Drawable icon,
+				final String label,
+				final Intent intent
+			) {
+				this.icon = icon;
+				this.label = label;
+				this.intent = intent;
+			}
+			
+			public Drawable getIcon() {
+				return this.icon;
+			}
+			
+			public String getLabel() {
+				return this.label;
+			}
+			
+			public Intent getIntent() {
+				return this.intent;
+			}
+		}
+		
+		final PackageManager packageManager = context.getPackageManager();
+		final List<ResolveInfo> targets = packageManager.queryIntentActivities(intent, 0);
+		
+		final ArrayList<Item> items = new ArrayList<Item>();
+		
+		for (final ResolveInfo target : targets) {
+			final String packageName = target.activityInfo.packageName;
+			final String activityName = target.activityInfo.name;
+
+			if (activityName.equals(CLEAN_URL_ACTIVITY) || activityName.equals(UNSHORT_URL_ACTIVITY)) {
+				continue;
+			}
+
+			final Intent targetIntent = (Intent) intent.clone();
+			targetIntent.setComponent(new ComponentName(packageName, activityName));
+			
+			items.add(
+				new Item(
+					target.loadIcon(packageManager),
+					(String) target.loadLabel(packageManager),
+					targetIntent
+				)
+			);
+		}
+
+		final LayoutInflater layoutInflater = LayoutInflater.from(context);
+		final View intentChooserDialog = layoutInflater.inflate(R.layout.intent_chooser, null);
+
+		final RecyclerView recyclerView = intentChooserDialog.findViewById(R.id.intents_list);
+		recyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
+		recyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.HORIZONTAL));
+
+		final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+		recyclerView.setLayoutManager(linearLayoutManager);
+
+		final AlertDialog alertDialog = new MaterialAlertDialogBuilder(context)
+			.setView(intentChooserDialog)
+			.setTitle(action.equals(Intent.ACTION_VIEW) ? "Open with" : "Share with")
+			.setNegativeButton("Cancel", null)
+			.create();
+		
+		alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+		
+		final class ItemViewHolder extends ViewHolder {
+			public AppCompatImageView icon = null;
+			public MaterialTextView name = null;
+			
+			public ItemViewHolder(final View view) {
+				super(view);
+		
+				icon = view.findViewById(R.id.activity_icon);
+				name = view.findViewById(R.id.activity_name);
+			}
+		}
+		
+		final class ItemAdapter extends Adapter<ItemViewHolder> {
+			private List<Item> items = null;
+			
+			public ItemAdapter(final List<Item> items) {
+				this.items = items;
+			}
+		
+			@Override
+			public ItemViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+				final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activities_list_item, parent, false);
+				final ItemViewHolder holder = new ItemViewHolder(view);
+				
+				view.setOnClickListener((final View itemView) -> {
+					final Item item = items.get(holder.getAdapterPosition());
+					final Context context = itemView.getContext();
+					
+					context.startActivity(item.getIntent());
+					
+					alertDialog.dismiss();
+				});
+				
+				return holder;
+			}
+		
+			@Override
+			public void onBindViewHolder(final ItemViewHolder viewHolder, final int position) {
+				final Item item = items.get(position);
+				
+				viewHolder.icon.setImageDrawable(item.getIcon());
+				viewHolder.name.setText(item.getLabel());
+			}
+		
+			@Override
+			public int getItemCount() {
+				return ((items != null) ? items.size() : 0);
+			}
+		}
+		
+		final ItemAdapter itemAdapter = new ItemAdapter(items);
+		recyclerView.setAdapter(itemAdapter);
+
+		alertDialog.show();
+		
+	}
+	
+	public static void createChooser(final Context context, final String url, final String action) {
 
 		final Intent intent = new Intent();
 
@@ -71,17 +237,19 @@ public class PackageUtils {
 				intent.setType("text/plain");
 				break;
 			default:
-				return null;
+				return;
 		}
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 			final Intent chooser = Intent.createChooser(intent, url);
 			chooser.putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, CHOOSER_EXCLUDE_COMPONENTS);
 			chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-			return chooser;
+			
+			context.startActivity(chooser);
+			
+			return;
 		}
-
+			
 		// Set package manager
 		final PackageManager packageManager = context.getPackageManager();
 
@@ -104,8 +272,8 @@ public class PackageUtils {
 		final Intent chooser = Intent.createChooser(intents.remove(0), url);
 		chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, intents.toArray(new Parcelable[0]));
 		chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-		return chooser;
+		
+		context.startActivity(chooser);
 	}
 
 	public static void disableComponent(final Context context, final ComponentName component) {
@@ -187,6 +355,11 @@ public class PackageUtils {
 		notificationManager.notify(DEFAULT_NOTIFICATION_ID, builder.build());
 
 		return DEFAULT_NOTIFICATION_ID;
+	}
+
+	public static void copyToClipboard(final Context context, final String text) {
+		final ClipboardManager clipboard = (ClipboardManager) context.getSystemService(context.CLIPBOARD_SERVICE);
+		clipboard.setPrimaryClip(ClipData.newPlainText(null, text));
 	}
 
 	public static void cancelNotification(final Context context, final int id) {

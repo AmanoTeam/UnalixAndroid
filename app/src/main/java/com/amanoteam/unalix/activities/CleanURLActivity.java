@@ -33,6 +33,8 @@ public class CleanURLActivity extends AppCompatActivity {
 
 		startService(service);
 
+		PackageUtils.createChooserNew(this, uglyUrl, Intent.ACTION_VIEW);
+
 		finishAndRemoveTask();
 	}
 

@@ -9,10 +9,11 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
-
+import android.content.SharedPreferences;
+import com.amanoteam.unalix.activities.MainActivity;
+import androidx.preference.PreferenceManager;
 import com.amanoteam.unalix.utilities.PackageUtils;
 import com.amanoteam.unalix.wrappers.Unalix;
-
 public class UnalixService extends Service {
 
 	private ServiceHandler serviceHandler;
@@ -23,13 +24,13 @@ public class UnalixService extends Service {
 				Process.THREAD_PRIORITY_BACKGROUND);
 		thread.start();
 
-		Looper serviceLooper = thread.getLooper();
+		final Looper serviceLooper = thread.getLooper();
 		serviceHandler = new ServiceHandler(serviceLooper);
 	}
 
 	@Override
 	public int onStartCommand(final Intent intent, final int flags, final int startId) {
-		Message msg = serviceHandler.obtainMessage();
+		final Message msg = serviceHandler.obtainMessage();
 		msg.arg1 = startId;
 		msg.obj = intent;
 		serviceHandler.sendMessage(msg);
@@ -61,6 +62,7 @@ public class UnalixService extends Service {
 			final String whatToDo = intent.getStringExtra("whatToDo");
 
 			final Context context = getApplicationContext();
+			final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
 			final Unalix unalix = new Unalix(context);
 
@@ -76,9 +78,17 @@ public class UnalixService extends Service {
 				PackageUtils.cancelNotification(context, notificationId);
 			}
 
-			final Intent chooser = PackageUtils.createChooser(context, cleanUrl, action);
-
-			startActivity(chooser);
+			final boolean preferNativeIntentChooser = preferences.getBoolean("preferNativeIntentChooser", false);
+			
+			if (preferNativeIntentChooser) {
+				PackageUtils.createChooser(context, cleanUrl, Intent.ACTION_VIEW);
+			} else {
+				/*
+				new Handler(Looper.getMainLooper()).post(() -> {
+					PackageUtils.createChooserNewK(null, UnalixService.this, cleanUrl, Intent.ACTION_VIEW);
+				});
+				*/
+			}
 
 			stopSelf(msg.arg1);
 		}
