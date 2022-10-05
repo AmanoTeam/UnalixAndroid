@@ -16,11 +16,9 @@ android {
 		externalNativeBuild {
 			cmake {
 				arguments (
-					"-DANDROID_STL=c++_shared",
-					"-DCMAKE_CXX_FLAGS_RELEASE=-Oz -flto=full",
-					"-DCMAKE_CXX_FLAGS_RELWITHDEBINFO=-Oz -flto=full",
 					"-DCMAKE_C_FLAGS_RELEASE=-Oz -flto=full",
-					"-DCMAKE_C_FLAGS_RELWITHDEBINFO=-Oz -flto=full"
+					"-DCMAKE_C_FLAGS_RELWITHDEBINFO=-Oz -flto=full",
+					"-DUNALIX_ENABLE_JNI=ON"
 				)
 			}
 		}
