@@ -1,6 +1,11 @@
 package com.amanoteam.unalix.fragments;
 
+import androidx.work.WorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.OneTimeWorkRequest;
 import android.content.ContentValues;
+import android.content.Intent;
+import com.amanoteam.unalix.services.RulesetsUpdateService;
 import android.content.Context;
 import android.database.Cursor;
 import androidx.appcompat.widget.AppCompatImageButton;
@@ -47,97 +52,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-final class Ruleset {
-
-	private String name;
-	private String url;
-	private String hashUrl;
-	private String filename;
-	private long lastUpdated;
-	private boolean isEnabled;
-
-	public Ruleset(
-		final String name,
-		final String url,
-		final String hashUrl,
-		final String filename,
-		final long lastUpdated,
-		final boolean isEnabled
-	) {
-		this.name = name;
-		this.url = url;
-		this.hashUrl = hashUrl;
-		this.filename = filename;
-		this.lastUpdated = lastUpdated;
-		this.isEnabled = isEnabled;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(final String name) {
-		this.name = name;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(final String url) {
-		this.url = url;
-	}
-
-	public String getHashUrl() {
-		return hashUrl;
-	}
-
-	public void setHashUrl(final String hashUrl) {
-		this.hashUrl = hashUrl;
-	}
-
-	public String getFilename() {
-		return filename;
-	}
-
-	public void setFilename(final String filename) {
-		this.filename = filename;
-	}
-
-	public long getLastUpdated() {
-		return lastUpdated;
-	}
-
-	public void setLastUpdate(final long lastUpdated) {
-		this.lastUpdated = lastUpdated;
-	}
-
-	public boolean isEnabled() {
-		return isEnabled;
-	}
-
-	public void setEnabled(final boolean isEnabled) {
-		this.isEnabled = isEnabled;
-	}
-
-	public boolean equals(final Ruleset other) {
-		final String thisName = getName();
-		final String otherName = other.getName();
-
-		final String thisUrl = getUrl();
-		final String otherUrl = other.getUrl();
-
-		final String thisHashUrl = getHashUrl();
-		final String otherHashUrl = other.getHashUrl();
-
-		if (thisName.equals(otherName) && thisUrl.equals(otherUrl)) {
-			return Objects.equals(thisHashUrl, otherHashUrl);
-		}
-		
-		return false;
-	}
-
-}
+import com.amanoteam.unalix.core.Ruleset;
+import com.amanoteam.unalix.utilities.RulesetsUtils;
 
 class InputUtils {
 
@@ -497,7 +413,17 @@ public class RulesetsFragment extends Fragment {
 		recyclerView.setAdapter(rulesetAdapter);
 		
 		final SwipeRefreshLayout swipeRefresh = fragmentView.findViewById(R.id.swipe_to_refresh);
+		
 		swipeRefresh.setOnRefreshListener(() -> {
+			
+			WorkRequest uploadWorkRequest =
+				new OneTimeWorkRequest.Builder(RulesetsUpdateService.class)
+					.build();
+			WorkManager
+				.getInstance(context)
+				.enqueue(uploadWorkRequest);
+
+			
 			swipeRefresh.setRefreshing(false);
 		});
 		
@@ -528,7 +454,7 @@ public class RulesetsFragment extends Fragment {
 									return;
 								}
 			
-								if (isAlreadyInDatabase(ruleset)) {
+								if (RulesetsUtils.isAlreadyInDatabase(ruleset, context)) {
 									urlInput.requestFocus();
 			
 									urlInput.setError(null);
@@ -548,7 +474,10 @@ public class RulesetsFragment extends Fragment {
 						
 						return true;
 					}
-					
+					case R.id.rulesets_update_action:
+						final Intent service = new Intent(activity, RulesetsUpdateService.class);
+						activity.startService(service);
+						return true;
 					default:
 						return false;
 				}
@@ -557,7 +486,7 @@ public class RulesetsFragment extends Fragment {
 		
 		activity.addMenuProvider(menuProvider, getViewLifecycleOwner());
 		
-		if (isColumnEmpty()) {
+		if (RulesetsUtils.isColumnEmpty(context)) {
 			final Ruleset[] rulesets = {
 				new Ruleset(
 					"ClearURLs",
@@ -581,7 +510,7 @@ public class RulesetsFragment extends Fragment {
 				rulesetAdapter.addRuleset(ruleset, true);
 			}
 		} else {
-			final ArrayList<Ruleset> rulesets = getRulesetsFromDatabase();
+			final ArrayList<Ruleset> rulesets = RulesetsUtils.getRulesetsFromDatabase(context);
 
 			for (final Ruleset ruleset : rulesets) {
 				rulesetAdapter.addRuleset(ruleset, false);
@@ -589,83 +518,4 @@ public class RulesetsFragment extends Fragment {
 		}
 	}
 	
-	private boolean isColumnEmpty() {
-		final SQLiteDatabase database = new RulesetsDatabaseHelper(getActivity().getApplicationContext())
-			.getReadableDatabase();
-
-		final String query = String.format("SELECT COUNT(*) FROM %s", RulesetEntry.TABLE_NAME);
-		final Cursor cursor = database.rawQuery(query, null);
-
-		cursor.moveToFirst();
-
-		final boolean isEmpty = (cursor.getInt(0) < 1);
-
-		cursor.close();
-		database.close();
-
-		return isEmpty;
-	}
-
-	private ArrayList<Ruleset> getRulesetsFromDatabase() {
-		final SQLiteDatabase database = new RulesetsDatabaseHelper(getActivity().getApplicationContext())
-			.getReadableDatabase();
-
-		final ArrayList<Ruleset> rulesets = new ArrayList<Ruleset>();
-
-		final Cursor cursor = database.query(RulesetEntry.TABLE_NAME, null, null, null, null, null, null);
-
-		while (cursor.moveToNext()) {
-			final String name = cursor.getString(cursor.getColumnIndex(RulesetEntry.COLUMN_RULESET_NAME));
-			final String url = cursor.getString(cursor.getColumnIndex(RulesetEntry.COLUMN_RULESET_URL));
-			final String hashUrl = cursor.getString(cursor.getColumnIndex(RulesetEntry.COLUMN_RULESET_HASH_URL));
-			final String filename = cursor.getString(cursor.getColumnIndex(RulesetEntry.COLUMN_RULESET_FILENAME));
-			final boolean isEnabled = cursor.getLong(cursor.getColumnIndex(RulesetEntry.COLUMN_RULESET_IS_ENABLED)) == 1;
-
-			final int index = cursor.getColumnIndex(RulesetEntry.COLUMN_RULESET_LAST_UPDATED);
-			final long lastUpdated = cursor.isNull(index) ? 0 : cursor.getLong(index);
-
-			final Ruleset ruleset = new Ruleset(
-				name,
-				url,
-				hashUrl,
-				filename,
-				lastUpdated,
-				isEnabled
-			);
-
-			rulesets.add(ruleset);
-		}
-
-		cursor.close();
-		database.close();
-
-		return rulesets;
-	}
-
-	private boolean isAlreadyInDatabase(final Ruleset ruleset) {
-		final SQLiteDatabase database = new RulesetsDatabaseHelper(getActivity().getApplicationContext())
-			.getReadableDatabase();
-
-		final String whereClause = String.format("%s = ?", RulesetEntry.COLUMN_RULESET_URL);
-		final String[] whereArgs = {
-			ruleset.getUrl()
-		};
-
-		final Cursor cursor = database.query(
-			RulesetEntry.TABLE_NAME,
-			null,
-			whereClause,
-			whereArgs,
-			null,
-			null,
-			null
-		);
-
-		final boolean alreadyExists = (cursor.getCount() > 0);
-
-		cursor.close();
-		database.close();
-
-		return alreadyExists;
-	}
 }

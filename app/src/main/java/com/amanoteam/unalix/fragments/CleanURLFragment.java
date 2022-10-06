@@ -21,13 +21,13 @@ import androidx.fragment.app.FragmentActivity;
 import com.amanoteam.unalix.R;
 import com.amanoteam.unalix.databinding.CleanUrlFragmentBinding;
 import com.amanoteam.unalix.utilities.PackageUtils;
-import com.amanoteam.unalix.wrappers.Unalix;
+import com.amanoteam.libunalix.LibUnalix;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class CleanURLFragment extends Fragment {
 
-	private Unalix unalix;
+	private LibUnalix unalix;
 
 	private final OnSharedPreferenceChangeListener onSharedPreferenceChangeListener = (preferences, key) -> {
 		if (!key.equals("appTheme")) {
@@ -149,7 +149,7 @@ public class CleanURLFragment extends Fragment {
 			urlInput.getText().clear();;
 		});
 
-		unalix = new Unalix(context);
+		unalix = new LibUnalix(context);
 	}
 
 	@Override

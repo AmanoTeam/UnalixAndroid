@@ -70,9 +70,9 @@ public class PackageUtils {
 		UNSHORT_URL_COMPONENT
 	};
 
-	private static final int DEFAULT_NOTIFICATION_ID = 1;
-	private static final String DEFAULT_NOTIFICATION_CHANNEL = "unalix_notification_channel";
-	private static final String DEFAULT_NOTIFICATION_CHANNEL_DESCRIPTION = "Default notification channel for Unalix";
+	public static final int DEFAULT_NOTIFICATION_ID = 1;
+	public static final String DEFAULT_NOTIFICATION_CHANNEL = "unalix_notification_channel";
+	public static final String DEFAULT_NOTIFICATION_CHANNEL_DESCRIPTION = "Default notification channel for Unalix";
 
 	public static void createChooserNew(final Context context, final String url, final String action) {
 
@@ -335,7 +335,17 @@ public class PackageUtils {
 		final Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
 		toast.show();
 	}
+	
+	public static void createNotificationChannelIfNeeded(final Context context) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			final NotificationChannel channel = new NotificationChannel(DEFAULT_NOTIFICATION_CHANNEL, "Unalix", NotificationManager.IMPORTANCE_DEFAULT);
+			channel.setDescription(DEFAULT_NOTIFICATION_CHANNEL_DESCRIPTION);
 
+			final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+			notificationManager.createNotificationChannel(channel);
+		}
+	}
+	
 	public static int showNotification(final Context context, final String title, final String description) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			final NotificationChannel channel = new NotificationChannel(DEFAULT_NOTIFICATION_CHANNEL, "Unalix", NotificationManager.IMPORTANCE_DEFAULT);
@@ -344,12 +354,13 @@ public class PackageUtils {
 			final NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
 			notificationManager.createNotificationChannel(channel);
 		}
-
+		
 		final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, DEFAULT_NOTIFICATION_CHANNEL)
 			.setSmallIcon(R.drawable.cleaning_icon)
 			.setContentTitle(title)
 			.setContentText(description)
-			.setPriority(NotificationCompat.PRIORITY_LOW);
+			.setPriority(NotificationCompat.PRIORITY_LOW)
+			.setAutoCancel(true);
 
 		final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 		notificationManager.notify(DEFAULT_NOTIFICATION_ID, builder.build());

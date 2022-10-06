@@ -13,7 +13,7 @@ import android.content.SharedPreferences;
 import com.amanoteam.unalix.activities.MainActivity;
 import androidx.preference.PreferenceManager;
 import com.amanoteam.unalix.utilities.PackageUtils;
-import com.amanoteam.unalix.wrappers.Unalix;
+import com.amanoteam.libunalix.LibUnalix;
 public class UnalixService extends Service {
 
 	private ServiceHandler serviceHandler;
@@ -64,7 +64,7 @@ public class UnalixService extends Service {
 			final Context context = getApplicationContext();
 			final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-			final Unalix unalix = new Unalix(context);
+			final LibUnalix unalix = new LibUnalix(context);
 
 			String cleanUrl;
 

@@ -16,9 +16,9 @@ android {
 		externalNativeBuild {
 			cmake {
 				arguments (
-					"-DCMAKE_C_FLAGS_RELEASE=-Oz -flto=full",
-					"-DCMAKE_C_FLAGS_RELWITHDEBINFO=-Oz -flto=full",
-					"-DUNALIX_ENABLE_JNI=ON"
+					"-DUNALIX_ENABLE_JNI=ON",
+					"-DUNALIX_ENABLE_LTO=ON",
+					"-DUNALIX_BUILD_TESTING=OFF"
 				)
 			}
 		}
@@ -26,7 +26,7 @@ android {
 
 	externalNativeBuild {
 		cmake {
-			path "CMakeLists.txt"
+			path "src/main/jni/libunalix/CMakeLists.txt"
 		}
 	}
 
@@ -73,4 +73,5 @@ dependencies {
 	implementation 'androidx.navigation:navigation-ui:2.5.2'
 	implementation 'com.google.android.material:material:1.6.1'
 	implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+	implementation 'androidx.work:work-runtime:2.7.1'
 }
