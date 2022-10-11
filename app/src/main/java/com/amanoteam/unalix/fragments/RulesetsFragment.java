@@ -131,7 +131,7 @@ public class RulesetsFragment extends Fragment {
 		final Context context = activity.getApplicationContext();
 		
 		final LayoutInflater layoutInflater = activity.getLayoutInflater();
-		final ScrollView addRulesetDialog = (ScrollView) layoutInflater.inflate(R.layout.add_ruleset, null);
+		final androidx.coordinatorlayout.widget.CoordinatorLayout addRulesetDialog = (androidx.coordinatorlayout.widget.CoordinatorLayout) layoutInflater.inflate(R.layout.add_ruleset, null);
 		
 		final TextInputEditText nameInput = addRulesetDialog.findViewById(R.id.ruleset_name_input);
 		final TextInputEditText urlInput = addRulesetDialog.findViewById(R.id.ruleset_url_input);
@@ -438,8 +438,9 @@ public class RulesetsFragment extends Fragment {
 				
 				switch (menuItem.getItemId()) {
 					case R.id.rulesets_add_action: {
-						IntentChooserDialogFragment d = new IntentChooserDialogFragment();
-						d.show(getChildFragmentManager(), IntentChooserDialogFragment.TAG);
+						IntentChooserDialogFragment d = IntentChooserDialogFragment.newInstance();
+						//IntentChooserDialogFragment d = new IntentChooserDialogFragment();
+						d.show(getActivity().getSupportFragmentManager(), IntentChooserDialogFragment.TAG);
 						
 						if (1 == 1) {
 							return true;

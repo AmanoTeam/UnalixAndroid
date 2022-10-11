@@ -34,33 +34,34 @@ public class LibUnalix {
 
 	private int timeout;
 	private String userAgent;
-
-
+	
+	public LibUnalix() {}
+	
 	public LibUnalix(final Context context) {
 		setFromPreferences(context);
 	}
 
 	private native String cleanUrl(
-			final String url,
-			final boolean ignoreReferralMarketing,
-			final boolean ignoreRules,
-			final boolean ignoreExceptions,
-			final boolean ignoreRawRules,
-			final boolean ignoreRedirections,
-			final boolean stripEmpty,
-			final boolean stripDuplicates
+		final String url,
+		final boolean ignoreReferralMarketing,
+		final boolean ignoreRules,
+		final boolean ignoreExceptions,
+		final boolean ignoreRawRules,
+		final boolean ignoreRedirections,
+		final boolean stripEmpty,
+		final boolean stripDuplicates
 	);
 
 	public String cleanUrl(final String url) {
 		return this.cleanUrl(
-				url,
-				this.ignoreReferralMarketing,
-				this.ignoreRules,
-				this.ignoreExceptions,
-				this.ignoreRawRules,
-				this.ignoreRedirections,
-				this.stripEmpty,
-				this.stripDuplicates
+			url,
+			this.ignoreReferralMarketing,
+			this.ignoreRules,
+			this.ignoreExceptions,
+			this.ignoreRawRules,
+			this.ignoreRedirections,
+			this.stripEmpty,
+			this.stripDuplicates
 		);
 	}
 
@@ -103,7 +104,11 @@ public class LibUnalix {
 		final String sha256_url,
 		final String temporary_directory
 	) throws UnalixException;
-
+	
+	public native boolean loadFile(final String filename);
+	
+	public native boolean loadString(final String string) throws UnalixException;
+	
 	private void setIgnoreReferralMarketing(final boolean value) {
 		this.ignoreReferralMarketing = value;
 	}

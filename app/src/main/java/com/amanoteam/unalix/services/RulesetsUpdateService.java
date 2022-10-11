@@ -83,8 +83,7 @@ public class RulesetsUpdateService extends Worker {
 	@Override
 	public Result doWork() {
 		final Context context = getApplicationContext();
-		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-		//PackageUtils.showToast(context, "start");
+		
 		final List<Ruleset> rulesets = RulesetsUtils.getRulesetsFromDatabase(context);
 		final int totalRulesets = rulesets.size();
 		
@@ -102,7 +101,8 @@ public class RulesetsUpdateService extends Worker {
 			.setSmallIcon(R.drawable.refresh_icon)
 			.setContentTitle(String.format(notificationTitleFormat, 0, totalRulesets))
 			.setPriority(NotificationCompat.PRIORITY_LOW)
-			.setProgress(totalRulesets, 0, false);
+			.setProgress(totalRulesets, 0, false)
+			.setSilent(true);
 		
 		final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 		notificationManager.notify(PackageUtils.DEFAULT_NOTIFICATION_ID, notificationBuilder.build());
@@ -170,25 +170,25 @@ public class RulesetsUpdateService extends Worker {
 				);
 				
 				database.close();
-			}
-			
-			try {
-				final boolean shouldUpdateRuleset = unalix.rulesetCheckUpdate(filename, url);
-				
-				if (!shouldUpdateRuleset) {
-					Log.w("UnalixRulesetsUpdate", "The remote file for this ruleset was not modified since the last update, skipping it");
-					totalSkipped++;
+			} else {
+				try {
+					final boolean shouldUpdateRuleset = unalix.rulesetCheckUpdate(filename, url);
+					
+					if (!shouldUpdateRuleset) {
+						Log.w("UnalixRulesetsUpdate", "The remote file for this ruleset was not modified since the last update, skipping it");
+						totalSkipped++;
+						
+						continue;
+					}
+				} catch (final UnalixException e) {
+					Log.e("UnalixRulesetsUpdate", "Cannot check for updates due to error", e);
+					totalErrors++;
 					
 					continue;
 				}
-			} catch (final UnalixException e) {
-				Log.e("UnalixRulesetsUpdate", "Cannot check for updates due to error", e);
-				totalErrors++;
-				
-				continue;
 			}
 			
-			Log.i("UnalixRulesetsUpdate", "Update available, fetching ruleset remote file");
+			Log.i("UnalixRulesetsUpdate", "Update available, fetching remote file");
 			
 			try {
 				unalix.rulesetUpdate(filename, url, hashUrl, context.getCacheDir() + "/");
@@ -198,7 +198,30 @@ public class RulesetsUpdateService extends Worker {
 			} catch (final UnalixException e) {
 				Log.e("UnalixRulesetsUpdate", "Cannot update ruleset due to error", e);
 				totalErrors++;
+				
+				continue;
 			}
+			
+			final SQLiteDatabase database = new RulesetsDatabaseHelper(context)
+				.getWritableDatabase();
+			
+			final ContentValues values = new ContentValues();
+			
+			values.put(RulesetEntry.COLUMN_RULESET_LAST_UPDATED, System.currentTimeMillis() / 1000);
+			
+			final String whereClause = String.format("%s = ?", RulesetEntry.COLUMN_RULESET_URL);
+			final String[] whereArgs = {
+				url
+			};
+			
+			database.update(
+				RulesetEntry.TABLE_NAME,
+				values,
+				whereClause,
+				whereArgs
+			);
+			
+			database.close();
 		}
 		
 		Log.i("UnalixRulesetsUpdate", String.format("Update check finished: %d updated, %d skipped and %d errors", totalUpdated, totalSkipped, totalErrors));
@@ -209,6 +232,13 @@ public class RulesetsUpdateService extends Worker {
 			.setContentText(String.format("%d updated, %d skipped and %d errors", totalUpdated, totalSkipped, totalErrors))
 			.setProgress(0, 0, false);
 		notificationManager.notify(PackageUtils.DEFAULT_NOTIFICATION_ID, notificationBuilder.build());
+		
+		if (totalUpdated > 0) {
+			PreferenceManager.getDefaultSharedPreferences(context)
+				.edit()
+				.putInt("lastRulesetUpdate", (int) (System.currentTimeMillis() / 1000))
+				.commit();
+		}
 		
 		return Result.success();
 	}

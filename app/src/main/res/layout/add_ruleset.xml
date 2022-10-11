@@ -1,18 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<androidx.coordinatorlayout.widget.CoordinatorLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/lllll"
 	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:layout_gravity="center_vertical" >
+	android:layout_height="match_parent" >
 	
+	<com.google.android.material.appbar.AppBarLayout
+		android:id="@+id/opa"
+		android:gravity="center_vertical"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:elevation="4dp" >
+	
+		<com.google.android.material.appbar.MaterialToolbar
+			android:id="@+id/pppp"
+			android:layout_width="match_parent"
+			android:layout_height="?attr/actionBarSize"
+			android:gravity="center_vertical"
+			style="@style/Widget.Material3.Toolbar"
+			app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight"
+			app:title="cccccccccccc"
+			app:titleCentered="true" />
+	</com.google.android.material.appbar.AppBarLayout>
+
 	<androidx.constraintlayout.widget.ConstraintLayout
 		xmlns:android="http://schemas.android.com/apk/res/android"
 		xmlns:app="http://schemas.android.com/apk/res-auto"
 		android:id="@+id/constraint_add_ruleset"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
-	
+		android:layout_height="match_parent" >
+		
 		<com.google.android.material.textfield.TextInputLayout
 			android:id="@+id/ruleset_name_layout"
 			android:layout_width="0dp"
@@ -23,9 +41,8 @@
 			app:counterMaxLength="23"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/constraint_add_ruleset"
-			app:layout_constraintTop_toTopOf="parent"
-			app:layout_constraintWidth_percent=".8">
+			app:layout_constraintTop_toBottomOf="parent"
+			app:layout_constraintWidth_percent=".9">
 	
 			<com.google.android.material.textfield.TextInputEditText
 				android:id="@+id/ruleset_name_input"
@@ -46,7 +63,7 @@
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toBottomOf="@id/ruleset_name_layout"
-			app:layout_constraintWidth_percent=".8">
+			app:layout_constraintWidth_percent=".9">
 	
 			<com.google.android.material.textfield.TextInputEditText
 				android:id="@+id/ruleset_url_input"
@@ -67,7 +84,7 @@
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toBottomOf="@id/ruleset_url_layout"
-			app:layout_constraintWidth_percent=".8">
+			app:layout_constraintWidth_percent=".9">
 	
 			<com.google.android.material.textfield.TextInputEditText
 				android:id="@+id/hash_url_input"
@@ -90,7 +107,7 @@
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toBottomOf="@id/hash_url_layout"
-			app:layout_constraintWidth_percent=".8" />
+			app:layout_constraintWidth_percent=".9" />
 	
 	</androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

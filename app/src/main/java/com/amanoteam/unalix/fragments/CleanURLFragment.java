@@ -17,7 +17,9 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import androidx.fragment.app.FragmentActivity;
 
-
+import java.util.List;
+import com.amanoteam.unalix.core.Ruleset;
+import com.amanoteam.unalix.utilities.RulesetsUtils;
 import com.amanoteam.unalix.R;
 import com.amanoteam.unalix.databinding.CleanUrlFragmentBinding;
 import com.amanoteam.unalix.utilities.PackageUtils;
@@ -35,7 +37,25 @@ public class CleanURLFragment extends Fragment {
 			unalix.setFromPreferences(context);
 		}
 	};
+	
+	private void loadRulesets() {
+		final List<Ruleset> rulesets = RulesetsUtils.getRulesetsFromDatabase(getActivity().getApplicationContext());
 
+		for (final Ruleset ruleset : rulesets) {
+			if (!ruleset.isEnabled()) {
+				continue;
+			}
+			
+			final String filename = ruleset.getFilename();
+			
+			if (filename == null) {
+				continue;
+			}
+			
+			unalix.loadFile(filename);
+		}
+	}
+	
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		final CleanUrlFragmentBinding binding = CleanUrlFragmentBinding.inflate(inflater, container, false);
@@ -150,6 +170,7 @@ public class CleanURLFragment extends Fragment {
 		});
 
 		unalix = new LibUnalix(context);
+		loadRulesets();
 	}
 
 	@Override

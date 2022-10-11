@@ -47,16 +47,17 @@ import androidx.appcompat.widget.AppCompatButton;
 import android.content.DialogInterface;
 import android.widget.ScrollView;
 
-public class IntentChooserDialogFragment extends BottomSheetDialogFragment {
+final public class IntentChooserDialogFragment extends BottomSheetDialogFragment {
 	
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		
-		return inflater.inflate(R.layout.a, container, false);
-		
+	public static IntentChooserDialogFragment newInstance() {
+		return new IntentChooserDialogFragment();
 	}
 	
+	@Override
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.add_ruleset, container, false);
+	}
+	/*
 	@Override
 	public AlertDialog onCreateDialog(Bundle savedInstanceState) {
 		final AlertDialog alertDialog = new MaterialAlertDialogBuilder(getActivity())
@@ -66,6 +67,6 @@ public class IntentChooserDialogFragment extends BottomSheetDialogFragment {
 		
 		return alertDialog;
 	}
-
+	*/
 	public static final String TAG = "IntentChooserDialog";
 }
